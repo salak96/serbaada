@@ -262,22 +262,42 @@ export async function initDatabase() {
 // ==========================================
 export async function getSellers() {
   const store = loadLocalStore();
-  return store.sellers.map(s => ({
-    ...s,
-    masked_key: maskApiKey(decryptCredential(s.encrypted_api_key)),
-    has_secret: !!s.encrypted_api_secret
-  }));
+  return store.sellers.map(s => {
+    let apiKey = '';
+    try {
+      apiKey = decryptCredential(s.encrypted_api_key);
+    } catch {
+      apiKey = s.encrypted_api_key || '';
+    }
+    return {
+      ...s,
+      masked_key: maskApiKey(apiKey),
+      has_secret: !!s.encrypted_api_secret
+    };
+  });
 }
 
 export async function getSellerById(id, includeDecrypted = false) {
   const store = loadLocalStore();
   const seller = store.sellers.find(s => s.id === Number(id));
   if (!seller) return null;
+  let apiKey = '';
+  let apiSecret = '';
+  try {
+    apiKey = decryptCredential(seller.encrypted_api_key);
+  } catch {
+    apiKey = seller.encrypted_api_key || '';
+  }
+  try {
+    apiSecret = decryptCredential(seller.encrypted_api_secret);
+  } catch {
+    apiSecret = seller.encrypted_api_secret || '';
+  }
   return {
     ...seller,
-    api_key: includeDecrypted ? decryptCredential(seller.encrypted_api_key) : undefined,
-    api_secret: includeDecrypted ? decryptCredential(seller.encrypted_api_secret) : undefined,
-    masked_key: maskApiKey(decryptCredential(seller.encrypted_api_key))
+    api_key: includeDecrypted ? apiKey : undefined,
+    api_secret: includeDecrypted ? apiSecret : undefined,
+    masked_key: maskApiKey(apiKey)
   };
 }
 
