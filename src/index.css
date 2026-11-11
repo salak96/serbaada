@@ -30,3 +30,35 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #2583F7;
 }
+
+/* ============================================================
+   Tema Admin Console: light / dark (preferensi tersimpan).
+   Default = dark (tampilan saat ini). Atribut data-theme="light"
+   di root AdminDashboard mengaktifkan mode terang.
+   Komponen memakai var(--...) agar ikut tema.
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+  --bg-page: #080D18;
+  --bg-panel: #0B1220;
+  --bg-card: #111A2B;
+  --bg-nested: #080D18;
+  --bg-hover: #1A263D;
+  --border: #26364D;
+  --text: #F8FAFC;
+  --text-muted: #94A3B8;
+  --accent: #2583F7;
+  --accent-soft: #38BDF8;
+}
+[data-theme="light"] {
+  --bg-page: #F1F5F9;
+  --bg-panel: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --bg-nested: #F8FAFC;
+  --bg-hover: #F1F5F9;
+  --border: #E2E8F0;
+  --text: #0F172A;
+  --text-muted: #64748B;
+  --accent: #2583F7;
+  --accent-soft: #0284C7;
+}

@@ -45,6 +45,37 @@ const CANONICAL_CATEGORIES = [
   'Jasa Digital Lainnya'
 ] as const;
 
+// Rentang harga (rupiah) untuk filter harga di katalog.
+// min inklusif, max eksklusif — produk tepat di batas bawah masuk ke rentang di atasnya.
+const PRICE_RANGES = [
+  { label: 'Semua Harga', min: null as number | null, max: null as number | null },
+  { label: 'Di bawah Rp50rb', min: null, max: 50000 },
+  { label: 'Rp50rb – Rp100rb', min: 50000, max: 100000 },
+  { label: 'Rp100rb – Rp500rb', min: 100000, max: 500000 },
+  { label: 'Rp500rb – Rp1jt', min: 500000, max: 1000000 },
+  { label: 'Di atas Rp1jt', min: 1000000, max: null },
+] as const;
+
+// Warna tombol filter per server. Server baru yang belum terdaftar
+// memakai warna default (emerald) agar tetap tampil rapi.
+const SERVER_STYLE: Record<string, { active: string; idle: string; dot: string }> = {
+  'Prs Digital': {
+    active: 'bg-[#2583F7] text-white shadow-xs',
+    idle: 'bg-[#EFF6FF] text-[#2583F7] border border-[#BFDBFE] dark:bg-[#111A2B] dark:text-[#38BDF8] dark:border-[#2583F7]/40',
+    dot: 'bg-[#2583F7]',
+  },
+  'Abellab': {
+    active: 'bg-amber-600 text-white shadow-xs',
+    idle: 'bg-[#FFFBEB] text-amber-600 border border-amber-200 dark:bg-[#111A2B] dark:text-amber-400 dark:border-amber-500/40',
+    dot: 'bg-amber-500',
+  },
+};
+const DEFAULT_SERVER_STYLE = {
+  active: 'bg-emerald-600 text-white shadow-xs',
+  idle: 'bg-[#ECFDF5] text-emerald-600 border border-emerald-200 dark:bg-[#111A2B] dark:text-emerald-400 dark:border-emerald-500/40',
+  dot: 'bg-emerald-500',
+};
+
 function App() {
   const [productsList, setProductsList] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -57,11 +88,22 @@ function App() {
   const [isTopSultanOpen, setIsTopSultanOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
+  // Admin terotentikasi (login sukses) — dipakai untuk menampilkan fitur khusus admin.
+  // Disimpan di sessionStorage agar tetap aktif saat halaman di-reload di tab yang sama,
+  // dan hilang saat tab ditutup. Ini hanya gating tampilan, bukan pengganti otorisasi server.
+  const [isAdmin, setIsAdmin] = useState<boolean>(() => {
+    try {
+      return sessionStorage.getItem('serbadigital_is_admin') === '1';
+    } catch {
+      return false;
+    }
+  });
   const [selectedDetailProduct, setSelectedDetailProduct] = useState<Product | null>(null);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('Semua');
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [priceRange, setPriceRange] = useState<string>('Semua Harga');
 
   const { isDarkMode, toggleDarkMode } = useTheme();
 
@@ -101,6 +143,7 @@ function App() {
     setSelectedCategory('Semua');
     setSelectedProvider(null);
     setSearch('');
+    setPriceRange('Semua Harga');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -189,12 +232,17 @@ function App() {
     return new Set(cart.map(item => item.id));
   }, [cart]);
 
-  const prsCount = useMemo(() => {
-    return productsList.filter(p => p.provider === 'Prs Digital').length;
-  }, [productsList]);
-
-  const abellabCount = useMemo(() => {
-    return productsList.filter(p => p.provider === 'Abellab Reseller').length;
+  // Jumlah produk per server — dinamis dari data yang ada, jadi kalau
+  // seller bertambah (mis. Prodseller.com) otomatis ikut muncul di filter.
+  const providerCounts = useMemo(() => {
+    const map = new Map<string, number>();
+    productsList.forEach(p => {
+      const key = (p.provider || 'Prs Digital').trim();
+      map.set(key, (map.get(key) || 0) + 1);
+    });
+    return Array.from(map.entries())
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count);
   }, [productsList]);
 
   const filteredProducts = useMemo(() => {
@@ -208,6 +256,16 @@ function App() {
       result = result.filter(product => product.category === selectedCategory);
     }
 
+    if (priceRange !== 'Semua Harga') {
+      const range = PRICE_RANGES.find(r => r.label === priceRange);
+      if (range) {
+        const min = range.min;
+        const max = range.max;
+        if (min !== null) result = result.filter(product => product.price >= min);
+        if (max !== null) result = result.filter(product => product.price < max);
+      }
+    }
+
     if (search.trim() !== '') {
       result = result.filter(product =>
         product.name.toLowerCase().includes(search.toLowerCase())
@@ -215,7 +273,7 @@ function App() {
     }
 
     return result;
-  }, [productsList, selectedProvider, selectedCategory, search]);
+  }, [productsList, selectedProvider, selectedCategory, search, priceRange]);
 
   const categorizedProducts = useMemo(() => {
     const categories = new Map<string, Product[]>();
@@ -241,6 +299,7 @@ function App() {
     setSelectedCategory('Semua');
     setSelectedProvider(null);
     setSearch('');
+    setPriceRange('Semua Harga');
   };
 
   return (
@@ -307,7 +366,7 @@ function App() {
                 </div>
 
                 {/* Kolom pencarian produk di sisi kanan untuk desktop */}
-                <div className="w-full md:w-80">
+                <div className="w-full md:w-80 flex flex-col gap-2">
                   <div className="relative">
                     <input
                       type="text"
@@ -326,6 +385,25 @@ function App() {
                         <X className="w-4 h-4" />
                       </button>
                     )}
+                  </div>
+
+                  {/* Filter harga — tepat di bawah kolom pencarian */}
+                  <div className="flex items-center gap-2">
+                    <label htmlFor="price-filter" className="text-xs font-bold text-[#64748B] dark:text-[#94A3B8] whitespace-nowrap">
+                      Harga:
+                    </label>
+                    <select
+                      id="price-filter"
+                      value={priceRange}
+                      onChange={(e) => setPriceRange(e.target.value)}
+                      className="flex-1 min-w-0 px-3 py-2 bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC] focus:outline-none focus:border-[#2583F7] focus:ring-1 focus:ring-[#2583F7] cursor-pointer"
+                    >
+                      {PRICE_RANGES.map(range => (
+                        <option key={range.label} value={range.label}>
+                          {range.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
@@ -351,9 +429,10 @@ function App() {
                 })}
               </div>
 
-              {/* Provider Clue Filter Bar */}
-              {!isLoading && (
+              {/* Provider Clue Filter Bar — filter Server hanya terlihat oleh admin */}
+              {!isLoading && (isAdmin || selectedCategory !== 'Semua' || selectedProvider || search.trim() !== '' || priceRange !== 'Semua Harga') && (
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2 pb-2">
+                  {isAdmin && (
                   <div className="flex flex-wrap items-center gap-2 text-xs">
                     <span className="text-[#64748B] dark:text-[#94A3B8] font-semibold text-[11px]">
                       Filter Server:
@@ -364,39 +443,33 @@ function App() {
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
                         selectedProvider === null
                           ? 'bg-[#2583F7] text-white shadow-xs'
-                          : 'bg-white dark:bg-[#111A2B] text-[#64748B] dark:text-[#94A3B8] border border-[#E2E8F0] dark:border-[#26364D] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
+                          : 'bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0] dark:bg-[#111A2B] dark:text-[#94A3B8] dark:border-[#26364D] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
                       }`}
                     >
                       Semua Server ({productsList.length})
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedProvider(selectedProvider === 'Prs Digital' ? null : 'Prs Digital')}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                        selectedProvider === 'Prs Digital'
-                          ? 'bg-[#2583F7] text-white shadow-xs'
-                          : 'bg-white dark:bg-[#111A2B] text-[#2583F7] dark:text-[#38BDF8] border border-[#BFDBFE] dark:border-[#2583F7]/40'
-                      }`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#2583F7]" />
-                      Server Prs Digital ({prsCount})
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedProvider(selectedProvider === 'Abellab' ? null : 'Abellab')}
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                        selectedProvider === 'Abellab'
-                          ? 'bg-amber-600 text-white shadow-xs'
-                          : 'bg-white dark:bg-[#111A2B] text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/40'
-                      }`}
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                      Server Abellab ({abellabCount})
-                    </button>
+                    {providerCounts.map(({ name, count }) => {
+                      const style = SERVER_STYLE[name] || DEFAULT_SERVER_STYLE;
+                      const isActive = selectedProvider === name;
+                      return (
+                        <button
+                          key={name}
+                          type="button"
+                          onClick={() => setSelectedProvider(isActive ? null : name)}
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                            isActive ? style.active : style.idle
+                          }`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                          Server {name} ({count})
+                        </button>
+                      );
+                    })}
                   </div>
+                  )}
 
                   {/* Active Filter Indicator Reset Button */}
-                  {(selectedCategory !== 'Semua' || selectedProvider || search.trim() !== '') && (
+                  {(selectedCategory !== 'Semua' || selectedProvider || search.trim() !== '' || priceRange !== 'Semua Harga') && (
                     <button
                       type="button"
                       onClick={handleResetFilters}
@@ -463,7 +536,7 @@ function App() {
                   Tidak Ada Produk yang Ditemukan
                 </h3>
                 <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mb-6">
-                  Maaf, tidak ada produk yang cocok dengan pencarian "{search || selectedCategory}".
+                  Maaf, tidak ada produk yang cocok dengan pencarian "{search || selectedCategory}"{priceRange !== 'Semua Harga' ? ` pada rentang harga ${priceRange}` : ''}.
                 </p>
                 <button
                   type="button"
@@ -663,6 +736,12 @@ function App() {
         isOpen={isAdminLoginOpen}
         onClose={() => setIsAdminLoginOpen(false)}
         onSuccess={() => {
+          setIsAdmin(true);
+          try {
+            sessionStorage.setItem('serbadigital_is_admin', '1');
+          } catch {
+            // sessionStorage tidak tersedia — tetap lanjut sebagai admin di sesi ini
+          }
           setIsAdminOpen(true);
           window.history.pushState({}, '', '?admin');
         }}

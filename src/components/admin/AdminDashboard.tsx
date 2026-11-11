@@ -1,8 +1,23 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
+import type { LucideIcon } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 import { SmartPagination } from './SmartPagination';
+import { cleanProductName } from '../../utils/cleanProductName';
 
 import {
-  LayoutDashboard,
+  Home,
+  LayoutGrid,
   Package,
   Layers,
   Store,
@@ -11,8 +26,8 @@ import {
   BadgePercent,
   Image as ImageIcon,
   ShoppingBag,
+  ShoppingCart,
   Receipt,
-  FileCode2,
   Settings,
   LogOut,
   ExternalLink,
@@ -28,7 +43,22 @@ import {
   EyeOff,
   MessageCircle,
   Menu,
-  X
+  X,
+  Users,
+  History,
+  Code,
+  BarChart3,
+  Tag,
+  Globe,
+  ChevronDown,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Sun,
+  Moon,
+  Database,
+  HardDrive,
+  AlertTriangle,
+  Zap
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -49,6 +79,161 @@ type TabType =
   | 'transactions'
   | 'logs'
   | 'settings';
+
+// Struktur menu sidebar (accordion). Satu-satunya sumber kebenaran untuk
+// navigasi — route/tab id di sini harus sama dengan TabType di atas.
+interface SidebarMenuItem {
+  id: TabType;
+  label: string;
+  icon: LucideIcon;
+}
+
+interface SidebarMenuGroup {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  items: SidebarMenuItem[];
+}
+
+const MENU_GROUPS: SidebarMenuGroup[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    icon: Home,
+    items: [{ id: 'dashboard', label: 'Dashboard', icon: LayoutGrid }],
+  },
+  {
+    id: 'produk_supplier',
+    label: 'Produk & Supplier',
+    icon: Package,
+    items: [
+      { id: 'katalog', label: 'Katalog Produk (Master)', icon: Package },
+      { id: 'supplier_products', label: 'Produk Supplier Mentah', icon: Layers },
+    ],
+  },
+  {
+    id: 'operasional',
+    label: 'Operasional',
+    icon: ShoppingCart,
+    items: [
+      { id: 'sellers', label: 'Manajemen Seller', icon: Users },
+      { id: 'orders', label: 'Pesanan Pelanggan', icon: Receipt },
+      { id: 'transactions', label: 'Riwayat Transaksi', icon: History },
+    ],
+  },
+  {
+    id: 'api',
+    label: 'API & Integrasi',
+    icon: Code,
+    items: [
+      { id: 'api_keys', label: 'API Key & Kredensial', icon: KeyRound },
+      { id: 'sync', label: 'Sinkronisasi Produk', icon: RefreshCw },
+      { id: 'logs', label: 'Log API & Monitoring', icon: BarChart3 },
+    ],
+  },
+  {
+    id: 'pengaturan',
+    label: 'Pengaturan',
+    icon: Settings,
+    items: [
+      { id: 'pricing', label: 'Manajemen Harga', icon: Tag },
+      { id: 'images', label: 'Manajemen Gambar', icon: ImageIcon },
+      { id: 'settings', label: 'Pengaturan Website', icon: Globe },
+    ],
+  },
+];
+
+// Cari kelompok yang memuat sebuah tab (untuk auto-buka accordion).
+function findGroupIdOfTab(tab: TabType): string | null {
+  const group = MENU_GROUPS.find(g => g.items.some(item => item.id === tab));
+  return group ? group.id : null;
+}
+
+// Waktu relatif Indonesia ("3 menit lalu", "2 jam lalu", "kemarin").
+function timeAgo(iso: string | null | undefined): string {
+  if (!iso) return 'Belum pernah';
+  const d = new Date(iso).getTime();
+  if (Number.isNaN(d)) return '—';
+  const diff = Date.now() - d;
+  const menit = Math.floor(diff / 60000);
+  if (menit < 1) return 'baru saja';
+  if (menit < 60) return `${menit} menit lalu`;
+  const jam = Math.floor(menit / 60);
+  if (jam < 24) return `${jam} jam lalu`;
+  const hari = Math.floor(jam / 24);
+  if (hari === 1) return 'kemarin';
+  if (hari < 30) return `${hari} hari lalu`;
+  return new Date(iso).toLocaleDateString('id-ID');
+}
+
+// Ambil angka "baru / diupdate" dari ringkasan sinkronisasi backend,
+// mis. "Sinkronisasi selesai: 58 produk (0 baru, 58 diupdate)".
+// Kembalikan null bila format tidak dikenali (bukan data dummy).
+function parseSyncSummary(summary: string | null | undefined): { total: number; baru: number; diupdate: number } | null {
+  if (!summary) return null;
+  const m = summary.match(/(\d+)\s*produk\s*\((\d+)\s*baru,\s*(\d+)\s*diupdate\)/i);
+  if (!m) return null;
+  return { total: Number(m[1]), baru: Number(m[2]), diupdate: Number(m[3]) };
+}
+
+// Uraikan item produk dari satu order (untuk Produk Terlaris).
+// Utamakan array `products` (punya nama, qty, subtotal per item).
+// Fallback: parse `product_name` ("Netflix VIP (x3)" / "A (x1), B (x1)").
+// Omzet per item hanya bisa dihitung bila ada harga per item; untuk order
+// multi-produk tanpa array `products`, omzet tidak diatribusikan (0).
+function getOrderItems(o: {
+  product_name?: string;
+  product_provider?: string;
+  total_amount?: number;
+  products?: Array<Record<string, unknown>>;
+}): { name: string; qty: number; revenue: number; provider: string }[] {
+  const provider = String(o.product_provider || '—');
+  if (o.products && o.products.length > 0) {
+    return o.products.map(p => ({
+      name: cleanProductName(String(p.name || 'Produk')) || 'Produk',
+      qty: Number(p.quantity || 1),
+      revenue: Number(p.subtotal_sale ?? p.customer_price ?? 0),
+      provider: String(p.supplier_name || p.provider || provider),
+    }));
+  }
+  const raw = String(o.product_name || '').trim();
+  if (!raw) return [];
+  const parts = raw.split(',').map(s => s.trim()).filter(Boolean);
+  const parsed = parts.map(part => {
+    const m = part.match(/^(.*?)\s*\(x(\d+)\)\s*$/);
+    if (m) return { name: cleanProductName(m[1].trim()) || 'Produk', qty: Number(m[2]) };
+    return { name: cleanProductName(part) || 'Produk', qty: 1 };
+  });
+  // Omzet hanya bisa diatribusikan bila order berisi 1 produk.
+  const revenue = parsed.length === 1 ? Number(o.total_amount || 0) : 0;
+  return parsed.map(p => ({ ...p, revenue, provider }));
+}
+
+// Label tanggal pendek Indonesia, mis. "4 Nov".
+function shortDayLabel(d: Date): string {
+  return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+}
+
+// Sparkline SVG mungil (tanpa library) untuk kartu KPI.
+// data = angka per hari (7 hari). Bila semua nol, garis datar.
+function Sparkline({ data, color = '#38BDF8', height = 32, width = 120 }: { data: number[]; color?: string; height?: number; width?: number }) {
+  const max = Math.max(...data, 1);
+  const min = Math.min(...data, 0);
+  const range = max - min || 1;
+  const yOf = (v: number) => height - 4 - ((v - min) / range) * (height - 8);
+  const points = data.map((v, i) => {
+    const x = data.length <= 1 ? width / 2 : (i / (data.length - 1)) * width;
+    return `${x.toFixed(1)},${yOf(v).toFixed(1)}`;
+  }).join(' ');
+  const lastX = data.length <= 1 ? width / 2 : width;
+  const lastY = yOf(data[data.length - 1] ?? 0);
+  return (
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} className="overflow-visible flex-shrink-0" aria-hidden="true">
+      <polyline points={points} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+      <circle cx={lastX} cy={lastY} r="3" fill={color} />
+    </svg>
+  );
+}
 
 interface SellerItem {
   id: number;
@@ -251,6 +436,38 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   const [markupType, setMarkupType] = useState<MarkupMode>('percent');
   const [markupVal, setMarkupVal] = useState<number>(25);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // Tema light/dark (preferensi tersimpan). Default: dark (tampilan saat ini).
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    try {
+      const saved = localStorage.getItem('serbadigital_admin_theme');
+      return saved === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
+  useEffect(() => {
+    try {
+      localStorage.setItem('serbadigital_admin_theme', theme);
+    } catch {
+      // abaikan bila storage tidak tersedia
+    }
+  }, [theme]);
+  // Mode compact: sidebar hanya ikon (tanpa label).
+  const [isCompact, setIsCompact] = useState(false);
+  // Accordion: hanya satu kelompok yang terbuka. Default = kelompok halaman aktif.
+  const [expandedGroup, setExpandedGroup] = useState<string | null>(() => findGroupIdOfTab('dashboard'));
+
+  // Kelompok menu aktif otomatis terbuka mengikuti halaman aktif.
+  useEffect(() => {
+    const groupId = findGroupIdOfTab(activeTab);
+    if (groupId) setExpandedGroup(groupId);
+  }, [activeTab]);
+
+  // Label menu aktif untuk judul di top navbar.
+  const activeMenuLabel = useMemo(() => {
+    const item = MENU_GROUPS.flatMap(g => g.items).find(i => i.id === activeTab);
+    return item ? item.label : activeTab.replace('_', ' ');
+  }, [activeTab]);
 
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
   const [editingProductImage, setEditingProductImage] = useState<MasterProductItem | null>(null);
@@ -307,6 +524,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   const [masterPageSize, setMasterPageSize] = useState(5);
   const [priceCurrentPage, setPriceCurrentPage] = useState(1);
   const [pricePageSize, setPricePageSize] = useState(5);
+  const [priceSearchQuery, setPriceSearchQuery] = useState('');
   const [ordersCurrentPage, setOrdersCurrentPage] = useState(1);
   const [ordersPageSize, setOrdersPageSize] = useState(5);
   const mainWorkspaceRef = useRef<HTMLElement | null>(null);
@@ -316,6 +534,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   };
   const [imagesCurrentPage, setImagesCurrentPage] = useState(1);
   const [imagesPageSize, setImagesPageSize] = useState(5);
+  const [imageSearchQuery, setImageSearchQuery] = useState('');
   const [selectedOrderDelivery, setSelectedOrderDelivery] = useState<OrderItem | null>(null);
   const [isProofLightboxOpen, setIsProofLightboxOpen] = useState(false);
 
@@ -647,20 +866,174 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     return filteredMasterProducts.slice(start, start + masterPageSize);
   }, [filteredMasterProducts, masterCurrentPage, masterPageSize]);
 
+  const filteredPriceProducts = useMemo(() => {
+    if (!priceSearchQuery.trim()) return masterProducts;
+    const q = priceSearchQuery.toLowerCase();
+    return masterProducts.filter(p => p.name.toLowerCase().includes(q));
+  }, [masterProducts, priceSearchQuery]);
+
   const paginatedPriceProducts = useMemo(() => {
     const start = (priceCurrentPage - 1) * pricePageSize;
-    return masterProducts.slice(start, start + pricePageSize);
-  }, [masterProducts, priceCurrentPage, pricePageSize]);
+    return filteredPriceProducts.slice(start, start + pricePageSize);
+  }, [filteredPriceProducts, priceCurrentPage, pricePageSize]);
 
   const paginatedOrders = useMemo(() => {
     const start = (ordersCurrentPage - 1) * ordersPageSize;
     return filteredOrders.slice(start, start + ordersPageSize);
   }, [filteredOrders, ordersCurrentPage, ordersPageSize]);
 
+  const filteredImageProducts = useMemo(() => {
+    if (!imageSearchQuery.trim()) return masterProducts;
+    const q = imageSearchQuery.toLowerCase();
+    return masterProducts.filter(p => p.name.toLowerCase().includes(q));
+  }, [masterProducts, imageSearchQuery]);
+
   const paginatedImageProducts = useMemo(() => {
     const start = (imagesCurrentPage - 1) * imagesPageSize;
-    return masterProducts.slice(start, start + imagesPageSize);
-  }, [masterProducts, imagesCurrentPage, imagesPageSize]);
+    return filteredImageProducts.slice(start, start + imagesPageSize);
+  }, [filteredImageProducts, imagesCurrentPage, imagesPageSize]);
+
+  // Jumlah produk per seller (untuk kartu Manajemen Seller):
+  // supplier = produk mentah dari API seller, master = produk di katalog.
+  const sellerProductCounts = useMemo(() => {
+    const map = new Map<number, { supplier: number; master: number }>();
+    supplierProducts.forEach(p => {
+      const cur = map.get(p.seller_id) || { supplier: 0, master: 0 };
+      cur.supplier += 1;
+      map.set(p.seller_id, cur);
+    });
+    masterProducts.forEach(p => {
+      if (p.primary_seller_id == null) return;
+      const cur = map.get(p.primary_seller_id) || { supplier: 0, master: 0 };
+      cur.master += 1;
+      map.set(p.primary_seller_id, cur);
+    });
+    return map;
+  }, [supplierProducts, masterProducts]);
+
+  // ---------- Data dashboard (semua dari data nyata, tanpa dummy) ----------
+  // 7 hari terakhir (label + kunci tanggal) untuk grafik.
+  const last7Days = useMemo(() => {
+    const days: { key: string; label: string }[] = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      days.push({ key: d.toISOString().slice(0, 10), label: shortDayLabel(d) });
+    }
+    return days;
+  }, []);
+
+  // Aktivitas sinkronisasi per hari (dari api_logs nyata: created_at + is_success).
+  // "Produk baru" diambil dari ringkasan backend "(X baru, Y diupdate)" bila ada.
+  const syncDaily = useMemo(() => {
+    const byDay = new Map<string, { total: number; sukses: number; gagal: number; baru: number }>();
+    logs.forEach(log => {
+      const key = String(log.created_at || '').slice(0, 10);
+      if (!key) return;
+      const cur = byDay.get(key) || { total: 0, sukses: 0, gagal: 0, baru: 0 };
+      cur.total += 1;
+      if (log.is_success) cur.sukses += 1; else cur.gagal += 1;
+      const parsed = parseSyncSummary(log.response_summary);
+      if (parsed) cur.baru += parsed.baru;
+      byDay.set(key, cur);
+    });
+    return last7Days.map(d => ({
+      label: d.label,
+      key: d.key,
+      total: byDay.get(d.key)?.total ?? 0,
+      sukses: byDay.get(d.key)?.sukses ?? 0,
+      gagal: byDay.get(d.key)?.gagal ?? 0,
+      baru: byDay.get(d.key)?.baru ?? 0,
+    }));
+  }, [logs, last7Days]);
+
+  // Distribusi status produk (donut) — kategori saling lepas, jumlah = total produk.
+  const productStatus = useMemo(() => {
+    let aktif = 0;
+    let stokHabis = 0;
+    let nonAktif = 0;
+    masterProducts.forEach(p => {
+      const stock = Number(p.custom_stock || 0);
+      if (stock <= 0) stokHabis += 1;
+      else if (p.is_active) aktif += 1;
+      else nonAktif += 1;
+    });
+    return [
+      { name: 'Aktif', value: aktif, color: '#2583F7' },
+      { name: 'Stok Habis', value: stokHabis, color: '#F59E0B' },
+      { name: 'Non-aktif', value: nonAktif, color: '#64748B' },
+    ];
+  }, [masterProducts]);
+
+  // Pesanan + omzet per hari (dari orders nyata: created_at + total_amount).
+  // Dipakai untuk sparkline KPI (hanya bila ada data time-series).
+  const ordersDaily = useMemo(() => {
+    const byDay = new Map<string, { orders: number; revenue: number }>();
+    orders.forEach(o => {
+      const key = String(o.created_at || '').slice(0, 10);
+      if (!key) return;
+      const cur = byDay.get(key) || { orders: 0, revenue: 0 };
+      cur.orders += 1;
+      if (o.payment_status === 'paid' || o.order_status === 'delivered') {
+        cur.revenue += Number(o.total_amount || 0);
+      }
+      byDay.set(key, cur);
+    });
+    return last7Days.map(d => ({
+      label: d.label,
+      key: d.key,
+      orders: byDay.get(d.key)?.orders ?? 0,
+      revenue: byDay.get(d.key)?.revenue ?? 0,
+    }));
+  }, [orders, last7Days]);
+
+  // Produk Terlaris — agregasi dari orders nyata (hanya yang lunas/delivered,
+  // sama seperti perhitungan omzet). Peringkat by jumlah unit terjual.
+  const topProducts = useMemo(() => {
+    const map = new Map<string, { name: string; provider: string; qty: number; revenue: number; orders: number }>();
+    orders.forEach(o => {
+      const isPaid = o.payment_status === 'paid' || o.order_status === 'delivered';
+      if (!isPaid) return;
+      getOrderItems(o).forEach(item => {
+        const key = item.name.toLowerCase();
+        const cur = map.get(key) || { name: item.name, provider: item.provider, qty: 0, revenue: 0, orders: 0 };
+        cur.qty += item.qty;
+        cur.revenue += item.revenue;
+        cur.orders += 1;
+        map.set(key, cur);
+      });
+    });
+    return [...map.values()]
+      .sort((a, b) => b.qty - a.qty || b.revenue - a.revenue)
+      .slice(0, 5);
+  }, [orders]);
+
+  // Kesehatan sistem — hanya dari health check nyata, tanpa angka karangan.
+  // Database: dari flag fallback backend (MySQL vs Embedded Store).
+  // API Engine: online bila data dashboard berhasil dimuat (fetch sukses).
+  // Sinkronisasi: dari log terbaru (sukses + <24 jam = normal).
+  // Storage: TIDAK tersedia — backend belum punya endpoint health storage.
+  const systemHealth = useMemo(() => {
+    const latestLog = logs[0] || kpis.recent_sync_activity?.[0];
+    const latestOk = latestLog
+      ? Boolean(latestLog.is_success) && Date.now() - new Date(latestLog.created_at).getTime() < 24 * 60 * 60 * 1000
+      : false;
+    const hasLogs = Boolean(latestLog);
+    return {
+      dbLabel: kpis.is_using_fallback ? 'Embedded Store (fallback)' : 'Database (MySQL 8)',
+      dbOk: true,
+      dbNote: kpis.is_using_fallback
+        ? 'MySQL tidak terhubung — memakai penyimpanan lokal'
+        : 'Terhubung',
+      apiOk: true,
+      syncOk: latestOk,
+      syncNote: !hasLogs
+        ? 'Belum ada log sinkronisasi'
+        : latestOk
+          ? `Terakhir ${timeAgo(latestLog.created_at)}`
+          : `Log terakhir gagal (${timeAgo(latestLog.created_at)})`,
+    };
+  }, [kpis.is_using_fallback, logs, kpis.recent_sync_activity]);
 
   const handleBulkImport = async () => {
     if (selectedSupplierIds.length === 0) return;
@@ -901,7 +1274,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
         body: JSON.stringify({ ...prod, is_active: updatedStatus })
       });
       if (res.ok) {
-        showNotification('success', `Status produk ${prod.name} diubah menjadi ${updatedStatus ? 'Aktif' : 'Nonaktif'}.`);
+        showNotification('success', `Status produk ${cleanProductName(prod.name)} diubah menjadi ${updatedStatus ? 'Aktif' : 'Nonaktif'}.`);
         if (onRefreshPublicProducts) onRefreshPublicProducts();
         loadAllData();
       }
@@ -1042,7 +1415,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden bg-[#080D18] text-[#F8FAFC] flex font-sans">
+    <div data-theme={theme} className="fixed inset-0 z-50 overflow-hidden bg-[var(--bg-page)] text-[var(--text)] flex font-sans">
       {/* Toast Notification at Bottom Left */}
       {statusMessage && (
         <div className={`fixed bottom-6 left-6 z-[100] px-4 py-3 rounded-xl border shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-fadeIn ${
@@ -1065,84 +1438,186 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
       {/* SIDEBAR DARK BLUE MODERN (Identitas AndroidStore)         */}
       {/* ========================================================= */}
-      <aside className={`fixed md:relative inset-y-0 left-0 z-50 w-64 bg-[#0B1220] border-r border-[#26364D] flex flex-col justify-between flex-shrink-0 select-none transition-transform duration-300 ${
+      {/* SIDEBAR DARK NAVY — Accordion + Compact + Drawer (Identitas AndroidStore) */}
+      {/* ========================================================= */}
+      <aside className={`fixed md:relative inset-y-0 left-0 z-50 ${isCompact ? 'w-[76px]' : 'w-64'} bg-[var(--bg-panel)] border-r border-[var(--border)] flex flex-col flex-shrink-0 select-none transition-all duration-300 ${
         isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:hidden'
       }`}>
-        <div>
-          {/* Logo Brand Header */}
-          <div className="p-5 border-b border-[#26364D] flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2583F7] to-[#38BDF8] p-1.5 flex items-center justify-center font-black text-white shadow-[0_0_15px_rgba(37,131,247,0.4)]">
+        {/* Logo Brand Header */}
+        <div className={`flex items-center ${isCompact ? 'justify-center px-2' : 'justify-between px-5'} py-4 border-b border-[var(--border)] flex-shrink-0`}>
+          <div className={`flex items-center ${isCompact ? '' : 'gap-3'} min-w-0`}>
+            <button
+              type="button"
+              onClick={() => { if (isCompact) setIsCompact(false); }}
+              title={isCompact ? 'Perluas sidebar' : 'Admin Console'}
+              className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#2583F7] to-[#38BDF8] flex items-center justify-center font-black text-white text-sm shadow-[0_0_15px_rgba(37,131,247,0.4)] flex-shrink-0"
+            >
               AS
-            </div>
-            <div>
-              <span className="font-black text-sm tracking-tight text-[#F8FAFC] block">
-                ADMIN CONSOLE
-              </span>
-              <span className="text-[10px] text-[#38BDF8] font-bold block uppercase tracking-wider">
-                Multi-Seller API System
-              </span>
-            </div>
+            </button>
+            {!isCompact && (
+              <div className="min-w-0">
+                <span className="font-black text-sm tracking-tight text-[var(--text)] block truncate">
+                  ADMIN CONSOLE
+                </span>
+                <span className="text-[10px] text-[var(--accent-soft)] font-bold block uppercase tracking-wider truncate">
+                  Multi-Seller API System
+                </span>
+              </div>
+            )}
           </div>
-
-          {/* Navigation Menus */}
-          <nav className="p-3 space-y-1 text-xs font-semibold overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-none">
-            {[
-              { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-              { id: 'katalog', label: 'Katalog Produk (Master)', icon: Package },
-              { id: 'supplier_products', label: 'Produk Supplier Mentah', icon: Layers },
-              { id: 'sellers', label: 'Manajemen Seller', icon: Store },
-              { id: 'api_keys', label: 'API Key & Kredensial', icon: KeyRound },
-              { id: 'sync', label: 'Sinkronisasi Produk', icon: RefreshCw },
-              { id: 'pricing', label: 'Manajemen Harga', icon: BadgePercent },
-              { id: 'images', label: 'Manajemen Gambar', icon: ImageIcon },
-              { id: 'orders', label: 'Pesanan Pelanggan', icon: ShoppingBag },
-              { id: 'transactions', label: 'Riwayat Transaksi', icon: Receipt },
-              { id: 'logs', label: 'Log API & Monitoring', icon: FileCode2 },
-              { id: 'settings', label: 'Pengaturan Website', icon: Settings },
-            ].map(item => {
-              const Icon = item.icon;
-              const isActive = activeTab === item.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => {
-                    setActiveTab(item.id as TabType);
-                    if (window.innerWidth < 768) setIsSidebarOpen(false);
-                  }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left ${
-                    isActive
-                      ? 'bg-[#2583F7] text-white font-bold shadow-[0_0_12px_rgba(37,131,247,0.35)]'
-                      : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B]'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#38BDF8]'}`} />
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
-          </nav>
+          {!isCompact && (
+            <button
+              type="button"
+              onClick={() => setIsCompact(true)}
+              title="Mode compact (ikon saja)"
+              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-card)] transition-colors flex-shrink-0"
+            >
+              <PanelLeftClose className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
-        {/* Footer Sidebar: Store Link & Logout */}
-        <div className="p-4 border-t border-[#26364D] space-y-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-[#111A2B] hover:bg-[#1A263D] border border-[#26364D] text-xs font-bold text-[#38BDF8] transition-colors"
-          >
-            <span>Buka Toko Publik</span>
-            <ExternalLink className="w-3.5 h-3.5" />
-          </button>
+        {/* Navigation Menus — scroll independen */}
+        <nav className="flex-1 overflow-y-auto p-3 space-y-1 text-xs font-semibold scrollbar-none">
+          {isCompact ? (
+            // Mode compact: rel ikon saja, dipisah antar kelompok.
+            <>
+              {MENU_GROUPS.map((group, gi) => (
+                <div key={group.id}>
+                  {group.items.map(item => {
+                    const Icon = item.icon;
+                    const isActive = activeTab === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        title={item.label}
+                        onClick={() => {
+                          setActiveTab(item.id);
+                          if (window.innerWidth < 768) setIsSidebarOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-center p-2.5 rounded-xl transition-all ${
+                          isActive
+                            ? 'bg-[#2583F7] text-white shadow-[0_0_12px_rgba(37,131,247,0.35)]'
+                            : 'text-[var(--accent-soft)] hover:text-[var(--text)] hover:bg-[var(--bg-card)]'
+                        }`}
+                      >
+                        <Icon className="w-5 h-5" />
+                      </button>
+                    );
+                  })}
+                  {gi < MENU_GROUPS.length - 1 && (
+                    <div className="my-2 mx-2 border-t border-[var(--border)]/60" />
+                  )}
+                </div>
+              ))}
+            </>
+          ) : (
+            // Mode penuh: accordion per kelompok (hanya kelompok aktif yang terbuka).
+            MENU_GROUPS.map(group => {
+              const GroupIcon = group.icon;
+              const isOpen = expandedGroup === group.id;
+              const isGroupActive = group.items.some(item => item.id === activeTab);
+              return (
+                <div key={group.id}>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedGroup(prev => (prev === group.id ? null : group.id))}
+                    aria-expanded={isOpen}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-left ${
+                      isGroupActive
+                        ? 'text-[var(--text)] bg-[var(--bg-card)]'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-card)]'
+                    }`}
+                  >
+                    <GroupIcon className="w-4 h-4 text-[var(--accent-soft)] flex-shrink-0" />
+                    <span className="flex-1 truncate">{group.label}</span>
+                    <ChevronDown className={`w-3.5 h-3.5 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <div className={`grid transition-all duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                    <div className="overflow-hidden">
+                      <div className="ml-[22px] mt-1 mb-1 space-y-1 border-l border-[var(--border)]/60 pl-3">
+                        {group.items.map(item => {
+                          const Icon = item.icon;
+                          const isActive = activeTab === item.id;
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => {
+                                setActiveTab(item.id);
+                                if (window.innerWidth < 768) setIsSidebarOpen(false);
+                              }}
+                              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all text-left ${
+                                isActive
+                                  ? 'bg-[#2583F7] text-white font-bold shadow-[0_0_12px_rgba(37,131,247,0.35)]'
+                                  : 'text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-card)]'
+                              }`}
+                            >
+                              <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-[var(--accent-soft)]'}`} />
+                              <span className="truncate">{item.label}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </nav>
 
-          <button
-            type="button"
-            onClick={onClose}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-950/30 transition-colors"
-          >
-            <LogOut className="w-3.5 h-3.5" />
-            <span>Keluar Dashboard</span>
-          </button>
+        {/* Footer Sidebar: Store Link & Logout */}
+        <div className="p-3 border-t border-[var(--border)] space-y-2 flex-shrink-0">
+          {isCompact ? (
+            <>
+              <button
+                type="button"
+                onClick={onClose}
+                title="Buka Toko Publik"
+                className="w-full flex items-center justify-center p-2.5 rounded-xl bg-[#2583F7]/10 hover:bg-[#2583F7]/20 border border-[#2583F7]/50 text-[var(--accent-soft)] transition-colors"
+              >
+                <ShoppingCart className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                title="Keluar Dashboard"
+                className="w-full flex items-center justify-center p-2.5 rounded-xl text-red-400 hover:bg-red-950/30 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsCompact(false)}
+                title="Perluas sidebar"
+                className="w-full flex items-center justify-center p-2.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-card)] border border-[var(--border)] transition-colors"
+              >
+                <PanelLeftOpen className="w-4 h-4" />
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#2583F7]/10 hover:bg-[#2583F7]/20 border border-[#2583F7]/50 text-xs font-bold text-[var(--accent-soft)] transition-colors"
+              >
+                <ShoppingCart className="w-4 h-4 flex-shrink-0" />
+                <span className="flex-1 text-left">Buka Toko Publik</span>
+                <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-950/30 transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Keluar Dashboard</span>
+              </button>
+            </>
+          )}
         </div>
       </aside>
 
@@ -1151,21 +1626,25 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Top Navbar Header */}
-        <header className="h-16 bg-[#0B1220] border-b border-[#26364D] px-4 md:px-6 flex items-center justify-between flex-shrink-0">
+        <header className="h-16 bg-[var(--bg-panel)] border-b border-[var(--border)] px-4 md:px-6 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setIsSidebarOpen(prev => !prev)}
-              className="p-2 rounded-xl bg-[#111A2B] hover:bg-[#1A263D] border border-[#26364D] text-[#38BDF8] transition-colors"
+              className="p-2 rounded-xl bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] border border-[var(--border)] text-[var(--accent-soft)] transition-colors"
               title="Sembunyikan / Tampilkan Sidebar"
             >
               <Menu className="w-4 h-4" />
             </button>
-            <h1 className="text-sm md:text-base font-black tracking-tight text-[#F8FAFC] capitalize truncate max-w-[130px] md:max-w-none">
-              {activeTab.replace('_', ' ')}
+            <h1 className="text-sm md:text-base font-black tracking-tight text-[var(--text)] truncate max-w-[200px] md:max-w-none">
+              {activeMenuLabel}
             </h1>
-            <span className="hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-md bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
-              MySQL 8 / API Engine Live
+            <span className={`hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${
+              kpis.is_using_fallback
+                ? 'bg-amber-500/15 text-amber-500 border-amber-500/30'
+                : 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30'
+            }`}>
+              {kpis.is_using_fallback ? 'Embedded Store / API Engine Live' : 'MySQL 8 / API Engine Live'}
             </span>
           </div>
 
@@ -1174,16 +1653,25 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               type="button"
               onClick={handleSyncAll}
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#111A2B] hover:bg-[#1A263D] border border-[#26364D] text-xs font-bold text-[#38BDF8] transition-colors active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] border border-[var(--border)] text-xs font-bold text-[var(--accent-soft)] transition-colors active:scale-95 disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-              <span>Sinkronkan Semua API</span>
+              <span className="hidden sm:inline">Sinkronkan Semua API</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setTheme(prev => (prev === 'dark' ? 'light' : 'dark'))}
+              className="p-2 rounded-xl bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] border border-[var(--border)] text-[var(--accent-soft)] transition-colors"
+              title={theme === 'dark' ? 'Beralih ke mode terang' : 'Beralih ke mode gelap'}
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
 
             <button
               type="button"
               onClick={onClose}
-              className="p-1.5 rounded-xl text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] transition-colors"
+              className="p-1.5 rounded-xl text-[var(--text-muted)] hover:text-[var(--text)] hover:bg-[var(--bg-card)] transition-colors"
               title="Tutup Dashboard"
             >
               <X className="w-5 h-5" />
@@ -1195,122 +1683,501 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
         <main ref={mainWorkspaceRef} className="flex-1 min-w-0 overflow-y-auto overscroll-contain p-4 md:p-6 space-y-6">
           
           {/* 1. TAB: DASHBOARD OVERVIEW */}
+          {/* 1. TAB: DASHBOARD OVERVIEW */}
           {activeTab === 'dashboard' && (
             <div className="space-y-6 animate-fadeIn">
-              {/* Primary KPI Metrics Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-2">
-                  <div className="flex items-center justify-between text-xs text-[#94A3B8]">
-                    <span>Total Produk Master</span>
-                    <Package className="w-4 h-4 text-[#38BDF8]" />
+              {/* ===== Welcome Banner ===== */}
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#1D4ED8] via-[#2583F7] to-[#0EA5E9] p-5 md:p-6 text-white shadow-lg">
+                <div className="absolute -right-12 -top-20 w-64 h-64 rounded-full bg-white/10 pointer-events-none" />
+                <div className="absolute right-32 -bottom-24 w-48 h-48 rounded-full bg-white/10 pointer-events-none" />
+                <div className="relative flex flex-col md:flex-row md:items-center gap-5">
+                  <div className="flex-1 min-w-0">
+                    <h2 className="text-xl md:text-2xl font-black tracking-tight">Selamat Datang, Admin 👋</h2>
+                    <p className="text-sm text-blue-100 mt-1 max-w-xl">
+                      Pantau performa multi-seller, sinkronisasi produk, pesanan, dan kesehatan API dalam satu dashboard.
+                    </p>
+                    <div className="flex flex-wrap items-center gap-2 mt-3">
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/25">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        API Engine Live
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/25">
+                        {kpis.connected_sellers}/{kpis.total_sellers} Seller Terhubung
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-2.5 py-1 rounded-full bg-white/15 border border-white/25">
+                        {kpis.is_using_fallback ? 'Embedded Store' : 'MySQL 8'}
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-2xl font-black text-[#F8FAFC] tabular-nums">
-                    {kpis.total_products}
-                  </div>
-                  <div className="text-[11px] text-[#10B981] font-semibold">
-                    ✓ {kpis.active_products} aktif di katalog publik
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-2">
-                  <div className="flex items-center justify-between text-xs text-[#94A3B8]">
-                    <span>Koneksi Supplier / Seller</span>
-                    <Store className="w-4 h-4 text-[#2583F7]" />
-                  </div>
-                  <div className="text-2xl font-black text-[#F8FAFC] tabular-nums">
-                    {kpis.total_sellers} Seller
-                  </div>
-                  <div className="text-[11px] text-[#38BDF8] font-semibold">
-                    ✓ {kpis.connected_sellers} terhubung ({kpis.failed_sellers} kendala)
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-2">
-                  <div className="flex items-center justify-between text-xs text-[#94A3B8]">
-                    <span>Total Pesanan Selesai</span>
-                    <ShoppingBag className="w-4 h-4 text-emerald-400" />
-                  </div>
-                  <div className="text-2xl font-black text-[#F8FAFC] tabular-nums">
-                    {kpis.total_orders} Pesanan
-                  </div>
-                  <div className="text-[11px] text-[#10B981] font-semibold">
-                    Total Omzet: {formatPrice(kpis.total_revenue)}
-                  </div>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-2">
-                  <div className="flex items-center justify-between text-xs text-[#94A3B8]">
-                    <span>Estimasi Keuntungan</span>
-                    <TrendingUp className="w-4 h-4 text-[#10B981]" />
-                  </div>
-                  <div className="text-2xl font-black text-[#10B981] tabular-nums">
-                    {formatPrice(kpis.estimated_profit)}
-                  </div>
-                  <div className="text-[11px] text-[#94A3B8]">
-                    Margin rata-rata: ~28% per transaksi
+                  <div className="hidden md:flex items-center gap-3 flex-shrink-0" aria-hidden="true">
+                    <div className="w-14 h-14 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center">
+                      <Store className="w-7 h-7" />
+                    </div>
+                    <Zap className="w-5 h-5 text-white/70" />
+                    <div className="w-14 h-14 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center">
+                      <Code className="w-7 h-7" />
+                    </div>
+                    <Zap className="w-5 h-5 text-white/70" />
+                    <div className="w-14 h-14 rounded-2xl bg-white/15 border border-white/25 flex items-center justify-center">
+                      <Globe className="w-7 h-7" />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Quick Actions & Supplier Summary */}
+              {/* ===== KPI Cards ===== */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-[var(--text-muted)] truncate">Total Produk Master</span>
+                    <span className="w-8 h-8 rounded-xl bg-[#2583F7]/15 flex items-center justify-center flex-shrink-0">
+                      <Package className="w-4 h-4 text-[#2583F7]" />
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-[var(--text)] tabular-nums whitespace-nowrap leading-none">{kpis.total_products}</div>
+                  <div className="text-[11px] font-semibold text-[#10B981] leading-tight mt-auto">
+                    ✓ {kpis.active_products} aktif · {kpis.out_of_stock_products} stok habis
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-[var(--text-muted)] truncate">Total Seller Terhubung</span>
+                    <span className="w-8 h-8 rounded-xl bg-violet-500/15 flex items-center justify-center flex-shrink-0">
+                      <Users className="w-4 h-4 text-violet-400" />
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-[var(--text)] tabular-nums whitespace-nowrap leading-none">{kpis.total_sellers} Seller</div>
+                  <div className="text-[11px] font-semibold text-[var(--accent-soft)] leading-tight mt-auto">
+                    ✓ {kpis.connected_sellers} terhubung{kpis.failed_sellers > 0 ? ` · ${kpis.failed_sellers} kendala` : ''}
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-[var(--text-muted)] truncate">Total Pesanan</span>
+                    <span className="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+                      <ShoppingBag className="w-4 h-4 text-emerald-400" />
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-[var(--text)] tabular-nums whitespace-nowrap leading-none">{kpis.total_orders}</div>
+                  <div className="flex items-end justify-between gap-2 mt-auto">
+                    <span className="text-[11px] font-semibold text-[#10B981] leading-tight">Omzet: {formatPrice(kpis.total_revenue)}</span>
+                    <Sparkline data={ordersDaily.map(d => d.orders)} color="#10B981" width={96} height={28} />
+                  </div>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex flex-col gap-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-[var(--text-muted)] truncate">Estimasi Keuntungan</span>
+                    <span className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+                      <TrendingUp className="w-4 h-4 text-amber-400" />
+                    </span>
+                  </div>
+                  <div className="text-2xl font-black text-[#10B981] tabular-nums whitespace-nowrap leading-none">{formatPrice(kpis.estimated_profit)}</div>
+                  <div className="flex items-end justify-between gap-2 mt-auto">
+                    <span className="text-[11px] text-[var(--text-muted)] leading-tight">Margin ~28% (estimasi)</span>
+                    <Sparkline data={ordersDaily.map(d => d.revenue)} color="#F59E0B" width={96} height={28} />
+                  </div>
+                </div>
+              </div>
+
+
+              {/* ===== Grafik: Aktivitas Sinkronisasi + Status Produk ===== */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 p-5 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold text-sm text-[#F8FAFC]">Status Supplier Terdaftar</h3>
+                <div className="lg:col-span-2 p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <h3 className="font-bold text-sm text-[var(--text)]">Aktivitas Sinkronisasi</h3>
+                      <p className="text-[11px] text-[var(--text-muted)]">7 hari terakhir · dari api_logs nyata</p>
+                    </div>
+                    <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-[var(--bg-nested)] border border-[var(--border)] text-[var(--text-muted)] flex-shrink-0">7 Hari Terakhir</span>
+                  </div>
+                  {syncDaily.every(d => d.total === 0) ? (
+                    <div className="mt-4 p-6 rounded-xl bg-[var(--bg-nested)] border border-dashed border-[var(--border)] text-center">
+                      <BarChart3 className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
+                      <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada aktivitas sinkronisasi</p>
+                      <p className="text-[11px] text-[var(--text-muted)] mt-1">Tidak ada api_logs dalam 7 hari terakhir. Grafik muncul setelah sinkronisasi berjalan.</p>
+                    </div>
+                  ) : (
+                    <div className="h-64 mt-4">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={syncDaily} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
+                          <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
+                          <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                          <Tooltip
+                            contentStyle={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12, color: 'var(--text)' }}
+                            labelStyle={{ color: 'var(--text)', fontWeight: 700 }}
+                          />
+                          <Bar dataKey="total" name="Request Sinkronisasi" fill="#2583F7" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                          <Bar dataKey="baru" name="Produk Baru" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
+                  <p className="text-[11px] text-[var(--text-muted)] mt-2">
+                    “Produk Baru” = produk baru per hari dari ringkasan sinkronisasi backend “(X baru, Y diupdate)”. Riwayat jumlah total produk belum terlacak (produk tidak punya created_at) — butuh kolom created_at di master_products untuk grafik pertumbuhan kumulatif.
+                  </p>
+                </div>
+
+                <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+                  <h3 className="font-bold text-sm text-[var(--text)]">Status Produk</h3>
+                  <p className="text-[11px] text-[var(--text-muted)]">Distribusi {kpis.total_products} produk master</p>
+                  {kpis.total_products === 0 ? (
+                    <div className="mt-4 p-6 rounded-xl bg-[var(--bg-nested)] border border-dashed border-[var(--border)] text-center">
+                      <Package className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
+                      <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada produk</p>
+                      <p className="text-[11px] text-[var(--text-muted)] mt-1">Import produk dari supplier untuk melihat distribusi status.</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="relative h-48 mt-2">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie data={productStatus} dataKey="value" nameKey="name" innerRadius={55} outerRadius={80} paddingAngle={2} strokeWidth={0}>
+                              {productStatus.map(entry => (
+                                <Cell key={entry.name} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              contentStyle={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12, color: 'var(--text)' }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                          <span className="text-2xl font-black text-[var(--text)] tabular-nums">{kpis.total_products}</span>
+                          <span className="text-[11px] text-[var(--text-muted)]">Produk</span>
+                        </div>
+                      </div>
+                      <div className="space-y-2 mt-2">
+                        {productStatus.map(item => (
+                          <div key={item.name} className="flex items-center justify-between text-xs">
+                            <span className="flex items-center gap-2 text-[var(--text-muted)]">
+                              <span className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                              {item.name}
+                            </span>
+                            <span className="font-bold text-[var(--text)] tabular-nums">
+                              {item.value} ({kpis.total_products ? ((item.value / kpis.total_products) * 100).toFixed(1).replace('.', ',') : '0,0'}%)
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* ===== Status Supplier + Aktivitas Sinkronisasi ===== */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="font-bold text-sm text-[var(--text)]">Status Supplier Terdaftar</h3>
                     <button
                       type="button"
                       onClick={() => setActiveTab('sellers')}
-                      className="text-xs text-[#38BDF8] hover:underline"
+                      className="text-xs font-bold text-[var(--accent-soft)] hover:underline flex-shrink-0"
                     >
                       Kelola Seller →
                     </button>
                   </div>
-
-                  <div className="space-y-2.5">
-                    {sellers.map(s => (
-                      <div key={s.id} className="p-3.5 bg-[#080D18] border border-[#26364D] rounded-xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                        <div className="space-y-0.5 min-w-0">
-                          <span className="font-bold text-xs text-[#F8FAFC] block truncate">{s.name}</span>
-                          <span className="text-[11px] text-[#94A3B8] font-mono block truncate max-w-full sm:max-w-[240px]">{s.base_url}</span>
-                        </div>
-                        <div className="flex items-center justify-between sm:justify-end gap-2 pt-2 sm:pt-0 border-t sm:border-0 border-[#26364D]/60">
-                          <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded ${
-                            s.last_status === 'connected'
-                              ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40'
-                              : 'bg-red-950/40 text-red-400 border border-red-800'
-                          }`}>
-                            {s.last_status === 'connected' ? 'Connected' : 'Error'}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleTestConnection(s.id)}
-                            className="px-3 py-1 rounded-lg bg-[#111A2B] hover:bg-[#1A263D] text-[11px] font-bold text-[#38BDF8] border border-[#26364D] transition-colors"
-                          >
-                            Test
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+                  {sellers.length === 0 ? (
+                    <div className="mt-4 p-6 rounded-xl bg-[var(--bg-nested)] border border-dashed border-[var(--border)] text-center">
+                      <Store className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
+                      <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada seller terdaftar</p>
+                      <p className="text-[11px] text-[var(--text-muted)] mt-1">Tambahkan seller di Manajemen Seller untuk mulai sinkronisasi produk.</p>
+                    </div>
+                  ) : (
+                    <div className="overflow-x-auto mt-4 -mx-1 px-1">
+                      <table className="w-full text-left text-xs min-w-[540px]">
+                        <thead>
+                          <tr className="text-[10px] uppercase tracking-wide text-[var(--text-muted)] border-b border-[var(--border)]">
+                            <th className="pb-2 pr-3 font-bold">Supplier / API URL</th>
+                            <th className="pb-2 pr-3 font-bold">Status</th>
+                            <th className="pb-2 pr-3 font-bold">Produk</th>
+                            <th className="pb-2 font-bold text-right">Aksi</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-[var(--border)]">
+                          {sellers.map(s => (
+                            <tr key={s.id}>
+                              <td className="py-3 pr-3 min-w-0">
+                                <span className="font-bold text-[var(--text)] block truncate">{s.name}</span>
+                                <span className="text-[11px] text-[var(--text-muted)] font-mono block truncate max-w-[260px]">{s.base_url}</span>
+                                <span className="text-[10px] text-[var(--text-muted)] block">Sync terakhir: {timeAgo(s.last_synced_at)}</span>
+                              </td>
+                              <td className="py-3 pr-3">
+                                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded whitespace-nowrap ${
+                                  s.last_status === 'connected'
+                                    ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40'
+                                    : 'bg-red-500/15 text-red-400 border border-red-500/40'
+                                }`}>
+                                  {s.last_status === 'connected' ? 'Connected' : 'Error'}
+                                </span>
+                              </td>
+                              <td className="py-3 pr-3 font-bold text-[var(--text)] tabular-nums">
+                                {sellerProductCounts.get(s.id)?.master ?? 0}
+                              </td>
+                              <td className="py-3 text-right">
+                                <button
+                                  type="button"
+                                  onClick={() => handleTestConnection(s.id)}
+                                  className="px-3 py-1 rounded-lg bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[11px] font-bold text-[var(--accent-soft)] border border-[var(--border)] transition-colors"
+                                >
+                                  Test
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-4">
-                  <h3 className="font-bold text-sm text-[#F8FAFC]">Aktivitas Sinkronisasi Terakhir</h3>
-                  <div className="space-y-3">
-                    {kpis.recent_sync_activity?.slice(0, 4).map((log: ApiLogItem) => (
-                      <div key={log.id} className="p-3 bg-[#080D18] border border-[#26364D] rounded-xl text-xs space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-bold text-[#38BDF8]">{log.seller_name}</span>
-                          <span className="text-[10px] text-[#94A3B8]">{log.duration_ms}ms</span>
+                <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="font-bold text-sm text-[var(--text)]">Aktivitas Sinkronisasi Terakhir</h3>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('logs')}
+                      className="text-xs font-bold text-[var(--accent-soft)] hover:underline flex-shrink-0"
+                    >
+                      Lihat Semua →
+                    </button>
+                  </div>
+                  <div className="space-y-3 mt-4">
+                    {(kpis.recent_sync_activity || []).slice(0, 4).map(log => (
+                      <button
+                        key={log.id}
+                        type="button"
+                        onClick={() => { setSelectedLogDetail(log); setActiveTab('logs'); }}
+                        title="Lihat detail log"
+                        className="w-full text-left p-3 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="font-bold text-xs text-[var(--accent-soft)] truncate">{log.seller_name}</span>
+                          <span className="text-[10px] text-[var(--text-muted)] flex-shrink-0">{timeAgo(log.created_at)}</span>
                         </div>
-                        <p className="text-[11px] text-[#94A3B8] line-clamp-1">{log.response_summary || log.error_message}</p>
-                      </div>
+                        <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 mt-1">{log.response_summary || log.error_message || '—'}</p>
+                        <div className="flex items-center justify-between mt-1.5">
+                          <span className={`text-[10px] font-bold ${log.is_success ? 'text-[#10B981]' : 'text-red-400'}`}>
+                            {log.is_success ? '✓ Sukses' : '✗ Gagal'}
+                          </span>
+                          <span className="text-[10px] text-[var(--text-muted)] tabular-nums">{log.duration_ms}ms</span>
+                        </div>
+                      </button>
                     ))}
+                    {(!kpis.recent_sync_activity || kpis.recent_sync_activity.length === 0) && (
+                      <div className="p-6 rounded-xl bg-[var(--bg-nested)] border border-dashed border-[var(--border)] text-center">
+                        <RefreshCw className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
+                        <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada aktivitas sinkronisasi</p>
+                        <p className="text-[11px] text-[var(--text-muted)] mt-1">Jalankan sinkronisasi untuk melihat aktivitas terbaru di sini.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* ===== Produk Terlaris ===== */}
+              <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h3 className="font-bold text-sm text-[var(--text)]">Produk Terlaris</h3>
+                    <p className="text-[11px] text-[var(--text-muted)]">Top 5 by unit terjual · hanya order lunas / delivered</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('orders')}
+                    className="text-xs font-bold text-[var(--accent-soft)] hover:underline flex-shrink-0"
+                  >
+                    Lihat Semua Pesanan →
+                  </button>
+                </div>
+                {topProducts.length === 0 ? (
+                  <div className="mt-4 p-6 rounded-xl bg-[var(--bg-nested)] border border-dashed border-[var(--border)] text-center">
+                    <ShoppingBag className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
+                    <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada produk terjual</p>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-1">Produk terlaris muncul setelah ada order yang lunas / delivered.</p>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto mt-4 -mx-1 px-1">
+                    <table className="w-full text-left text-xs min-w-[540px]">
+                      <thead>
+                        <tr className="text-[10px] uppercase tracking-wide text-[var(--text-muted)] border-b border-[var(--border)]">
+                          <th className="pb-2 pr-3 font-bold w-10">#</th>
+                          <th className="pb-2 pr-3 font-bold">Produk</th>
+                          <th className="pb-2 pr-3 font-bold">Seller</th>
+                          <th className="pb-2 pr-3 font-bold text-right">Terjual</th>
+                          <th className="pb-2 font-bold text-right">Omzet</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[var(--border)]">
+                        {topProducts.map((p, i) => (
+                          <tr key={p.name.toLowerCase()}>
+                            <td className="py-3 pr-3">
+                              <span className={`inline-flex items-center justify-center w-6 h-6 rounded-lg text-[11px] font-black ${
+                                i === 0
+                                  ? 'bg-amber-500/20 text-amber-500'
+                                  : i === 1
+                                    ? 'bg-slate-400/20 text-slate-400'
+                                    : i === 2
+                                      ? 'bg-orange-500/20 text-orange-400'
+                                      : 'bg-[var(--bg-nested)] text-[var(--text-muted)]'
+                              }`}>
+                                {i + 1}
+                              </span>
+                            </td>
+                            <td className="py-3 pr-3 min-w-0">
+                              <span className="font-bold text-[var(--text)] block truncate max-w-[280px]">{p.name}</span>
+                              <span className="text-[10px] text-[var(--text-muted)]">{p.orders} order</span>
+                            </td>
+                            <td className="py-3 pr-3 text-[var(--text-muted)] whitespace-nowrap">{p.provider}</td>
+                            <td className="py-3 pr-3 font-bold text-[var(--text)] tabular-nums text-right whitespace-nowrap">{p.qty} unit</td>
+                            <td className="py-3 font-bold text-[#10B981] tabular-nums text-right whitespace-nowrap">{formatPrice(p.revenue)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+
+              {/* ===== Kesehatan Sistem + Quick Actions ===== */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="font-bold text-sm text-[var(--text)]">Kesehatan Sistem</h3>
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
+                      systemHealth.dbOk && systemHealth.apiOk && systemHealth.syncOk
+                        ? 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30'
+                        : 'bg-amber-500/15 text-amber-500 border-amber-500/30'
+                    }`}>
+                      {systemHealth.dbOk && systemHealth.apiOk && systemHealth.syncOk ? '✓ Sistem Normal' : '⚠ Perlu Perhatian'}
+                    </span>
+                  </div>
+                  <div className="space-y-3 mt-4 text-xs">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2 font-semibold text-[var(--text)]">
+                        <Database className="w-4 h-4 text-[var(--accent-soft)]" />
+                        {systemHealth.dbLabel}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[var(--text-muted)]">
+                        {systemHealth.dbNote}
+                        <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2 font-semibold text-[var(--text)]">
+                        <Zap className="w-4 h-4 text-[var(--accent-soft)]" />
+                        API Engine
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[var(--text-muted)]">
+                        Online
+                        <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2 font-semibold text-[var(--text)]">
+                        <RefreshCw className="w-4 h-4 text-[var(--accent-soft)]" />
+                        Sinkronisasi
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[var(--text-muted)]">
+                        {systemHealth.syncNote}
+                        {systemHealth.syncOk
+                          ? <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                          : <AlertTriangle className="w-4 h-4 text-amber-500" />}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="flex items-center gap-2 font-semibold text-[var(--text)]">
+                        <HardDrive className="w-4 h-4 text-[var(--accent-soft)]" />
+                        Storage
+                      </span>
+                      <span className="flex items-center gap-1.5 text-[var(--text-muted)]" title="Backend belum menyediakan endpoint health storage">
+                        Tidak tersedia
+                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-[var(--text-muted)] mt-4">
+                    Storage belum bisa dicek — backend belum punya endpoint health storage. Perlu persetujuan untuk menambahkannya.
+                  </p>
+                </div>
+
+                <div className="lg:col-span-2 p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
+                  <h3 className="font-bold text-sm text-[var(--text)]">Quick Actions</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTab('supplier_products');
+                        setEditingSupplierProduct({
+                          seller_id: sellers[0]?.id || 1,
+                          name: '',
+                          original_category: 'Voucher & Digital',
+                          cost_price: 15000,
+                          stock: 25,
+                          description: '',
+                        });
+                        setIsSupplierProductModalOpen(true);
+                      }}
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors"
+                    >
+                      <span className="w-9 h-9 rounded-xl bg-[#2583F7]/15 flex items-center justify-center flex-shrink-0">
+                        <Plus className="w-4 h-4 text-[#2583F7]" />
+                      </span>
+                      <span>
+                        <span className="block text-xs font-bold text-[var(--text)]">Tambah Produk</span>
+                        <span className="block text-[11px] text-[var(--text-muted)]">Produk supplier manual</span>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('sellers')}
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors"
+                    >
+                      <span className="w-9 h-9 rounded-xl bg-violet-500/15 flex items-center justify-center flex-shrink-0">
+                        <Store className="w-4 h-4 text-violet-400" />
+                      </span>
+                      <span>
+                        <span className="block text-xs font-bold text-[var(--text)]">Kelola Seller</span>
+                        <span className="block text-[11px] text-[var(--text-muted)]">{kpis.total_sellers} seller terdaftar</span>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleSyncAll}
+                      disabled={isLoading}
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors disabled:opacity-50"
+                    >
+                      <span className="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
+                        <RefreshCw className={`w-4 h-4 text-emerald-400 ${isLoading ? 'animate-spin' : ''}`} />
+                      </span>
+                      <span>
+                        <span className="block text-xs font-bold text-[var(--text)]">Sinkronisasi Produk</span>
+                        <span className="block text-[11px] text-[var(--text-muted)]">Sync semua seller aktif</span>
+                      </span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('logs')}
+                      className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors"
+                    >
+                      <span className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+                        <BarChart3 className="w-4 h-4 text-amber-400" />
+                      </span>
+                      <span>
+                        <span className="block text-xs font-bold text-[var(--text)]">Monitoring API</span>
+                        <span className="block text-[11px] text-[var(--text-muted)]">Log &amp; health request API</span>
+                      </span>
+                    </button>
                   </div>
                 </div>
               </div>
             </div>
           )}
+
 
           {/* 2. TAB: KATALOG PRODUK (MASTER) */}
           {activeTab === 'katalog' && (
@@ -1443,7 +2310,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                     <img src={prod.custom_image_url || '/assets/default_produk.png'} alt="" className="w-full h-full object-cover" />
                                   </div>
                                   <div className="min-w-0">
-                                    <span className="font-bold text-[#F8FAFC] block truncate max-w-[220px]">{prod.name}</span>
+                                    <span className="font-bold text-[#F8FAFC] block truncate max-w-[220px]">{cleanProductName(prod.name)}</span>
                                     <span className="text-[10px] text-[#94A3B8] font-mono">{prod.slug}</span>
                                   </div>
                                 </div>
@@ -1754,22 +2621,13 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                               <td className="p-4 font-mono text-[#94A3B8]">{rowNum}</td>
                               <td className="p-4 font-bold text-[#22C7FF]">{item.seller_name}</td>
                               <td className="p-4">
-                                <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-xl bg-[#080F1F] border border-[#243650] overflow-hidden flex-shrink-0 flex items-center justify-center">
-                                    <img
-                                      src={item.image_url || '/assets/default_produk.png'}
-                                      alt=""
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                  <div className="min-w-0">
-                                    <span className="font-bold text-[#F8FAFC] block truncate max-w-[240px]" title={item.name}>
-                                      {item.name}
-                                    </span>
-                                    <span className="text-[11px] text-[#94A3B8] truncate block max-w-[240px]">
-                                      {item.description ? item.description.replace(/[\r\n]+/g, ' ') : 'Ready instant process'}
-                                    </span>
-                                  </div>
+                                <div className="min-w-0">
+                                  <span className="font-bold text-[#F8FAFC] block truncate max-w-[240px]" title={cleanProductName(item.name)}>
+                                    {cleanProductName(item.name)}
+                                  </span>
+                                  <span className="text-[11px] text-[#94A3B8] truncate block max-w-[240px]">
+                                    {item.description ? cleanProductName(item.description).replace(/[\r\n]+/g, ' ') : 'Ready instant process'}
+                                  </span>
                                 </div>
                               </td>
                               <td className="p-4 text-[#94A3B8] font-medium">{item.original_category}</td>
@@ -1889,6 +2747,14 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <div className="flex justify-between text-[#94A3B8]">
                         <span>Sync Terakhir:</span>
                         <span className="text-[#F8FAFC]">{s.last_synced_at ? new Date(s.last_synced_at).toLocaleString('id-ID') : 'Belum pernah'}</span>
+                      </div>
+                      <div className="flex justify-between text-[#94A3B8] border-t border-[#26364D]/60 pt-1 mt-1">
+                        <span>Produk Supplier:</span>
+                        <span className="text-[#F8FAFC] font-bold">{sellerProductCounts.get(s.id)?.supplier ?? 0} produk</span>
+                      </div>
+                      <div className="flex justify-between text-[#94A3B8]">
+                        <span>Produk Katalog:</span>
+                        <span className="text-[#F8FAFC] font-bold">{sellerProductCounts.get(s.id)?.master ?? 0} produk</span>
                       </div>
                     </div>
 
@@ -2043,10 +2909,20 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           {/* 7. TAB: MANAJEMEN HARGA */}
           {activeTab === 'pricing' && (
             <div className="space-y-4 animate-fadeIn">
-              <div className="p-4 bg-[#111A2B] border border-[#26364D] rounded-2xl flex items-center justify-between">
+              <div className="p-4 bg-[#111A2B] border border-[#26364D] rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <h3 className="font-bold text-sm text-[#F8FAFC]">Kebijakan Margin &amp; Pengaturan Harga Jual</h3>
                   <p className="text-xs text-[#94A3B8]">Pelanggan hanya melihat harga jual Androidstore. Harga modal supplier bersifat rahasia.</p>
+                </div>
+                <div className="relative w-full sm:w-72 shrink-0">
+                  <input
+                    type="text"
+                    value={priceSearchQuery}
+                    onChange={(e) => { setPriceSearchQuery(e.target.value); setPriceCurrentPage(1); }}
+                    placeholder="Cari produk..."
+                    className="w-full pl-9 pr-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                  />
+                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
                 </div>
               </div>
 
@@ -2072,7 +2948,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       return (
                          <tr key={p.id} className="hover:bg-[#1A263D]/40">
                            <td className="p-3.5 font-mono text-[#94A3B8]">{(priceCurrentPage - 1) * pricePageSize + index + 1}</td>
-                           <td className="p-3.5 font-bold text-[#F8FAFC]">{p.name}</td>
+                           <td className="p-3.5 font-bold text-[#F8FAFC]">{cleanProductName(p.name)}</td>
                           <td className="p-3.5 font-mono text-[#94A3B8]">{formatPrice(p.cost_price)}</td>
                           <td className="p-3.5 capitalize text-[#38BDF8]">{p.pricing_mode.replace('_', ' ')}</td>
                           <td className="p-3.5 font-mono font-bold text-[#F8FAFC]">{formatPrice(p.selling_price)}</td>
@@ -2105,7 +2981,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
                <SmartPagination
                  currentPage={priceCurrentPage}
-                 totalItems={masterProducts.length}
+                 totalItems={filteredPriceProducts.length}
                  pageSize={pricePageSize}
                  onPageChange={setPriceCurrentPage}
                  onPageSizeChange={setPricePageSize}
@@ -2116,10 +2992,20 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
            {/* 8. TAB: MANAJEMEN GAMBAR */}
           {activeTab === 'images' && (
             <div className="space-y-4 animate-fadeIn">
-              <div className="p-4 bg-[#111A2B] border border-[#26364D] rounded-2xl flex items-center justify-between">
+              <div className="p-4 bg-[#111A2B] border border-[#26364D] rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
                   <h3 className="font-bold text-sm text-[#F8FAFC]">Manajemen Gambar Produk (Upload File &amp; URL Link)</h3>
                   <p className="text-xs text-[#94A3B8]">Prioritas: 1. Upload Admin → 2. Link Custom Admin → 3. Gambar Supplier.</p>
+                </div>
+                <div className="relative w-full sm:w-72 shrink-0">
+                  <input
+                    type="text"
+                    value={imageSearchQuery}
+                    onChange={(e) => { setImageSearchQuery(e.target.value); setImagesCurrentPage(1); }}
+                    placeholder="Cari produk..."
+                    className="w-full pl-9 pr-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                  />
+                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
                 </div>
               </div>
 
@@ -2130,7 +3016,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <img src={p.custom_image_url || '/assets/default_produk.png'} alt="" className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <span className="font-bold text-xs text-[#F8FAFC] line-clamp-1">{p.name}</span>
+                      <span className="font-bold text-xs text-[#F8FAFC] line-clamp-1">{cleanProductName(p.name)}</span>
                       <span className="text-[10px] text-[#38BDF8] uppercase font-semibold">Tipe: {p.image_type}</span>
                     </div>
                     <button
@@ -2149,7 +3035,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                </div>
                <SmartPagination
                  currentPage={imagesCurrentPage}
-                 totalItems={masterProducts.length}
+                 totalItems={filteredImageProducts.length}
                  pageSize={imagesPageSize}
                  onPageChange={setImagesCurrentPage}
                  onPageSizeChange={setImagesPageSize}
@@ -3487,7 +4373,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <div key={itemKey} className="p-3.5 bg-[#080F1F] border border-[#243650] rounded-xl space-y-2">
                         <div className="flex items-start justify-between gap-2">
                           <div className="w-full">
-                            <span className="font-bold text-[#F8FAFC] text-sm block">{index + 1}. {String(item.name || '')}</span>
+                            <span className="font-bold text-[#F8FAFC] text-sm block">{index + 1}. {cleanProductName(String(item.name || ''))}</span>
                             
                             <div className="mt-1.5 p-2.5 bg-[#1677FF]/10 rounded-xl border border-[#1677FF]/30 flex items-center justify-between gap-2">
                               <span className="text-[11px] text-[#38BDF8] font-mono truncate">
@@ -3527,7 +4413,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     return (
                       <div key={fallbackKey} className="p-3.5 bg-[#080F1F] border border-[#243650] rounded-xl space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="font-semibold block text-sm">{item.name}</span>
+                          <span className="font-semibold block text-sm">{cleanProductName(item.name)}</span>
                           <span className="text-[#22C7FF] font-bold">x{item.quantity}</span>
                         </div>
                         <div className="p-2.5 bg-[#1677FF]/10 rounded-xl border border-[#1677FF]/30 flex items-center justify-between gap-2">

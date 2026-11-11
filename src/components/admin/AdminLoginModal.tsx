@@ -18,7 +18,7 @@ declare global {
 }
 
 export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalProps) {
-  const [email, setEmail] = useState('androidstore279@gmail.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -114,7 +114,7 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
                 autoComplete="username"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
-                placeholder="androidstore279@gmail.com"
+                placeholder="Masukkan email admin"
                 className="w-full pl-9 pr-3 py-2.5 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
               />
               <Mail className="w-3.5 h-3.5 text-[#94A3B8] absolute left-3 top-3" />

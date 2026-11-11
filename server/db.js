@@ -119,6 +119,17 @@ function normalizeProductName(name) {
     .trim();
 }
 
+// Hapus karakter ikon (emoji & simbol dekoratif) dari nama produk API.
+// Dipakai saat menyimpan nama produk agar yang tersimpan sudah bersih.
+function cleanProductName(name) {
+  if (!name || typeof name !== 'string') return name;
+  return name
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2190}-\u{21FF}\u{2300}-\u{23FF}\u{2460}-\u{24FF}\u{1F100}-\u{1F1FF}\u{2B00}-\u{2BFF}]/gu, '')
+    .replace(/[\uFE00-\uFE0F\u200D]/g, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 function inferCategoryServer(text, originalCategory = '') {
   const n = `${text} ${originalCategory}`.toLowerCase();
   
@@ -414,12 +425,12 @@ export async function saveSupplierProductsBatch(sellerId, products) {
     if (idx !== -1) {
       store.supplier_products[idx] = {
         ...store.supplier_products[idx],
-        name: item.name,
+        name: cleanProductName(item.name),
         original_category: item.original_category || store.supplier_products[idx].original_category,
         cost_price: item.cost_price,
         stock: item.stock,
         is_available: item.is_available,
-        description: item.description || store.supplier_products[idx].description,
+        description: cleanProductName(item.description || store.supplier_products[idx].description),
         image_url: item.image_url || store.supplier_products[idx].image_url,
         requires_email: item.requires_email ?? store.supplier_products[idx].requires_email,
         raw_response: item.raw_response,
@@ -432,12 +443,12 @@ export async function saveSupplierProductsBatch(sellerId, products) {
         id: newId,
         seller_id: Number(sellerId),
         external_product_id: String(item.external_product_id),
-        name: item.name,
+        name: cleanProductName(item.name),
         original_category: item.original_category || 'Digital',
         cost_price: item.cost_price,
         stock: item.stock,
         is_available: item.is_available,
-        description: item.description || '',
+        description: cleanProductName(item.description || ''),
         image_url: item.image_url || '',
         requires_email: !!item.requires_email,
         raw_response: item.raw_response,
@@ -463,6 +474,8 @@ export async function saveSupplierProduct(data) {
       store.supplier_products[idx] = {
         ...store.supplier_products[idx],
         ...data,
+        name: cleanProductName(data.name || store.supplier_products[idx].name),
+        description: cleanProductName(data.description ?? store.supplier_products[idx].description),
         id,
         cost_price: Number(data.cost_price || 0),
         stock: Number(data.stock || 0),
@@ -476,12 +489,12 @@ export async function saveSupplierProduct(data) {
       id,
       seller_id: Number(data.seller_id || 1),
       external_product_id: data.external_product_id || `manual_${Date.now()}`,
-      name: data.name,
+      name: cleanProductName(data.name || ''),
       original_category: data.original_category || 'Voucher & Digital',
       cost_price: Number(data.cost_price || 0),
       stock: Number(data.stock || 25),
       is_available: Number(data.stock || 25) > 0 ? 1 : 0,
-      description: data.description || '',
+      description: cleanProductName(data.description || ''),
       image_url: data.image_url || '',
       requires_email: !!data.requires_email,
       created_at: now,
@@ -547,6 +560,8 @@ export async function saveMasterProduct(data) {
       store.master_products[idx] = {
         ...store.master_products[idx],
         ...data,
+        name: cleanProductName(data.name || store.master_products[idx].name),
+        description: cleanProductName(data.description ?? store.master_products[idx].description),
         id,
         updated_at: now
       };
@@ -555,10 +570,10 @@ export async function saveMasterProduct(data) {
     id = store.master_products.length ? Math.max(...store.master_products.map(p => p.id || 0)) + 1 : 1;
     const newMaster = {
       id,
-      slug: data.slug || data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      name: data.name,
+      slug: data.slug || cleanProductName(data.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      name: cleanProductName(data.name || ''),
       category: data.category || 'Voucher & Digital',
-      description: data.description || '',
+      description: cleanProductName(data.description || ''),
       cost_price: Number(data.cost_price || 0),
       selling_price: Number(data.selling_price || 0),
       old_price: Number(data.old_price || 0),
@@ -625,6 +640,7 @@ export async function importSupplierToMaster(supplierProductId, markupPercent = 
          (p.name && normalizeProductName(p.name) === suppNorm && Number(p.primary_seller_id) === Number(suppProd.seller_id))
   );
 
+  const cleanName = cleanProductName(suppProd.name);
   const cost = suppProd.cost_price;
   const markup = Number(markupPercent || 25);
   const now = new Date().toISOString();
@@ -645,7 +661,7 @@ export async function importSupplierToMaster(supplierProductId, markupPercent = 
   }
 
   // Infer canonical category
-  const category = inferCategoryServer(suppProd.name, suppProd.description || suppProd.original_category || '');
+  const category = inferCategoryServer(cleanName, suppProd.description || suppProd.original_category || '');
 
   const selling = Math.round((cost * (1 + markup / 100)) / 500) * 500;
   const oldPrice = Math.round((selling * 1.35) / 1000) * 1000;
@@ -653,10 +669,10 @@ export async function importSupplierToMaster(supplierProductId, markupPercent = 
 
   const newMaster = {
     id: newId,
-    slug: suppProd.name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + newId,
-    name: suppProd.name,
+    slug: cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + newId,
+    name: cleanName,
     category,
-    description: suppProd.description || '',
+    description: cleanProductName(suppProd.description || ''),
     cost_price: cost,
     selling_price: selling,
     old_price: oldPrice,

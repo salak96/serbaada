@@ -9,6 +9,7 @@ import igImg from '../assets/ig.jpg';
 import museImg from '../assets/muse.svg';
 import defaultProductImg from '../assets/default_produk.png';
 import { Product } from '../types/product';
+import { cleanProductName } from '../utils/cleanProductName';
 
 interface PrsProduct {
   id: string;
@@ -156,6 +157,7 @@ async function fetchFromPrsDigital(): Promise<Product[]> {
   }
 
   return json.products.map(item => {
+    const cleanName = cleanProductName(item.name);
     const markupFactor = 1.35;
     const oldPrice = Math.round((item.price_idr * markupFactor) / 1000) * 1000;
     const discount = oldPrice > item.price_idr
@@ -168,15 +170,15 @@ async function fetchFromPrsDigital(): Promise<Product[]> {
 
     return {
       id: item.id,
-      name: item.name,
+      name: cleanName,
       price: item.price_idr,
       oldPrice,
       discount,
-      category: inferCategory(item.name),
-      image: getProductImage(item.name),
+      category: inferCategory(cleanName),
+      image: getProductImage(cleanName),
       availability: item.availability,
       stock: isAvailable ? 25 : 0,
-      description: item.description,
+      description: cleanProductName(item.description),
       requires_email: item.requires_email,
       provider: 'Prs Digital',
       isWholesale,
@@ -219,6 +221,7 @@ async function fetchFromAbellab(): Promise<Product[]> {
   }
 
   return json.products.map(item => {
+    const cleanName = cleanProductName(item.name);
     const finalPrice = item.reseller_price || item.price || item.base_price || 0;
     const markupFactor = 1.35;
     const oldPrice = Math.round((finalPrice * markupFactor) / 1000) * 1000;
@@ -233,16 +236,16 @@ async function fetchFromAbellab(): Promise<Product[]> {
 
     return {
       id: `ab_${item.id}`,
-      name: item.name,
+      name: cleanName,
       price: finalPrice,
       oldPrice,
       discount,
-      category: inferCategory(`${item.category || ''} ${item.name}`),
-      image: getProductImage(item.name),
+      category: inferCategory(`${item.category || ''} ${cleanName}`),
+      image: getProductImage(cleanName),
       availability: isAvailable ? 'in_stock' : 'out_of_stock',
       stock: actualStock,
-      description: item.description,
-      provider: 'Abellab Reseller',
+      description: cleanProductName(item.description),
+      provider: 'Abellab',
       isWholesale,
       wholesaleMin: isWholesale ? 5 : undefined,
       wholesalePrice
@@ -259,11 +262,14 @@ export async function fetchProductsFromApi(): Promise<Product[]> {
       if (json.success && Array.isArray(json.products) && json.products.length > 0) {
         return json.products.map((p: Product) => {
           const isBlockedRemoteImage = p.image?.includes('images.unsplash.com');
+          const cleanName = cleanProductName(p.name);
           return {
             ...p,
+            name: cleanName,
+            description: cleanProductName(p.description),
             image: p.image && !isBlockedRemoteImage && (p.image.startsWith('/uploads') || p.image.startsWith('/api/storage') || p.image.startsWith('http'))
               ? p.image
-              : getProductImage(p.name)
+              : getProductImage(cleanName)
           };
         });
       }
