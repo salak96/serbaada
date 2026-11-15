@@ -58,7 +58,9 @@ import {
   Database,
   HardDrive,
   AlertTriangle,
-  Zap
+  Zap,
+  FileText,
+  Star
 } from 'lucide-react';
 
 interface AdminDashboardProps {
@@ -268,6 +270,15 @@ interface ProductVariant {
   is_active: number;
 }
 
+interface ProductReview {
+  id: string;
+  name: string;
+  rating: number;
+  text: string;
+  photo?: string;
+  date?: string;
+}
+
 interface MasterProductItem {
   id: number;
   slug: string;
@@ -290,6 +301,8 @@ interface MasterProductItem {
   is_active: number;
   custom_stock: number;
   variants?: ProductVariant[];
+  terms?: string;
+  reviews?: ProductReview[];
 }
 
 interface ApiLogItem {
@@ -447,6 +460,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   
   const [isPricingModalOpen, setIsPricingModalOpen] = useState(false);
   const [editingProductPrice, setEditingProductPrice] = useState<MasterProductItem | null>(null);
+  const [isContentModalOpen, setIsContentModalOpen] = useState(false);
+  const [editingProductContent, setEditingProductContent] = useState<MasterProductItem | null>(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [editingProductReviews, setEditingProductReviews] = useState<MasterProductItem | null>(null);
   const [markupType, setMarkupType] = useState<MarkupMode>('percent');
   const [markupVal, setMarkupVal] = useState<number>(25);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -1542,6 +1559,68 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     }
   };
 
+  const handleSaveContent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProductContent) return;
+    try {
+      const res = await fetch(`/api/admin/products/${editingProductContent.id}/content`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: editingProductContent.description || '',
+          terms: editingProductContent.terms || ''
+        })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showNotification('success', 'Deskripsi & S&K berhasil diperbarui!');
+        setIsContentModalOpen(false);
+        if (onRefreshPublicProducts) onRefreshPublicProducts();
+        loadAllData();
+      }
+    } catch {
+      showNotification('error', 'Gagal menyimpan deskripsi & S&K.');
+    }
+  };
+
+  const updateReviewField = (idx: number, field: keyof ProductReview, value: string | number) => {
+    if (!editingProductReviews) return;
+    const reviews = [...(editingProductReviews.reviews || [])];
+    reviews[idx] = { ...reviews[idx], [field]: value };
+    setEditingProductReviews({ ...editingProductReviews, reviews });
+  };
+  const addReview = () => {
+    if (!editingProductReviews) return;
+    const nr: ProductReview = { id: `r_${Date.now().toString(36)}`, name: '', rating: 5, text: '', photo: '', date: new Date().toISOString().slice(0, 10) };
+    setEditingProductReviews({ ...editingProductReviews, reviews: [...(editingProductReviews.reviews || []), nr] });
+  };
+  const removeReview = (idx: number) => {
+    if (!editingProductReviews) return;
+    const reviews = [...(editingProductReviews.reviews || [])];
+    reviews.splice(idx, 1);
+    setEditingProductReviews({ ...editingProductReviews, reviews });
+  };
+  const handleSaveReviews = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProductReviews) return;
+    try {
+      const res = await fetch(`/api/admin/products/${editingProductReviews.id}/reviews`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reviews: editingProductReviews.reviews || [] })
+      });
+      const json = await res.json();
+      if (json.success) {
+        showNotification('success', 'Ulasan & testimoni berhasil diperbarui!');
+        setIsReviewModalOpen(false);
+        if (onRefreshPublicProducts) onRefreshPublicProducts();
+        loadAllData();
+      }
+    } catch {
+      showNotification('error', 'Gagal menyimpan ulasan.');
+    }
+  };
+
   // -------------------------------------------------------------
   // Image Handlers
   // -------------------------------------------------------------
@@ -2529,6 +2608,28 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                   title="Ganti Gambar"
                                 >
                                   <ImageIcon className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingProductContent(prod);
+                                    setIsContentModalOpen(true);
+                                  }}
+                                  className="p-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[#10B981] text-[var(--text-muted)] hover:text-white transition-colors"
+                                  title="Edit Deskripsi & S&K"
+                                >
+                                  <FileText className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingProductReviews(prod);
+                                    setIsReviewModalOpen(true);
+                                  }}
+                                  className="p-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-amber-500 text-[var(--text-muted)] hover:text-white transition-colors"
+                                  title="Ulasan & Testimoni"
+                                >
+                                  <Star className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   type="button"
@@ -4414,6 +4515,148 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </button>
                 <button type="submit" className="px-5 py-2 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold">
                   Simpan Harga
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL: EDIT DESKRIPSI & SYARAT KETENTUAN                  */}
+      {/* ========================================================= */}
+      {isContentModalOpen && editingProductContent && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="font-bold text-sm">Deskripsi & S&K: {editingProductContent.name}</h3>
+              <button type="button" onClick={() => setIsContentModalOpen(false)}>
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveContent} className="space-y-3.5">
+              <div>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Deskripsi (tab DESKRIPSI di toko)</label>
+                <textarea
+                  rows={7}
+                  value={editingProductContent.description || ''}
+                  onChange={(e) => setEditingProductContent({ ...editingProductContent, description: e.target.value })}
+                  placeholder="Tulis deskripsi layanan, misal: Akun Private & Bergaransi. Durasi langsung 1 bulan. Stok terbatas."
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
+                />
+                <p className="text-[11px] text-[var(--text-muted)] mt-1">Tampil di tab DESKRIPSI pada halaman detail produk. Enter = baris baru.</p>
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Syarat & Ketentuan (tab S & K di toko)</label>
+                <textarea
+                  rows={7}
+                  value={editingProductContent.terms || ''}
+                  onChange={(e) => setEditingProductContent({ ...editingProductContent, terms: e.target.value })}
+                  placeholder="Tulis syarat & ketentuan, misal: Garansi berlaku 25 hari. Dilarang mengubah email/password utama."
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
+                />
+                <p className="text-[11px] text-[var(--text-muted)] mt-1">Tampil di tab S &amp; K pada halaman detail produk. Kosongkan untuk memakai ketentuan standar toko.</p>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
+                <button type="button" onClick={() => setIsContentModalOpen(false)} className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]">
+                  Batal
+                </button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold">
+                  Simpan Deskripsi & S&K
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* MODAL: ULASAN & TESTIMONI                                */}
+      {/* ========================================================= */}
+      {isReviewModalOpen && editingProductReviews && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <h3 className="font-bold text-sm">Ulasan & Testimoni: {editingProductReviews.name}</h3>
+              <button type="button" onClick={() => setIsReviewModalOpen(false)}>
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveReviews} className="space-y-3.5">
+              <p className="text-[11px] text-[var(--text-muted)]">Ulasan diisi admin dan tampil di halaman detail produk (bagian Ulasan). Foto diisi berupa link gambar (URL).</p>
+
+              {(editingProductReviews.reviews || []).map((rv, idx) => (
+                <div key={rv.id || idx} className="p-3 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <input
+                      value={rv.name}
+                      onChange={(e) => updateReviewField(idx, 'name', e.target.value)}
+                      placeholder="Nama pembeli (misal: Budi)"
+                      className="flex-1 min-w-0 px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-semibold"
+                    />
+                    <button type="button" onClick={() => removeReview(idx)} className="text-[var(--danger)] text-[11px] font-bold hover:underline shrink-0">
+                      Hapus
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    <span className="text-[var(--text-muted)] font-semibold mr-1">Bintang:</span>
+                    {[1, 2, 3, 4, 5].map(n => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => updateReviewField(idx, 'rating', n)}
+                        className="p-0.5"
+                        title={`${n} bintang`}
+                      >
+                        <Star className={`w-4 h-4 ${n <= (rv.rating || 5) ? 'text-amber-400 fill-amber-400' : 'text-[var(--text-muted)]'}`} />
+                      </button>
+                    ))}
+                    <span className="text-[11px] text-[var(--text-muted)] ml-1">{rv.rating || 5}/5</span>
+                  </div>
+
+                  <textarea
+                    rows={2}
+                    value={rv.text}
+                    onChange={(e) => updateReviewField(idx, 'text', e.target.value)}
+                    placeholder="Isi ulasan / testimoni"
+                    className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)]"
+                  />
+
+                  <input
+                    value={rv.photo || ''}
+                    onChange={(e) => updateReviewField(idx, 'photo', e.target.value)}
+                    placeholder="Link foto (URL gambar, opsional)"
+                    className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)]"
+                  />
+                  {rv.photo ? (
+                    <img src={rv.photo} alt="" className="w-12 h-12 rounded-lg object-cover border border-[var(--border)]" />
+                  ) : null}
+                </div>
+              ))}
+
+              {(editingProductReviews.reviews || []).length === 0 && (
+                <p className="text-[11px] text-[var(--text-muted)]">Belum ada ulasan — tambahkan testimoni pertama.</p>
+              )}
+
+              <button
+                type="button"
+                onClick={addReview}
+                className="w-full py-2 rounded-xl border border-dashed border-[var(--border)] text-[var(--text-muted)] font-bold hover:border-[#2583F7] hover:text-[#2583F7]"
+              >
+                + Tambah Ulasan
+              </button>
+
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
+                <button type="button" onClick={() => setIsReviewModalOpen(false)} className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]">
+                  Batal
+                </button>
+                <button type="submit" className="px-5 py-2 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold">
+                  Simpan Ulasan
                 </button>
               </div>
             </form>

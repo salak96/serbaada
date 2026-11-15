@@ -151,6 +151,22 @@ function normalizeVariants(input) {
     }));
 }
 
+// Normalisasi ulasan/testimoni produk (diisi admin).
+// Setiap ulasan = {id, name, rating 1-5, text, photo (URL), date}.
+function normalizeReviews(input) {
+  if (!Array.isArray(input)) return [];
+  return input
+    .filter(r => r && String(r.name || '').trim())
+    .map((r, idx) => ({
+      id: String(r.id || ('r_' + Date.now().toString(36) + idx + Math.random().toString(36).slice(2, 7))),
+      name: String(r.name || '').trim(),
+      rating: Math.min(5, Math.max(1, Number(r.rating || 5))),
+      text: String(r.text || '').trim(),
+      photo: String(r.photo || '').trim(),
+      date: String(r.date || new Date().toISOString().slice(0, 10))
+    }));
+}
+
 function inferCategoryServer(text, originalCategory = '') {
   const n = `${text} ${originalCategory}`.toLowerCase();
   
@@ -625,6 +641,8 @@ export async function saveMasterProduct(data) {
         description: cleanProductName(data.description ?? store.master_products[idx].description),
         id,
         variants: normalizeVariants(data.variants !== undefined ? data.variants : store.master_products[idx].variants),
+        terms: data.terms !== undefined ? String(data.terms || '').trim() : (store.master_products[idx].terms || ''),
+        reviews: normalizeReviews(data.reviews !== undefined ? data.reviews : store.master_products[idx].reviews),
         updated_at: now
       };
     }
@@ -654,12 +672,38 @@ export async function saveMasterProduct(data) {
       stock_display_mode: data.stock_display_mode || 'real',
       custom_stock: Number(data.custom_stock || 25),
       variants: normalizeVariants(data.variants),
+      terms: String(data.terms || '').trim(),
+      reviews: normalizeReviews(data.reviews),
       created_at: now,
       updated_at: now
     };
     store.master_products.push(newMaster);
   }
 
+  saveLocalStore(store);
+  return getMasterProductById(id);
+}
+
+// Simpan Deskripsi + Syarat & Ketentuan produk (dari admin console).
+// Sengaja TIDAK lewat cleanProductName: baris baru & emoji dipertahankan.
+export async function saveProductContent(id, description, terms) {
+  const store = loadLocalStore();
+  const idx = store.master_products.findIndex(p => p.id === Number(id));
+  if (idx === -1) return null;
+  store.master_products[idx].description = description !== undefined ? String(description || '').trim() : (store.master_products[idx].description || '');
+  store.master_products[idx].terms = terms !== undefined ? String(terms || '').trim() : (store.master_products[idx].terms || '');
+  store.master_products[idx].updated_at = new Date().toISOString();
+  saveLocalStore(store);
+  return getMasterProductById(id);
+}
+
+// Simpan ulasan/testimoni produk (dari admin console).
+export async function saveProductReviews(id, reviews) {
+  const store = loadLocalStore();
+  const idx = store.master_products.findIndex(p => p.id === Number(id));
+  if (idx === -1) return null;
+  store.master_products[idx].reviews = normalizeReviews(reviews);
+  store.master_products[idx].updated_at = new Date().toISOString();
   saveLocalStore(store);
   return getMasterProductById(id);
 }

@@ -20,6 +20,8 @@ import {
   getMasterProducts,
   getMasterProductById,
   saveMasterProduct,
+  saveProductContent,
+  saveProductReviews,
   deleteMasterProduct,
   deleteAllMasterProducts,
   deleteMultipleMasterProducts,
@@ -488,6 +490,32 @@ app.post('/api/admin/products/batch-delete', async (req, res) => {
   }
 });
 
+// Edit Deskripsi + Syarat & Ketentuan produk (admin console)
+app.put('/api/admin/products/:id/content', async (req, res) => {
+  try {
+    const { description, terms } = req.body;
+    const current = await getMasterProductById(req.params.id);
+    if (!current) return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
+    const updated = await saveProductContent(req.params.id, description, terms);
+    if (!updated) return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// Simpan ulasan/testimoni produk (admin console)
+app.put('/api/admin/products/:id/reviews', async (req, res) => {
+  try {
+    const { reviews } = req.body;
+    const updated = await saveProductReviews(req.params.id, reviews || []);
+    if (!updated) return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
+    res.json({ success: true, data: updated });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // Manage Product Price (Manual / Markup Nominal / Markup Percent)
 app.put('/api/admin/products/:id/price', async (req, res) => {
   try {
@@ -616,6 +644,8 @@ app.get('/api/public/products', async (req, res) => {
         wholesalePrice: p.wholesale_price,
         provider: p.primary_seller_name || 'Prs Digital',
         description: p.description,
+        terms: p.terms || '',
+        reviews: p.reviews || [],
         variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, stock: v.stock }))
       };
     });
@@ -746,6 +776,8 @@ app.get('/api/public/products/:slug', async (req, res) => {
         wholesalePrice: p.wholesale_price,
         provider: p.primary_seller_name || 'Prs Digital',
         description: p.description,
+        terms: p.terms || '',
+        reviews: p.reviews || [],
         variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, stock: v.stock }))
       }
     });

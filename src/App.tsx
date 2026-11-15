@@ -235,7 +235,7 @@ function App() {
   ) => {
     // Produk bervarian: id komposit per varian agar tiap varian jadi baris
     // keranjang sendiri, nama + harga + stok mengikuti varian terpilih.
-    const cartProduct: Product = variant
+    const cartProduct: Product & { variantId?: string; variantName?: string; variantAccountType?: string; variantDuration?: string } = variant
       ? {
         ...product,
         id: `${product.id}_${variant.id}`,

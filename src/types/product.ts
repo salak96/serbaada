@@ -9,6 +9,15 @@ export interface ProductVariant {
   is_active?: number;
 }
 
+export interface ProductReview {
+  id: string;
+  name: string;
+  rating: number;
+  text: string;
+  photo?: string;
+  date?: string;
+}
+
 export interface Product {
   id: string | number;
   name: string;
@@ -20,6 +29,7 @@ export interface Product {
   availability?: 'in_stock' | 'out_of_stock';
   stock?: number;
   description?: string;
+  terms?: string;
   requires_email?: boolean;
   provider?: 'Prs Digital' | 'Abellab Reseller' | 'Produk Manual' | string;
   isWholesale?: boolean;
@@ -28,6 +38,7 @@ export interface Product {
   recipientEmail?: string;
   recipientId?: string;
   variants?: ProductVariant[];
+  reviews?: ProductReview[];
 }
 
 export interface CartItem extends Product {

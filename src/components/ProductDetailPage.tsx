@@ -4,20 +4,15 @@ import {
   Plus,
   Minus,
   Check,
-  Info,
   ShoppingBag,
   MessageCircle,
-  ExternalLink,
-  HelpCircle,
-  Clock,
-  Layers,
   AlertCircle,
   X,
   ShieldCheck,
-  Share2
+  Share2,
+  Star
 } from 'lucide-react';
 import { Product, ProductVariant } from '../types/product';
-import { FormattedDescription } from './FormattedDescription';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -45,8 +40,7 @@ export function ProductDetailPage({
   onAddToCart,
   onInstantBuy,
   onSelectProduct,
-  onCategorySelect,
-  isDarkMode = false
+  onCategorySelect
 }: ProductDetailPageProps) {
   const [quantity, setQuantity] = useState(1);
   // ---- Varian produk (Tipe Akun · Varian · Durasi) ----
@@ -58,6 +52,14 @@ export function ProductDetailPage({
   const accountTypes = [...new Set(activeVariants.map(v => v.account_type))];
   const variantNames = [...new Set(activeVariants.filter(v => v.account_type === selAccountType).map(v => v.name))];
   const durations = [...new Set(activeVariants.filter(v => v.account_type === selAccountType && v.name === selVariantName).map(v => v.duration))];
+  // Sumbu varian yang benar-benar bisa dipilih (2+ opsi). Bila hanya satu sumbu, labelnya "Pilih Variasi".
+  const variantGroupCount = (accountTypes.length > 1 ? 1 : 0) + (variantNames.length > 1 ? 1 : 0) + (durations.length > 1 ? 1 : 0);
+  const singleVariantGroup = variantGroupCount === 1;
+  // ---- Ulasan & testimoni (diisi admin) ----
+  const productReviews = product.reviews || [];
+  const avgRating = productReviews.length > 0
+    ? productReviews.reduce((s, r) => s + (Number(r.rating) || 5), 0) / productReviews.length
+    : 0;
   const selectedVariant: ProductVariant | null = hasVariants
     ? (activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName && v.duration === selDuration)
       || activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName)
@@ -281,163 +283,55 @@ export function ProductDetailPage({
             </div>
           </div>
 
-          {/* Bagian: Tentang Paket Ini (Tepat di Bawah Gambar) */}
-          <div className="bg-white dark:bg-[#111A2B] rounded-2xl border border-[#E2E8F0] dark:border-[#26364D] p-6 shadow-[0_4px_20px_rgba(15,23,42,0.06)] dark:shadow-card space-y-5">
+          {/* Bagian: Ulasan & Testimoni (diisi admin) */}
+          <div className="bg-white dark:bg-[#111A2B] rounded-2xl border border-[#E2E8F0] dark:border-[#26364D] p-6 shadow-[0_4px_20px_rgba(15,23,42,0.06)] dark:shadow-card space-y-4">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-[#0F172A] dark:text-[#F8FAFC] tracking-tight">
-                Tentang paket ini
+                Ulasan & Testimoni
               </h2>
               <p className="text-xs sm:text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5">
-                Rincian paket dan petunjuk penggunaan dari penyedia.
+                {productReviews.length > 0
+                  ? `${avgRating.toFixed(1)} dari 5 · ${productReviews.length} ulasan`
+                  : 'Belum ada ulasan untuk produk ini.'}
               </p>
             </div>
 
-            {isMuseAi ? (
-              <div className="space-y-5 text-xs sm:text-sm text-[#334155] dark:text-[#CBD5E1] leading-relaxed">
-                
-                {/* Kuota pada nama paket */}
-                <div>
-                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] mb-1.5 flex items-center gap-1.5">
-                    <Layers className="w-3.5 h-3.5 text-[#2583F7]" />
-                    Kuota pada nama paket
-                  </h3>
-                  <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] font-semibold text-sm text-[#0F172A] dark:text-[#F8FAFC]">
-                    {quotaName}
-                  </div>
+            {productReviews.length > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map(n => (
+                    <Star key={n} className={`w-5 h-5 ${n <= Math.round(avgRating) ? 'text-amber-400 fill-amber-400' : 'text-[#CBD5E1] dark:text-[#334155]'}`} />
+                  ))}
                 </div>
-
-                {/* Detail Layanan */}
-                <div>
-                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] mb-2">
-                    Detail Layanan
-                  </h3>
-                  <ul className="space-y-1.5 pl-1">
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#2583F7] font-bold">•</span>
-                      <span>Jasa refill Muse AI {quotaName}.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#2583F7] font-bold">•</span>
-                      <span>Proses refill dilakukan secara manual oleh admin.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#2583F7] font-bold">•</span>
-                      <span>Pesanan diproses sesuai antrean.</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-[#2583F7] font-bold">•</span>
-                      <span>Mohon bersabar selama proses pengerjaan berlangsung.</span>
-                    </li>
-                  </ul>
-                </div>
-
-                {/* Card Peringatan PENTING! WAJIB DIBACA */}
-                <div className="bg-[#EFF6FF] dark:bg-[#0B1528] border border-[#BFDBFE] dark:border-[#2583F7]/50 rounded-xl p-4 sm:p-5 space-y-2.5 text-[#1E3A8A] dark:text-[#93C5FD]">
-                  <div className="flex items-center gap-2 text-xs font-bold tracking-wide uppercase text-[#1D4ED8] dark:text-[#38BDF8]">
-                    <Info className="w-4 h-4 text-[#2583F7] flex-shrink-0" />
-                    <span>PENTING! WAJIB DIBACA</span>
-                  </div>
-
-                  <p className="text-xs leading-relaxed">
-                    Pastikan token yang diminta <strong className="font-bold underline decoration-[#2583F7]">BENAR, TEPAT, DAN SESUAI</strong> sebelum melakukan pemesanan.
-                  </p>
-                  <p className="text-xs leading-relaxed text-[#1E40AF] dark:text-[#93C5FD]/90">
-                    Kesalahan dalam pengisian atau pemilihan token menjadi tanggung jawab pembeli.
-                  </p>
-                  <p className="text-xs leading-relaxed text-[#1E40AF] dark:text-[#93C5FD]/90">
-                    Refill dilakukan secara manual, sehingga proses membutuhkan waktu. Mohon menunggu hingga admin memproses pesanan sesuai antrean.
-                  </p>
-                  <p className="text-xs font-semibold leading-relaxed">
-                    Jangan melakukan pemesanan berulang hanya karena proses belum selesai.
-                  </p>
-                </div>
-
-                {/* Ketentuan Pemesanan */}
-                <div>
-                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] mb-1">
-                    Ketentuan Pemesanan
-                  </h3>
-                  <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                    Harap periksa kembali detail token sebelum memesan. Dengan melakukan pemesanan, pembeli dianggap telah memahami dan menyetujui ketentuan di atas.
-                  </p>
-                </div>
-
-                {/* Ketentuan Garansi */}
-                <div>
-                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] mb-1">
-                    Ketentuan Garansi
-                  </h3>
-                  <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                    Jika terjadi kesalahan token, garansi <strong className="text-[#DC2626] font-bold">HANGUS</strong>.
-                  </p>
-                </div>
-
-                {/* Di mana melihat akses setelah membeli? */}
-                <div className="p-3.5 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-1">
-                  <h4 className="font-semibold text-xs text-[#0F172A] dark:text-[#F8FAFC] flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#2583F7]" />
-                    Di mana melihat akses setelah membeli?
-                  </h4>
-                  <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed">
-                    Masuk ke akun yang digunakan saat checkout, lalu buka Pesanan Saya. Akses ditampilkan setelah pembayaran dan pengiriman selesai.
-                  </p>
-                </div>
-
-                {/* Butuh bantuan aktivasi? */}
-                <div className="p-3.5 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-1.5">
-                  <h4 className="font-semibold text-xs text-[#0F172A] dark:text-[#F8FAFC] flex items-center gap-1.5">
-                    <HelpCircle className="w-3.5 h-3.5 text-[#2583F7]" />
-                    Butuh bantuan aktivasi?
-                  </h4>
-                  <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed">
-                    Hubungi tim kami lewat Telegram / WhatsApp dengan menyertakan ID pesanan. Jangan kirim kata sandi akun pribadimu.
-                  </p>
-                  <a
-                    href="https://wa.me/6285867336036"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#2583F7] hover:underline pt-0.5"
-                  >
-                    <span>Hubungi CS WhatsApp Resmi</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-
-              </div>
-            ) : (
-              <div className="space-y-4 text-xs sm:text-sm text-[#334155] dark:text-[#CBD5E1] leading-relaxed">
-                <div>
-                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] mb-1.5">
-                    Rincian Fitur &amp; Spesifikasi
-                  </h3>
-                  <div className="p-3.5 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] text-xs text-[#475569] dark:text-[#94A3B8] break-words overflow-hidden max-w-full leading-relaxed">
-                    <FormattedDescription
-                      text={product.description || 'Layanan produk digital bergaransi resmi dengan aktivasi instan.'}
-                      isDarkMode={isDarkMode}
-                    />
-                  </div>
-                </div>
-
-                <div className="bg-[#EFF6FF] dark:bg-[#0B1528] border border-[#BFDBFE] dark:border-[#2583F7]/50 rounded-xl p-4 text-[#1E3A8A] dark:text-[#93C5FD] space-y-1.5">
-                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8] dark:text-[#38BDF8]">
-                    <Info className="w-4 h-4 text-[#2583F7]" />
-                    <span>PANDUAN PEMESANAN</span>
-                  </div>
-                  <p className="text-xs text-[#1E40AF] dark:text-[#93C5FD]">
-                    Pastikan data penerima seperti email aktivasi atau nomor akun diisi secara valid untuk kelancaran proses pengiriman.
-                  </p>
-                </div>
-
-                <div>
-                  <h3 className="font-semibold text-xs uppercase tracking-wider text-[#64748B] dark:text-[#94A3B8] mb-1">
-                    Ketentuan Garansi
-                  </h3>
-                  <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
-                    Produk ini dilindungi garansi penggantian atau bantuan perbaikan selama masa aktif yang tertera pada paket langganan.
-                  </p>
-                </div>
+                <span className="font-bold text-sm text-[#0F172A] dark:text-[#F8FAFC]">{avgRating.toFixed(1)}</span>
               </div>
             )}
+
+            <div className="space-y-4">
+              {productReviews.map(rv => (
+                <div key={rv.id} className="flex gap-3 pb-4 border-b border-[#F1F5F9] dark:border-[#26364D] last:border-0 last:pb-0">
+                  {rv.photo ? (
+                    <img src={rv.photo} alt={rv.name} className="w-11 h-11 rounded-full object-cover border border-[#E2E8F0] dark:border-[#26364D] shrink-0" />
+                  ) : (
+                    <span className="w-11 h-11 rounded-full bg-[#EFF6FF] dark:bg-[#2583F7]/15 text-[#2583F7] dark:text-[#38BDF8] font-bold flex items-center justify-center text-sm shrink-0">
+                      {rv.name.charAt(0).toUpperCase()}
+                    </span>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-bold text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC] truncate">{rv.name}</span>
+                      {rv.date && <span className="text-[11px] text-[#94A3B8] shrink-0">{rv.date}</span>}
+                    </div>
+                    <div className="flex items-center gap-0.5 my-0.5">
+                      {[1, 2, 3, 4, 5].map(n => (
+                        <Star key={n} className={`w-3.5 h-3.5 ${n <= (rv.rating || 5) ? 'text-amber-400 fill-amber-400' : 'text-[#CBD5E1] dark:text-[#334155]'}`} />
+                      ))}
+                    </div>
+                    {rv.text && <p className="text-xs sm:text-sm text-[#475569] dark:text-[#CBD5E1] leading-relaxed whitespace-pre-line break-words">{rv.text}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>
@@ -526,9 +420,9 @@ export function ProductDetailPage({
 
             {hasVariants && (
               <>
-                {/* Tipe Akun */}
+                {accountTypes.length > 1 && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">Tipe akun</span>
+                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">{singleVariantGroup ? 'Pilih Variasi' : 'Tipe akun'}</span>
                   <div className="flex flex-wrap gap-2">
                     {accountTypes.map(at => (
                       <button
@@ -546,9 +440,10 @@ export function ProductDetailPage({
                     ))}
                   </div>
                 </div>
-                {/* Varian */}
+                )}
+                {variantNames.length > 1 && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">Varian</span>
+                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">{singleVariantGroup ? 'Pilih Variasi' : 'Varian'}</span>
                   <div className="flex flex-wrap gap-2">
                     {variantNames.map(n => (
                       <button
@@ -566,9 +461,10 @@ export function ProductDetailPage({
                     ))}
                   </div>
                 </div>
-                {/* Pilih Durasi */}
+                )}
+                {durations.length > 1 && (
                 <div className="space-y-2">
-                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">Pilih durasi</span>
+                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">{singleVariantGroup ? 'Pilih Variasi' : 'Pilih durasi'}</span>
                   <div className="flex flex-wrap gap-2">
                     {durations.map(d => {
                       const dv = activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName && v.duration === d);
@@ -593,6 +489,7 @@ export function ProductDetailPage({
                     })}
                   </div>
                 </div>
+                )}
               </>
             )}
 
@@ -650,24 +547,32 @@ export function ProductDetailPage({
             </>
             )}
 
-            {/* 8. Kotak Promo atau Harga Grosir (Border Putus-Putus) */}
-            <div className="p-3.5 rounded-xl border-2 border-dashed border-[#2583F7]/50 bg-[#EFF6FF]/60 dark:bg-[#2583F7]/10 text-xs text-[#1E40AF] dark:text-[#93C5FD] space-y-1">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-[#1D4ED8] dark:text-[#38BDF8] flex items-center gap-1.5">
-                  <span className="text-base">🔥</span> Promo Pembelian Grosir
-                </span>
+            {/* 8. Kotak Harga Grosir (Border Putus-Putus) */}
+            {product.isWholesale && product.wholesalePrice ? (
+              <div className="p-3.5 rounded-xl border-2 border-dashed border-[#10B981]/50 bg-[#ECFDF5]/60 dark:bg-[#10B981]/10 text-xs space-y-2">
+                <p className="font-bold text-[#059669] dark:text-emerald-400 flex items-center gap-1.5">
+                  <span className="text-base">🏷️</span> Harga Grosir Tersedia
+                </p>
+                <div className="grid grid-cols-2 gap-2 text-[#334155] dark:text-[#CBD5E1]">
+                  <div>
+                    <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block">Min. Pembelian</span>
+                    <span className="font-bold">≥ {product.wholesaleMin || 5} unit</span>
+                  </div>
+                  <div>
+                    <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block">Harga Satuan</span>
+                    <span className="font-bold">{formatPrice(product.wholesalePrice)}</span>
+                  </div>
+                </div>
                 {isWholesaleApplied && (
-                  <span className="bg-[#10B981] text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                  <span className="inline-block bg-[#10B981] text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
                     Hemat Grosir Diterapkan
                   </span>
                 )}
               </div>
-              <p className="text-[#3B82F6] dark:text-[#93C5FD] text-[11px] leading-relaxed">
-                {product.isWholesale && product.wholesalePrice
-                  ? `Beli ${product.wholesaleMin || 5}+ unit otomatis mendapatkan harga grosir Rp ${product.wholesalePrice.toLocaleString('id-ID')} /unit.`
-                  : 'Beli 5 unit atau lebih untuk mendapatkan potongan harga grosir langsung saat checkout.'}
-              </p>
-            </div>
+            ) : null}
+            {isOutOfStock && (
+              <p className="text-xs font-bold text-[#DC2626] dark:text-red-400">Stok telah habis.</p>
+            )}
 
             {/* 9. Informasi Ketersediaan Stok */}
             <div className="flex items-center justify-between text-xs py-1">
@@ -721,11 +626,8 @@ export function ProductDetailPage({
               <div className="text-xs sm:text-sm text-[#475569] dark:text-[#CBD5E1] leading-relaxed min-h-[90px] break-words overflow-hidden max-w-full">
                 {activeTab === 'desc' ? (
                   <div className="space-y-3">
-                    <p className="font-bold text-[#0F172A] dark:text-[#F8FAFC]">
-                      Ringkasan Layanan {product.name}:
-                    </p>
-                    <p className="line-clamp-3">
-                      {product.description ? product.description.replace(/[\r\n]+/g, ' ') : `Layanan ${product.name} bergaransi resmi dengan proses aktivasi instan & aman.`}
+                    <p className="whitespace-pre-line">
+                      {product.description || `Layanan ${product.name} bergaransi resmi dengan proses aktivasi instan & aman.`}
                     </p>
                     <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-2 mt-2">
                       <p className="font-bold text-xs text-[#2583F7] dark:text-[#38BDF8]">
@@ -750,15 +652,21 @@ export function ProductDetailPage({
                   </div>
                 ) : (
                   <div className="space-y-2 text-xs">
-                    <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
-                      Ketentuan Pembelian Androidstore.web.id:
-                    </p>
-                    <ul className="list-disc pl-4 space-y-1 text-[#64748B] dark:text-[#94A3B8]">
-                      <li>Pastikan data akun / email yang diberikan sudah benar sebelum menyelesaikan pesanan.</li>
-                      <li>Klaim garansi wajib menyertakan nomor invoice atau ID pesanan WhatsApp.</li>
-                      <li>Dilarang mengubah data akun atau melanggar TOS layanan penyedia.</li>
-                      <li>Penyelesaian pesanan rata-rata berlangsung 5 - 15 menit sesuai antrean.</li>
-                    </ul>
+                    {product.terms ? (
+                      <p className="whitespace-pre-line text-[#475569] dark:text-[#CBD5E1] leading-relaxed text-xs sm:text-sm">{product.terms}</p>
+                    ) : (
+                      <>
+                        <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
+                          Ketentuan Pembelian Androidstore.web.id:
+                        </p>
+                        <ul className="list-disc pl-4 space-y-1 text-[#64748B] dark:text-[#94A3B8]">
+                          <li>Pastikan data akun / email yang diberikan sudah benar sebelum menyelesaikan pesanan.</li>
+                          <li>Klaim garansi wajib menyertakan nomor invoice atau ID pesanan WhatsApp.</li>
+                          <li>Dilarang mengubah data akun atau melanggar TOS layanan penyedia.</li>
+                          <li>Penyelesaian pesanan rata-rata berlangsung 5 - 15 menit sesuai antrean.</li>
+                        </ul>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
