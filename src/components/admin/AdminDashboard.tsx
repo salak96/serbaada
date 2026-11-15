@@ -1513,6 +1513,40 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     setEditingProductPrice({ ...editingProductPrice, variants: [...(editingProductPrice.variants || []), nv] });
   };
 
+  // Import varian dari produk mentah seller: nama, modal, stok & gambar diisi
+  // otomatis dari produk seller, harga jual dihitung pakai markup produk ini.
+  const importVariantFromSupplier = (supplierId: number) => {
+    if (!editingProductPrice) return;
+    const sp = supplierProducts.find(p => p.id === supplierId);
+    if (!sp) return;
+    const cost = Number(sp.cost_price || 0);
+    let selling = cost;
+    const mode = editingProductPrice.pricing_mode || 'manual';
+    const markup = Number(editingProductPrice.markup_value || 0);
+    if (mode === 'markup_nominal') selling = cost + markup;
+    else if (mode === 'markup_percent') selling = Math.round((cost * (1 + markup / 100)) / 500) * 500;
+    // Tebak durasi dari nama produk seller ("1 Bulan", "7 Hari", "2 Tahun", ...).
+    let duration = 'Semua';
+    const dm = String(sp.name || '').match(/(\d+)\s*(hari|bulan|tahun|minggu)/i);
+    if (dm) {
+      const unit = dm[2].toLowerCase();
+      duration = `${dm[1]} ${unit === 'minggu' ? 'minggu' : unit === 'tahun' ? 'tahun' : unit === 'bulan' ? 'bulan' : 'hari'}`;
+    }
+    const nv: ProductVariant = {
+      id: 'v_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      name: String(sp.name || '').trim(),
+      account_type: 'private',
+      duration,
+      selling_price: selling,
+      cost_price: cost,
+      stock: Number(sp.stock || 25),
+      is_active: 1,
+      image: String(sp.image_url || '').trim()
+    };
+    setEditingProductPrice({ ...editingProductPrice, variants: [...(editingProductPrice.variants || []), nv] });
+    showNotification('success', `Varian diimpor dari "${sp.name}". Sesuaikan nama & harga bila perlu, lalu Simpan.`);
+  };
+
   const removeVariant = (idx: number) => {
     if (!editingProductPrice) return;
     const variants = [...(editingProductPrice.variants || [])];
@@ -4411,13 +4445,26 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               <div className="pt-3 border-t border-[var(--border)]">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-bold">Varian Produk</span>
-                  <button
-                    type="button"
-                    onClick={addVariant}
-                    className="px-3 py-1.5 rounded-lg bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold text-[11px]"
-                  >
-                    + Tambah Varian
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value=""
+                      onChange={(e) => { const id = Number(e.target.value); if (id) importVariantFromSupplier(id); }}
+                      className="px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] text-[11px] font-bold max-w-[260px]"
+                      title="Import varian dari produk mentah seller (nama, modal, stok & gambar terisi otomatis)"
+                    >
+                      <option value="">⇩ Import dari Produk Seller…</option>
+                      {supplierProducts.filter(p => p.is_available !== 0).map(p => (
+                        <option key={p.id} value={p.id}>{p.name} — {p.seller_name} (Rp{Number(p.cost_price || 0).toLocaleString('id-ID')})</option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={addVariant}
+                      className="px-3 py-1.5 rounded-lg bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold text-[11px]"
+                    >
+                      + Tambah Varian
+                    </button>
+                  </div>
                 </div>
                 <p className="text-[11px] text-[var(--text-muted)] mb-2 leading-relaxed">
                   Satu varian = satu kombinasi nama, tipe akun, dan durasi — masing-masing dengan harga jual, modal, dan stok sendiri. Pembeli memilih ketiganya di halaman produk.
