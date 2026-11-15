@@ -126,38 +126,12 @@ export function CheckoutModal({
       return;
     }
 
-    setIsSubmitting(true);
+    // Pesanan TIDAK dibuat di tahap ini — Order ID hanya disiapkan untuk
+    // ditampilkan di QRIS. Pesanan baru dikirim ke database saat bukti
+    // transfer diunggah (Tahap 3), supaya pesanan yang belum dibayar tidak
+    // masuk database dan tidak memicu notifikasi.
     const generatedOrderId = `ORD-${Date.now().toString().slice(-8)}`;
     setOrderId(generatedOrderId);
-    const normalizedPhone = normalizePhoneNumber(whatsappNumber);
-
-    try {
-      await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          invoice_number: generatedOrderId,
-          customer_name: customerName.trim(),
-          customer_phone: normalizedPhone,
-          total_amount: totalPrice,
-          payment_method: 'QRIS Instant',
-          payment_status: 'pending',
-          order_status: 'pending',
-          product_name: cart.map(i => `${i.name} (x${i.quantity})`).join(', '),
-          product_provider: cart.map(i => `${i.name}: ${i.provider || 'Produk Manual'}`).join(', '),
-          products: cart.map(i => ({
-            name: i.name,
-            quantity: i.quantity,
-            price: i.price,
-            provider: i.provider || 'Produk Manual'
-          }))
-        })
-      });
-    } catch {
-      // Offline fallback handling
-    } finally {
-      setIsSubmitting(false);
-    }
 
     setStage('qris');
   };
@@ -205,6 +179,23 @@ export function CheckoutModal({
       if (customerNotes) {
         formData.append('customer_notes', customerNotes);
       }
+      // Data pesanan dikirim bersama bukti — backend membuat pesanan di
+      // tahap ini (bila belum ada), jadi pesanan hanya masuk database
+      // setelah bukti transfer diunggah.
+      const normalizedPhone = normalizePhoneNumber(whatsappNumber);
+      formData.append('invoice_number', orderId);
+      formData.append('customer_name', customerName.trim());
+      formData.append('customer_phone', normalizedPhone);
+      formData.append('total_amount', String(Math.round(totalPrice)));
+      formData.append('payment_method', 'QRIS Instant');
+      formData.append('product_name', cart.map(i => `${i.name} (x${i.quantity})`).join(', '));
+      formData.append('product_provider', cart.map(i => `${i.name}: ${i.provider || 'Produk Manual'}`).join(', '));
+      formData.append('products', JSON.stringify(cart.map(i => ({
+        name: i.name,
+        quantity: i.quantity,
+        price: i.price,
+        provider: i.provider || 'Produk Manual'
+      }))));
 
       const res = await fetch(`/api/orders/${orderId}/payment-proof`, {
         method: 'POST',

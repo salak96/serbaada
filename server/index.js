@@ -769,6 +769,32 @@ app.post('/api/orders/:orderId/payment-proof', memoryUpload.single('file'), asyn
       orderId
     );
 
+    // Alur checkout QRIS: pesanan BARU dibuat di tahap ini (saat bukti
+    // transfer diunggah), bukan saat isi identitas — supaya pesanan yang
+    // belum dibayar tidak masuk database dan tidak memicu notifikasi.
+    const existingOrders = await getOrders();
+    const foundOrder = existingOrders.find(o => o.invoice_number === orderId || String(o.id) === orderId);
+    if (!foundOrder && req.body.customer_name) {
+      let proofProducts = [];
+      try {
+        proofProducts = typeof req.body.products === 'string' ? JSON.parse(req.body.products) : (req.body.products || []);
+      } catch {
+        proofProducts = [];
+      }
+      await saveOrder({
+        invoice_number: orderId,
+        customer_name: req.body.customer_name,
+        customer_phone: req.body.customer_phone || '',
+        total_amount: Number(req.body.total_amount || 0),
+        payment_method: req.body.payment_method || 'QRIS Instant',
+        payment_status: 'pending',
+        order_status: 'pending',
+        product_name: req.body.product_name || '',
+        product_provider: req.body.product_provider || '',
+        products: proofProducts
+      }, { notify: false });
+    }
+
     const updated = await updateOrderStatus(orderId, {
       payment_proof_url: uploadResult.url || uploadResult.pathOrKey,
       order_status: 'waiting_verification',

@@ -852,7 +852,7 @@ export async function sendTelegramNotification(order) {
   }
 }
 
-export async function saveOrder(orderData) {
+export async function saveOrder(orderData, options = {}) {
   const store = loadLocalStore();
   const id = store.orders.length ? Math.max(...store.orders.map(o => o.id || 0)) + 1 : 1;
   const invoice = orderData.invoice_number || `INV-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${String(id).padStart(3, '0')}`;
@@ -919,7 +919,12 @@ export async function saveOrder(orderData) {
 
   store.orders.unshift(order);
   saveLocalStore(store);
-  sendTelegramNotification(order);
+  // Notifikasi Telegram hanya bila diminta (default: ya). Alur checkout QRIS
+  // membuat pesanan tanpa notifikasi saat bukti diunggah; notifikasi dikirim
+  // sekali oleh updateOrderStatus saat bukti transfer dilampirkan.
+  if (options.notify !== false) {
+    sendTelegramNotification(order);
+  }
   return order;
 }
 
