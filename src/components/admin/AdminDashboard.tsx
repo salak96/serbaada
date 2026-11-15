@@ -572,6 +572,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   const [newOrderProofFile, setNewOrderProofFile] = useState<File | null>(null);
   const [newOrderProofPreview, setNewOrderProofPreview] = useState<string | null>(null);
   const [newOrderSuggestOpen, setNewOrderSuggestOpen] = useState(false);
+  const [togglingProductId, setTogglingProductId] = useState<number | null>(null);
 
   // Saran produk dari katalog saat mengetik (hanya produk aktif, maks 8).
   const newOrderSuggestions = useMemo(() => {
@@ -1338,6 +1339,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   };
 
   const handleToggleProductActive = async (prod: MasterProductItem) => {
+    setTogglingProductId(prod.id);
     try {
       const updatedStatus = prod.is_active ? 0 : 1;
       const res = await fetch(`/api/admin/products/${prod.id}`, {
@@ -1345,13 +1347,17 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...prod, is_active: updatedStatus })
       });
-      if (res.ok) {
-        showNotification('success', `Status produk ${cleanProductName(prod.name)} diubah menjadi ${updatedStatus ? 'Aktif' : 'Nonaktif'}.`);
-        if (onRefreshPublicProducts) onRefreshPublicProducts();
-        loadAllData();
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json?.success) {
+        throw new Error(json?.message || 'Server menolak permintaan.');
       }
-    } catch {
-      showNotification('error', 'Gagal mengubah status produk.');
+      showNotification('success', `Status produk ${cleanProductName(prod.name)} diubah menjadi ${updatedStatus ? 'Aktif' : 'Nonaktif'}.`);
+      if (onRefreshPublicProducts) onRefreshPublicProducts();
+      loadAllData();
+    } catch (e) {
+      showNotification('error', `Gagal mengubah status produk: ${(e as Error).message}`);
+    } finally {
+      setTogglingProductId(null);
     }
   };
 
@@ -2401,15 +2407,22 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 </span>
                               </td>
                               <td className="p-3.5">
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleProductActive(prod)}
-                                  className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                    prod.is_active ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]'
-                                  }`}
-                                >
-                                  {prod.is_active ? 'Aktif' : 'Nonaktif'}
-                                </button>
+                                <span className="inline-flex items-center gap-2">
+                                  <button
+                                    type="button"
+                                    role="switch"
+                                    aria-checked={!!prod.is_active}
+                                    title={prod.is_active ? 'Klik untuk menonaktifkan produk' : 'Klik untuk mengaktifkan produk'}
+                                    disabled={togglingProductId === prod.id}
+                                    onClick={() => handleToggleProductActive(prod)}
+                                    className={`relative inline-flex h-5 w-10 shrink-0 items-center rounded-full transition-colors disabled:opacity-50 ${prod.is_active ? 'bg-[#10B981]' : 'bg-[#64748B]'}`}
+                                  >
+                                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${prod.is_active ? 'translate-x-5' : 'translate-x-0.5'}`} />
+                                  </button>
+                                  <span className={`text-[10px] font-bold ${prod.is_active ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
+                                    {prod.is_active ? 'Aktif' : 'Nonaktif'}
+                                  </span>
+                                </span>
                               </td>
                               <td className="p-3.5 text-right space-x-1">
                                 <button
