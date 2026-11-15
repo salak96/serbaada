@@ -796,7 +796,7 @@ export async function getOrders() {
     const totalAmount = Number(order.total_amount || calcTotalSale || 25000);
     const totalCost = Number(order.total_cost || calcTotalCost || Math.round(totalAmount * 0.7));
     const grossProfit = Number(order.gross_profit !== undefined ? order.gross_profit : (totalAmount - totalCost));
-    const gatewayFee = Number(order.gateway_fee !== undefined ? order.gateway_fee : Math.round(totalAmount * 0.015));
+    const gatewayFee = Number(order.gateway_fee !== undefined ? order.gateway_fee : 0); // Payment gateway belum dipakai
     const additionalFee = Number(order.additional_fee || 0);
     const netProfit = Number(order.net_profit !== undefined ? order.net_profit : (grossProfit - gatewayFee - additionalFee));
 
@@ -899,7 +899,7 @@ export async function saveOrder(orderData, options = {}) {
   const totalAmount = Number(orderData.total_amount || calculatedTotalSale || 25000);
   const totalCost = Number(calculatedTotalCost || Math.round(totalAmount * 0.7));
   const grossProfit = totalAmount - totalCost;
-  const gatewayFee = Math.round(totalAmount * 0.015);
+  const gatewayFee = 0; // Payment gateway belum dipakai
   const additionalFee = 0;
   const netProfit = grossProfit - gatewayFee - additionalFee;
 

@@ -330,6 +330,11 @@ interface OrderItem {
   created_at: string;
 }
 
+// Keuntungan bersih tanpa biaya payment gateway (gateway belum dipakai).
+function netProfitNoGateway(order: OrderItem): number {
+  return (order.gross_profit || 0) - (order.additional_fee || 0);
+}
+
 function parseOrderProducts(order: OrderItem): Array<{ name: string; quantity: number; provider?: string }> {
   if (order.products?.length) {
     return order.products.map(item => ({
@@ -4285,7 +4290,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
               {selectedOrderProof.customer_notes && (
-                <div className="p-2.5 bg-[var(--bg-card)] rounded-xl border border-[var(--border)] text-[var(--text-muted)]">
+                <div className="p-2.5 bg-[var(--bg-card)] rounded-xl border border-[var(--border)] text-[var(--text-muted)] break-all whitespace-pre-wrap">
                   <strong className="text-[var(--text)]">Catatan:</strong> {selectedOrderProof.customer_notes}
                 </div>
               )}
@@ -4561,22 +4566,18 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     <strong className="font-mono text-[var(--success)]">+{formatPrice(selectedOrderDetail.gross_profit || 0)}</strong>
                   </div>
                   <div className="flex justify-between text-[var(--text-muted)]">
-                    <span>Biaya Payment Gateway</span>
-                    <strong className="font-mono text-[var(--warn)]">-{formatPrice(selectedOrderDetail.gateway_fee || 0)}</strong>
-                  </div>
-                  <div className="flex justify-between text-[var(--text-muted)]">
                     <span>Biaya Tambahan Lainnya</span>
                     <strong className="font-mono text-[var(--warn)]">-{formatPrice(selectedOrderDetail.additional_fee || 0)}</strong>
                   </div>
                   <div className="flex justify-between text-sm font-black text-[var(--text)] border-t border-[var(--border)] pt-2">
                     <span className="text-[var(--success)]">KEUNTUNGAN BERSIH</span>
-                    <span className="font-mono text-[var(--success)]">+{formatPrice(selectedOrderDetail.net_profit || selectedOrderDetail.gross_profit || 0)}</span>
+                    <span className="font-mono text-[var(--success)]">{netProfitNoGateway(selectedOrderDetail) >= 0 ? '+' : ''}{formatPrice(netProfitNoGateway(selectedOrderDetail))}</span>
                   </div>
                 </div>
               </div>
 
               {selectedOrderDetail.customer_notes && (
-                <div className="p-3 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text-muted)]">
+                <div className="p-3 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text-muted)] break-all whitespace-pre-wrap">
                   <strong className="text-[var(--text)]">Catatan:</strong> {selectedOrderDetail.customer_notes}
                 </div>
               )}
