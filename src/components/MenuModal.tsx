@@ -6,7 +6,6 @@ import {
   Home,
   Layers,
   Sparkles,
-  MessageSquare,
   ShieldCheck,
   ReceiptText,
   Sun,
@@ -31,6 +30,15 @@ const CATEGORIES = [
   'Streaming & Hiburan',
   'Voucher & Digital'
 ];
+
+// Logo WhatsApp resmi (Simple Icons, CC0) — diklik membuka chat ke nomor CS.
+function WhatsAppIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+  );
+}
 
 export function MenuModal({
   isOpen,
@@ -77,6 +85,34 @@ export function MenuModal({
     onClose();
   };
 
+  // Palet sidebar mengikuti Mode Tampilan (dark = navy seperti sebelumnya, light = putih).
+  const c = {
+    panel: isDarkMode ? 'bg-[#0B1220] border-[#26364D] text-[#F8FAFC]' : 'bg-white border-[#E2E8F0] text-[#0F172A]',
+    header: isDarkMode ? 'bg-[#0B1220] border-[#26364D]' : 'bg-white border-[#E2E8F0]',
+    closeBtn: isDarkMode
+      ? 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]'
+      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] hover:border-[#E2E8F0]',
+    navPrimary: isDarkMode
+      ? 'text-[#F8FAFC] hover:bg-[#111A2B]'
+      : 'text-[#0F172A] hover:bg-[#F1F5F9]',
+    navSecondary: isDarkMode
+      ? 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B]'
+      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]',
+    modePill: isDarkMode
+      ? 'bg-[#080D18] text-[#38BDF8] border-[#26364D]'
+      : 'bg-[#F0F7FF] text-[#2583F7] border-[#DCE8F5]',
+    catItem: isDarkMode
+      ? 'text-[#94A3B8] hover:text-[#38BDF8] hover:bg-[#111A2B]'
+      : 'text-[#64748B] hover:text-[#2583F7] hover:bg-[#F1F5F9]',
+    catBorder: isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]',
+    chevron: isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]',
+    divider: isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]',
+    csCard: isDarkMode ? 'bg-[#111A2B] border-[#26364D]' : 'bg-[#F0F7FF] border-[#DCE8F5]',
+    csTitle: isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]',
+    csDesc: isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]',
+    footer: isDarkMode ? 'bg-[#080D18] border-[#26364D] text-[#94A3B8]' : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#64748B]',
+  };
+
   return (
     <div
       className="fixed inset-0 z-50 overflow-hidden"
@@ -93,10 +129,10 @@ export function MenuModal({
 
       {/* Drawer */}
       <div className="fixed inset-y-0 left-0 flex max-w-full pr-10 pointer-events-none">
-        <aside className="w-screen max-w-xs bg-[#0B1220] shadow-drawer flex flex-col pointer-events-auto border-r border-[#26364D] transform transition-all duration-300 ease-out animate-slideInLeft text-[#F8FAFC]">
-          
+        <aside className={`w-screen max-w-xs ${c.panel} shadow-drawer flex flex-col pointer-events-auto border-r transform transition-all duration-300 ease-out animate-slideInLeft`}>
+
           {/* Header with Logo Click */}
-          <div className="px-5 py-4 bg-[#0B1220] border-b border-[#26364D] flex items-center justify-between">
+          <div className={`px-5 py-4 ${c.header} border-b flex items-center justify-between`}>
             <button
               type="button"
               onClick={handleHomeClick}
@@ -114,7 +150,7 @@ export function MenuModal({
             <button
               onClick={onClose}
               aria-label="Tutup menu"
-              className="w-8 h-8 rounded-xl text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors focus:outline-none"
+              className={`w-8 h-8 rounded-xl ${c.closeBtn} border border-transparent flex items-center justify-center transition-colors focus:outline-none`}
             >
               <X className="w-5 h-5" />
             </button>
@@ -125,7 +161,7 @@ export function MenuModal({
             <button
               type="button"
               onClick={handleHomeClick}
-              className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[#F8FAFC] hover:text-[#38BDF8] hover:bg-[#111A2B] font-semibold text-sm transition-colors text-left"
+              className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl ${c.navPrimary} hover:text-[#38BDF8] font-semibold text-sm transition-colors text-left`}
             >
               <Home className="w-4 h-4 text-[#38BDF8]" />
               <span>Halaman Awal (Katalog)</span>
@@ -136,7 +172,7 @@ export function MenuModal({
               <button
                 type="button"
                 onClick={onToggleDarkMode}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[#F8FAFC] hover:bg-[#111A2B] font-semibold text-sm transition-colors"
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl ${c.navPrimary} font-semibold text-sm transition-colors`}
               >
                 <div className="flex items-center gap-3">
                   {isDarkMode ? (
@@ -146,7 +182,7 @@ export function MenuModal({
                   )}
                   <span>Mode Tampilan</span>
                 </div>
-                <span className="text-xs px-2.5 py-1 rounded-lg bg-[#080D18] text-[#38BDF8] border border-[#26364D] font-bold">
+                <span className={`text-xs px-2.5 py-1 rounded-lg ${c.modePill} border font-bold`}>
                   {isDarkMode ? '🌙 Mode Gelap' : '☀️ Mode Terang'}
                 </span>
               </button>
@@ -159,7 +195,7 @@ export function MenuModal({
                   onClose();
                   onOpenCheckTransaction();
                 }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] font-semibold text-sm transition-colors text-left"
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl ${c.navSecondary} font-semibold text-sm transition-colors text-left`}
               >
                 <ReceiptText className="w-4 h-4 text-[#38BDF8]" />
                 <span>Cek Transaksi</span>
@@ -173,7 +209,7 @@ export function MenuModal({
                   onClose();
                   onOpenTopSultan();
                 }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] font-semibold text-sm transition-colors text-left"
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl ${c.navSecondary} font-semibold text-sm transition-colors text-left`}
               >
                 <span className="text-base">👑</span>
                 <span>Top Sultan (Leaderboard)</span>
@@ -187,7 +223,7 @@ export function MenuModal({
                   onClose();
                   onOpenAdminLogin();
                 }}
-                className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] font-semibold text-sm transition-colors text-left"
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl ${c.navSecondary} font-semibold text-sm transition-colors text-left`}
               >
                 <ShieldCheck className="w-4 h-4 text-[#38BDF8]" />
                 <span>Login Administrator</span>
@@ -199,27 +235,27 @@ export function MenuModal({
               <button
                 type="button"
                 onClick={() => setIsKategoriExpanded(!isKategoriExpanded)}
-                className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[#F8FAFC] hover:bg-[#111A2B] font-bold text-sm transition-colors border border-transparent hover:border-[#26364D]"
+                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl ${c.navPrimary} font-bold text-sm transition-colors border border-transparent ${isDarkMode ? 'hover:border-[#26364D]' : 'hover:border-[#E2E8F0]'}`}
               >
                 <div className="flex items-center gap-3">
                   <Layers className="w-4 h-4 text-[#2583F7]" />
                   <span>Kategori Produk</span>
                 </div>
                 {isKategoriExpanded ? (
-                  <ChevronUp className="w-4 h-4 text-[#94A3B8]" />
+                  <ChevronUp className={`w-4 h-4 ${c.chevron}`} />
                 ) : (
-                  <ChevronDown className="w-4 h-4 text-[#94A3B8]" />
+                  <ChevronDown className={`w-4 h-4 ${c.chevron}`} />
                 )}
               </button>
 
               {isKategoriExpanded && (
-                <div className="mt-1 ml-4 pl-3 border-l-2 border-[#26364D] space-y-1 py-1">
+                <div className={`mt-1 ml-4 pl-3 border-l-2 ${c.catBorder} space-y-1 py-1`}>
                   {CATEGORIES.map(cat => (
                     <button
                       key={cat}
                       type="button"
                       onClick={() => handleCategoryClick(cat)}
-                      className="w-full text-left px-3 py-2 rounded-lg text-xs md:text-sm font-medium text-[#94A3B8] hover:text-[#38BDF8] hover:bg-[#111A2B] transition-colors flex items-center justify-between"
+                      className={`w-full text-left px-3 py-2 rounded-lg text-xs md:text-sm font-medium ${c.catItem} transition-colors flex items-center justify-between`}
                     >
                       <span>{cat}</span>
                       <Sparkles className="w-3 h-3 opacity-0 group-hover:opacity-100" />
@@ -230,30 +266,31 @@ export function MenuModal({
             </div>
 
             {/* Customer Support Info */}
-            <div className="pt-6 mt-4 border-t border-[#26364D]">
-              <div className="p-3.5 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#F8FAFC]">
+            <div className={`pt-6 mt-4 border-t ${c.divider}`}>
+              <div className={`p-3.5 rounded-2xl ${c.csCard} border space-y-2`}>
+                <div className={`flex items-center gap-2 text-xs font-bold ${c.csTitle}`}>
                   <ShieldCheck className="w-4 h-4 text-[#10B981]" />
                   <span>Jaminan Transaksi</span>
                 </div>
-                <p className="text-[11px] text-[#94A3B8] leading-relaxed">
+                <p className={`text-[11px] ${c.csDesc} leading-relaxed`}>
                   Layanan live support resmi Androidstore.web.id siap melayani 24/7.
                 </p>
                 <a
-                  href="https://wa.me/6285867336036"
+                  href="https://wa.me/6285867336036?text=Halo%20Admin%20Androidstore.web.id!%20Saya%20butuh%20bantuan%20terkait%20produk%20digital."
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#38BDF8] hover:underline pt-1"
+                  aria-label="Hubungi CS via WhatsApp"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-[#25D366] hover:bg-[#1DA851] text-white text-xs font-bold transition-colors"
                 >
-                  <MessageSquare className="w-3.5 h-3.5" />
-                  Hubungi CS (+62 858-6733-6036)
+                  <WhatsAppIcon className="w-4 h-4" />
+                  Hubungi CS
                 </a>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="border-t border-[#26364D] p-4 text-center text-xs text-[#94A3B8] bg-[#080D18]">
+          <div className={`border-t ${c.footer} p-4 text-center text-xs`}>
             © 2026 Androidstore.web.id — All Rights Reserved
           </div>
         </aside>
