@@ -7,6 +7,7 @@ export interface ProductVariant {
   cost_price?: number;
   stock: number;
   is_active?: number;
+  image?: string;
 }
 
 export interface ProductReview {

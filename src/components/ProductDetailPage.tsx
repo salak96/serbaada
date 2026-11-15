@@ -68,6 +68,8 @@ export function ProductDetailPage({
       || activeVariants.find(v => v.account_type === selAccountType)
       || activeVariants[0])
     : null;
+  // Gambar ikut varian terpilih bila varian punya gambar sendiri, kalau tidak pakai gambar utama produk.
+  const displayImage = (hasVariants && selectedVariant && selectedVariant.image) ? selectedVariant.image : product.image;
   const handleAccountType = (at: string) => {
     setSelAccountType(at);
     const next = activeVariants.find(v => v.account_type === at && v.name === selVariantName)
@@ -275,7 +277,7 @@ export function ProductDetailPage({
             {/* Main Image Container */}
             <div className="aspect-square w-full rounded-xl overflow-hidden bg-[#F8FAFC] dark:bg-[#080D18] border border-[#F1F5F9] dark:border-[#101827] flex items-center justify-center p-4">
               <img
-                src={product.image}
+                src={displayImage}
                 alt={product.name}
                 className="w-full h-full object-contain rounded-lg group-hover:scale-105 transition-transform duration-300 ease-out"
                 loading="eager"

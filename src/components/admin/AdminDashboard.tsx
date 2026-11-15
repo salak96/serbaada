@@ -268,6 +268,7 @@ interface ProductVariant {
   cost_price: number;
   stock: number;
   is_active: number;
+  image?: string;
 }
 
 interface ProductReview {
@@ -4482,6 +4483,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                           value={v.stock}
                           onChange={(e) => updateVariantField(idx, { stock: Number(e.target.value) })}
                           className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Gambar Varian (URL) — kosong = pakai gambar utama produk</label>
+                      <div className="flex items-center gap-2">
+                        {v.image ? (
+                          <img src={v.image} alt="" className="w-9 h-9 rounded-lg object-cover border border-[var(--border)] shrink-0" />
+                        ) : null}
+                        <input
+                          type="text"
+                          value={v.image || ''}
+                          placeholder="https://... (gambar ChatGPT Go / Plus)"
+                          onChange={(e) => updateVariantField(idx, { image: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)]"
                         />
                       </div>
                     </div>
