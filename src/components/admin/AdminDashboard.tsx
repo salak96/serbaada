@@ -546,6 +546,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
   const [targetOrderForAction, setTargetOrderForAction] = useState<OrderItem | null>(null);
   const [editOrderForm, setEditOrderForm] = useState<Partial<OrderItem>>({});
+  const [editOrderProofFile, setEditOrderProofFile] = useState<File | null>(null);
+  const [editOrderProofPreview, setEditOrderProofPreview] = useState<string | null>(null);
   const [newOrderForm, setNewOrderForm] = useState({
     customer_name: '',
     customer_phone: '',
@@ -632,6 +634,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     e.preventDefault();
     if (!targetOrderForAction) return;
     try {
+      // Upload bukti transfer manual dulu (bila admin memilih file).
+      // Endpoint admin hanya mengisi payment_proof_url, tidak mengubah status.
+      if (editOrderProofFile) {
+        const proofData = new FormData();
+        proofData.append('file', editOrderProofFile);
+        const proofRes = await fetch(`/api/admin/orders/${targetOrderForAction.id}/proof`, {
+          method: 'POST',
+          body: proofData
+        });
+        const proofJson = await proofRes.json();
+        if (!proofJson.success) {
+          showNotification('error', proofJson.message || 'Gagal mengunggah bukti transfer.');
+          return;
+        }
+      }
       const res = await fetch(`/api/admin/orders/${targetOrderForAction.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -643,6 +660,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
         setIsEditOrderModalOpen(false);
         setTargetOrderForAction(null);
         loadAllData();
+        setEditOrderProofFile(null);
+        setEditOrderProofPreview(null);
       } else {
         showNotification('error', json.message);
       }
@@ -3159,6 +3178,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                     order_status: o.order_status,
                                     customer_notes: o.customer_notes
                                   });
+                                  setEditOrderProofFile(null);
+                                  setEditOrderProofPreview(null);
                                   setIsEditOrderModalOpen(true);
                                 }}
                                 className="px-2.5 py-1 rounded-lg bg-[#1677FF]/20 hover:bg-[#1677FF] text-[#22C7FF] hover:text-white border border-[#1677FF]/40 text-[11px] font-bold transition-all"
@@ -4817,6 +4838,40 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     <option value="rejected">Rejected</option>
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[#94A3B8] mb-1 font-semibold">Bukti Transfer (Upload Manual)</label>
+                {targetOrderForAction.payment_proof_url ? (
+                  <div className="mb-2 flex items-center gap-2">
+                    <img src={targetOrderForAction.payment_proof_url} alt="Bukti Transfer" className="w-16 h-16 object-cover rounded-lg border border-[#26364D]" />
+                    <span className="text-[11px] text-[#10B981]">Bukti sudah ada — pilih file baru untuk mengganti.</span>
+                  </div>
+                ) : (
+                  <p className="mb-2 text-[11px] text-[#F59E0B]">Belum ada bukti transfer — upload manual di sini.</p>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const f = e.target.files && e.target.files[0];
+                    setEditOrderProofFile(f || null);
+                    if (f) {
+                      const reader = new FileReader();
+                      reader.onload = () => setEditOrderProofPreview(String(reader.result));
+                      reader.readAsDataURL(f);
+                    } else {
+                      setEditOrderProofPreview(null);
+                    }
+                  }}
+                  className="w-full text-xs text-[#94A3B8] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1677FF] file:text-white hover:file:bg-[#1D4ED8]"
+                />
+                {editOrderProofPreview && (
+                  <div className="mt-2">
+                    <img src={editOrderProofPreview} alt="Preview Bukti" className="w-full max-h-40 object-contain rounded-xl bg-[#080D18] border border-[#26364D]" />
+                    <p className="text-[11px] text-[#94A3B8] mt-1">File baru: {editOrderProofFile?.name} — akan diunggah saat Simpan Perubahan.</p>
+                  </div>
+                )}
               </div>
 
               <div>

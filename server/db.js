@@ -928,7 +928,7 @@ export async function saveOrder(orderData, options = {}) {
   return order;
 }
 
-export async function updateOrderStatus(id, updates) {
+export async function updateOrderStatus(id, updates, options = {}) {
   const store = loadLocalStore();
   const targetId = String(id);
   const idx = store.orders.findIndex(o => String(o.id) === targetId || o.invoice_number === targetId);
@@ -940,7 +940,7 @@ export async function updateOrderStatus(id, updates) {
     };
     saveLocalStore(store);
 
-    if (updates.payment_proof_url || updates.order_status === 'waiting_verification') {
+    if (options.notify !== false && (updates.payment_proof_url || updates.order_status === 'waiting_verification')) {
       sendTelegramNotification({
         ...store.orders[idx],
         product_name: `[UPLOAD BUKTI TRANSFER] ${store.orders[idx].product_name || 'Pesanan Baru'}`

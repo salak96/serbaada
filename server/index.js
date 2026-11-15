@@ -816,6 +816,40 @@ app.post('/api/orders/:orderId/payment-proof', memoryUpload.single('file'), asyn
   }
 });
 
+// Upload bukti transfer MANUAL oleh admin (dari modal Edit Pesanan).
+// Hanya mengisi payment_proof_url — tidak mengubah status pesanan dan tidak
+// mengirim notifikasi Telegram, supaya status yang admin atur di modal Edit
+// tetap tersimpan apa adanya.
+app.post('/api/admin/orders/:id/proof', memoryUpload.single('file'), async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: 'File bukti transfer wajib diunggah (maks 5MB)' });
+    }
+    const orders = await getOrders();
+    const order = orders.find(o => String(o.id) === orderId || o.invoice_number === orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan' });
+    }
+    const uploadResult = await uploadPaymentProof(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+      order.invoice_number || orderId
+    );
+    const updated = await updateOrderStatus(orderId, {
+      payment_proof_url: uploadResult.url || uploadResult.pathOrKey
+    }, { notify: false });
+    res.json({
+      success: true,
+      message: 'Bukti transfer berhasil diunggah (manual oleh admin).',
+      order: updated
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 app.get('/api/admin/orders/:id/proof-url', async (req, res) => {
   try {
     const orders = await getOrders();
