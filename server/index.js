@@ -598,12 +598,12 @@ app.get('/api/public/products', async (req, res) => {
 
 app.get('/api/leaderboard/top-sultan', async (_req, res) => {
   try {
-    const store = loadLocalStore();
-    const orders = Array.isArray(store.orders) ? store.orders : [];
+    const allOrders = await getOrders();
+    // Hanya transaksi sukses (lunas / delivered), konsisten dengan omzet & Produk Terlaris
+    const orders = (Array.isArray(allOrders) ? allOrders : []).filter(
+      o => o.payment_status === 'paid' || o.order_status === 'delivered'
+    );
     
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
 
     const customerMap = new Map();
 
@@ -638,7 +638,7 @@ app.get('/api/leaderboard/top-sultan', async (_req, res) => {
 
     res.json({
       success: true,
-      period: 'current_month',
+      period: 'all_time',
       data: leaderboard,
       leaderboard
     });
@@ -649,12 +649,12 @@ app.get('/api/leaderboard/top-sultan', async (_req, res) => {
 
 app.get('/api/leaderboard', async (req, res) => {
   try {
-    const store = loadLocalStore();
-    const orders = Array.isArray(store.orders) ? store.orders : [];
+    const allOrders = await getOrders();
+    // Hanya transaksi sukses (lunas / delivered), konsisten dengan omzet & Produk Terlaris
+    const orders = (Array.isArray(allOrders) ? allOrders : []).filter(
+      o => o.payment_status === 'paid' || o.order_status === 'delivered'
+    );
     
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
 
     const customerMap = new Map();
 
