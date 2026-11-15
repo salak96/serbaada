@@ -447,13 +447,16 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   const [markupType, setMarkupType] = useState<MarkupMode>('percent');
   const [markupVal, setMarkupVal] = useState<number>(25);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  // Tema light/dark (preferensi tersimpan). Default: dark (tampilan saat ini).
+  // Tema light/dark (preferensi tersimpan). Bila tema admin belum pernah
+  // diatur, ikuti tema toko (light = default toko) supaya tidak bentrok.
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try {
       const saved = localStorage.getItem('serbadigital_admin_theme');
-      return saved === 'light' ? 'light' : 'dark';
+      if (saved === 'light' || saved === 'dark') return saved;
+      const storeTheme = localStorage.getItem('androidstore_theme') || localStorage.getItem('klikLanggananTheme');
+      return storeTheme === 'dark' ? 'dark' : 'light';
     } catch {
-      return 'dark';
+      return 'light';
     }
   });
   useEffect(() => {

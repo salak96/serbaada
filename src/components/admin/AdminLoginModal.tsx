@@ -26,13 +26,24 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
   const [isLoading, setIsLoading] = useState(false);
   // Tema light/dark mengikuti preferensi tersimpan (sama seperti dashboard).
   // Modal ini dirender di luar AdminDashboard, jadi baca langsung dari storage.
-  const [theme] = useState<'dark' | 'light'>(() => {
+  // Dibaca ulang setiap kali modal dibuka (bukan sekali saat mount) supaya
+  // tidak ketinggalan bila tema admin diubah selama sesi berjalan.
+  const [theme, setTheme] = useState<'dark' | 'light'>('light');
+  useEffect(() => {
+    if (!isOpen) return;
     try {
-      return localStorage.getItem('serbadigital_admin_theme') === 'light' ? 'light' : 'dark';
+      const adminTheme = localStorage.getItem('serbadigital_admin_theme');
+      if (adminTheme === 'light' || adminTheme === 'dark') {
+        setTheme(adminTheme);
+        return;
+      }
+      // Tema admin belum pernah diatur: ikuti tema toko (light = default toko).
+      const storeTheme = localStorage.getItem('androidstore_theme') || localStorage.getItem('klikLanggananTheme');
+      setTheme(storeTheme === 'dark' ? 'dark' : 'light');
     } catch {
-      return 'dark';
+      setTheme('light');
     }
-  });
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;
