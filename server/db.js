@@ -470,6 +470,46 @@ export async function saveSupplierProduct(data) {
   let id = Number(data.id);
   const now = new Date().toISOString();
 
+  // Seller manual (tanpa API): bila frontend mengirim seller_name tanpa seller_id
+  // yang valid, cari seller manual dengan nama itu, atau buat baru (auth_type manual).
+  // Produk tetap punya seller_id nyata sehingga filter, impor katalog, dan
+  // tampilan nama seller tetap jalan; sinkronisasi melewati seller manual.
+  let sellerId = Number(data.seller_id);
+  const manualName = String(data.seller_name || '').trim();
+  if (manualName && (!sellerId || !store.sellers.some(s => s.id === sellerId))) {
+    const slug = manualName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    let manual = store.sellers.find(s => s.auth_type === 'manual' && s.name.toLowerCase() === manualName.toLowerCase());
+    if (!manual) {
+      const newSellerId = store.sellers.length ? Math.max(...store.sellers.map(s => s.id)) + 1 : 1;
+      manual = {
+        id: newSellerId,
+        name: manualName,
+        slug,
+        base_url: '',
+        auth_type: 'manual',
+        auth_header_key: '',
+        encrypted_api_key: '',
+        encrypted_api_secret: '',
+        endpoint_products: '',
+        endpoint_product_detail: '',
+        endpoint_stock: '',
+        endpoint_order: '',
+        endpoint_check_order: '',
+        request_format: 'json',
+        is_active: 1,
+        sync_interval_minutes: 0,
+        last_synced_at: null,
+        last_status: 'manual',
+        last_error_message: null,
+        created_at: now,
+        updated_at: now
+      };
+      store.sellers.push(manual);
+    }
+    sellerId = manual.id;
+  }
+  if (!sellerId) sellerId = 1;
+
   if (id) {
     const idx = store.supplier_products.findIndex(p => p.id === id);
     if (idx !== -1) {
@@ -479,6 +519,7 @@ export async function saveSupplierProduct(data) {
         name: cleanProductName(data.name || store.supplier_products[idx].name),
         description: cleanProductName(data.description ?? store.supplier_products[idx].description),
         id,
+        seller_id: sellerId,
         cost_price: Number(data.cost_price || 0),
         stock: Number(data.stock || 0),
         is_available: Number(data.stock || 0) > 0 ? 1 : 0,
@@ -489,8 +530,8 @@ export async function saveSupplierProduct(data) {
     id = store.supplier_products.length ? Math.max(...store.supplier_products.map(p => p.id || 0)) + 1 : 1;
     const newProd = {
       id,
-      seller_id: Number(data.seller_id || 1),
-      external_product_id: data.external_product_id || `manual_${Date.now()}`,
+      seller_id: sellerId,
+      external_product_id: data.external_product_id || `manual_${Date.now()}` ,
       name: cleanProductName(data.name || ''),
       original_category: data.original_category || 'Voucher & Digital',
       cost_price: Number(data.cost_price || 0),
@@ -508,7 +549,6 @@ export async function saveSupplierProduct(data) {
   saveLocalStore(store);
   return store.supplier_products.find(p => p.id === id);
 }
-
 export async function deleteSupplierProduct(id) {
   const store = loadLocalStore();
   const idx = store.supplier_products.findIndex(p => p.id === Number(id));

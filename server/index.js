@@ -243,6 +243,9 @@ app.post('/api/admin/sellers/:id/test', async (req, res) => {
   try {
     const seller = await getSellerById(sellerId, true);
     if (!seller) return res.status(404).json({ success: false, message: 'Seller tidak ditemukan' });
+    if (seller.auth_type === 'manual') {
+      return res.json({ success: false, message: 'Seller manual tidak punya API — tidak bisa test koneksi.' });
+    }
 
     const adapter = createSellerAdapter(seller);
     const testResult = await adapter.testConnection();
@@ -273,6 +276,9 @@ app.post('/api/admin/sellers/:id/sync', async (req, res) => {
   try {
     const seller = await getSellerById(sellerId, true);
     if (!seller) return res.status(404).json({ success: false, message: 'Seller tidak ditemukan' });
+    if (seller.auth_type === 'manual') {
+      return res.json({ success: true, message: 'Seller manual tidak punya API — tidak perlu sinkronisasi.', data: { inserted: 0, updated: 0, total: 0 } });
+    }
 
     const adapter = createSellerAdapter(seller);
     const rawProducts = await adapter.fetchProducts();
@@ -319,8 +325,12 @@ app.post('/api/admin/sellers/:id/sync', async (req, res) => {
 app.post('/api/admin/sync-all', async (_req, res) => {
   try {
     const sellers = await getSellers();
-    const active = sellers.filter(s => s.is_active);
+    const active = sellers.filter(s => s.is_active && s.auth_type !== 'manual');
     const results = [];
+    // Seller manual (tanpa API) tidak disinkronisasi — produknya ditambah manual.
+    sellers.filter(s => s.is_active && s.auth_type === 'manual').forEach(s => {
+      results.push({ seller: s.name, success: true, skipped: true, count: 0 });
+    });
 
     for (const seller of active) {
       const full = await getSellerById(seller.id, true);

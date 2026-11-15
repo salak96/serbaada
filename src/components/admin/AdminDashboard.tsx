@@ -546,6 +546,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   // Supplier Product CRUD & Order CRUD States
   const [isSupplierProductModalOpen, setIsSupplierProductModalOpen] = useState(false);
   const [editingSupplierProduct, setEditingSupplierProduct] = useState<Partial<SupplierProductItem>>({});
+  const [isManualSeller, setIsManualSeller] = useState(false);
+  const [manualSellerName, setManualSellerName] = useState('');
   const [isCreateOrderModalOpen, setIsCreateOrderModalOpen] = useState(false);
   const [isEditOrderModalOpen, setIsEditOrderModalOpen] = useState(false);
   const [isDeleteOrderModalOpen, setIsDeleteOrderModalOpen] = useState(false);
@@ -578,6 +580,15 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
   const handleSaveSupplierProduct = async (e: React.FormEvent) => {
     e.preventDefault();
+    // Seller manual (tanpa API): nama seller ditulis sendiri; backend akan
+    // membuat/mencari seller manual (auth_type 'manual') dari nama ini.
+    if (isManualSeller && !manualSellerName.trim()) {
+      showNotification('error', 'Isi nama seller manual dulu.');
+      return;
+    }
+    const payload = isManualSeller
+      ? { ...editingSupplierProduct, seller_id: 0, seller_name: manualSellerName.trim() }
+      : editingSupplierProduct;
     try {
       const method = editingSupplierProduct.id ? 'PUT' : 'POST';
       const endpoint = editingSupplierProduct.id
@@ -586,13 +597,15 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       const res = await fetch(endpoint, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingSupplierProduct)
+        body: JSON.stringify(payload)
       });
       const json = await res.json();
       if (json.success) {
         showNotification('success', 'Produk supplier berhasil disimpan!');
         setIsSupplierProductModalOpen(false);
         setEditingSupplierProduct({});
+        setIsManualSeller(false);
+        setManualSellerName('');
         loadAllData();
       } else {
         showNotification('error', json.message);
@@ -2205,6 +2218,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                           stock: 25,
                           description: '',
                         });
+                        setIsManualSeller(false);
+                        setManualSellerName('');
                         setIsSupplierProductModalOpen(true);
                       }}
                       className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors"
@@ -2511,6 +2526,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         stock: 25,
                         description: ''
                       });
+                      setIsManualSeller(false);
+                      setManualSellerName('');
                       setIsSupplierProductModalOpen(true);
                     }}
                     className="px-4 py-2.5 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-md flex items-center gap-2 transition-all"
@@ -2746,6 +2763,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                   type="button"
                                   onClick={() => {
                                     setEditingSupplierProduct(item);
+                                    setIsManualSeller(false);
+                                    setManualSellerName('');
                                     setIsSupplierProductModalOpen(true);
                                   }}
                                   className="px-2.5 py-1.5 rounded-xl bg-[var(--bg-card)] hover:bg-[#2583F7] text-[var(--accent-soft)] hover:text-white border border-[var(--border)] text-xs font-bold transition-all"
@@ -2818,23 +2837,23 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     <div className="flex items-start justify-between">
                       <div>
                         <h4 className="font-bold text-sm text-[var(--text)]">{s.name}</h4>
-                        <span className="font-mono text-xs text-[var(--accent-soft)] break-all">{s.base_url}</span>
+                        <span className="font-mono text-xs text-[var(--accent-soft)] break-all">{s.base_url || 'Tanpa API — produk manual'}</span>
                       </div>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
-                        s.last_status === 'connected' ? 'bg-[var(--success-bg)] text-[var(--success)] border-[#10B981]/40' : 'bg-[var(--danger-bg)] text-[var(--danger)] border-[var(--danger-border)]'
+                        s.auth_type === 'manual' ? 'bg-[var(--bg-nested)] text-[var(--text-muted)] border-[var(--border)]' : s.last_status === 'connected' ? 'bg-[var(--success-bg)] text-[var(--success)] border-[#10B981]/40' : 'bg-[var(--danger-bg)] text-[var(--danger)] border-[var(--danger-border)]'
                       }`}>
-                        {s.last_status === 'connected' ? 'Connected' : 'Error'}
+                        {s.auth_type === 'manual' ? 'Manual' : s.last_status === 'connected' ? 'Connected' : 'Error'}
                       </span>
                     </div>
 
                     <div className="p-3 bg-[var(--bg-nested)] rounded-xl border border-[var(--border)] text-xs space-y-1 font-mono">
                       <div className="flex justify-between text-[var(--text-muted)]">
                         <span>Auth Type:</span>
-                        <span className="text-[var(--text)]">{s.auth_type} ({s.auth_header_key})</span>
+                        <span className="text-[var(--text)]">{s.auth_type === 'manual' ? 'manual (tanpa API)' : s.auth_type + ' (' + s.auth_header_key + ')'}</span>
                       </div>
                       <div className="flex justify-between text-[var(--text-muted)]">
                         <span>API Key:</span>
-                        <span className="text-[var(--accent-soft)]">{s.masked_key}</span>
+                        <span className="text-[var(--accent-soft)]">{s.auth_type === 'manual' ? '—' : s.masked_key}</span>
                       </div>
                       <div className="flex justify-between text-[var(--text-muted)]">
                         <span>Sync Terakhir:</span>
@@ -2851,6 +2870,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     </div>
 
                     <div className="flex items-center justify-between pt-2">
+                      {s.auth_type !== 'manual' && (
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
@@ -2866,7 +2886,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         >
                           Sync Sekarang
                         </button>
-                      </div>
+                      </div>)}
+                      {s.auth_type === 'manual' && (
+                        <span className="text-[11px] text-[var(--text-muted)]">Produk ditambah manual — tanpa sinkronisasi API.</span>
+                      )}
 
                       <div className="flex items-center gap-1">
                         <button
@@ -4799,12 +4822,33 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               <div>
                 <label className="block text-[var(--text-muted)] mb-1 font-semibold">Pilih Supplier / Seller</label>
                 <select
-                  value={editingSupplierProduct.seller_id || sellers[0]?.id || 1}
-                  onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, seller_id: Number(e.target.value) })}
+                  value={isManualSeller ? 'manual' : String(editingSupplierProduct.seller_id || sellers[0]?.id || 1)}
+                  onChange={(e) => {
+                    if (e.target.value === 'manual') {
+                      setIsManualSeller(true);
+                    } else {
+                      setIsManualSeller(false);
+                      setEditingSupplierProduct({ ...editingSupplierProduct, seller_id: Number(e.target.value) });
+                    }
+                  }}
                   className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 >
-                  {sellers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
+                  {sellers.map(s => <option key={s.id} value={String(s.id)}>{s.name}{s.auth_type === 'manual' ? ' (Manual)' : ''}</option>)}
+                  <option value="manual">Seller Manual (tanpa API) — tulis nama sendiri</option>
                 </select>
+                {isManualSeller && (
+                  <input
+                    type="text"
+                    required
+                    value={manualSellerName}
+                    onChange={(e) => setManualSellerName(e.target.value)}
+                    placeholder="Contoh: Toko Saya / Supplier Lokal"
+                    className="w-full px-3 py-2 mt-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
+                  />
+                )}
+                {isManualSeller && (
+                  <p className="text-[11px] text-[var(--text-muted)] mt-1">Seller ini tidak punya API — produk hanya tersimpan manual dan tidak disinkronisasi.</p>
+                )}
               </div>
 
               <div>
