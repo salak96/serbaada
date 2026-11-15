@@ -51,7 +51,9 @@ export function ProductDetailPage({
   const [selDuration, setSelDuration] = useState<string>(activeVariants[0]?.duration || 'Semua');
   const accountTypes = [...new Set(activeVariants.map(v => v.account_type))];
   const variantNames = [...new Set(activeVariants.filter(v => v.account_type === selAccountType).map(v => v.name))];
-  const durations = [...new Set(activeVariants.filter(v => v.account_type === selAccountType && v.name === selVariantName).map(v => v.duration))];
+  // Durasi = semua durasi untuk tipe akun terpilih (tidak disaring nama varian),
+  // supaya durasi tampil sebagai sumbu pilihan sendiri (Plus=1 bulan, Go=3 bulan).
+  const durations = [...new Set(activeVariants.filter(v => v.account_type === selAccountType).map(v => v.duration))];
   // Sumbu varian yang benar-benar bisa dipilih (2+ opsi). Bila hanya satu sumbu, labelnya "Pilih Variasi".
   const variantGroupCount = (accountTypes.length > 1 ? 1 : 0) + (variantNames.length > 1 ? 1 : 0) + (durations.length > 1 ? 1 : 0);
   const singleVariantGroup = variantGroupCount === 1;
@@ -77,6 +79,15 @@ export function ProductDetailPage({
     const next = activeVariants.find(v => v.account_type === selAccountType && v.name === name)
       || activeVariants.find(v => v.name === name);
     if (next) setSelDuration(next.duration);
+  };
+  const handleDuration = (d: string) => {
+    setSelDuration(d);
+    // Bila varian terpilih tidak punya durasi ini, pindah ke varian yang punya.
+    const hasIt = activeVariants.some(v => v.account_type === selAccountType && v.name === selVariantName && v.duration === d);
+    if (!hasIt) {
+      const next = activeVariants.find(v => v.account_type === selAccountType && v.duration === d);
+      if (next) setSelVariantName(next.name);
+    }
   };
   const displayName = hasVariants && selectedVariant
     ? `${product.name} ${selectedVariant.name} ${selectedVariant.account_type === 'private' ? 'Private' : 'Shared'}`
@@ -467,15 +478,16 @@ export function ProductDetailPage({
                   <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">{singleVariantGroup ? 'Pilih Variasi' : 'Pilih durasi'}</span>
                   <div className="flex flex-wrap gap-2">
                     {durations.map(d => {
-                      const dv = activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName && v.duration === d);
+                      const dv = activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName && v.duration === d)
+                        || activeVariants.find(v => v.account_type === selAccountType && v.duration === d);
                       const dPrice = dv
                         ? Number(dv.selling_price || 0)
-                        : Math.min(...activeVariants.filter(v => v.account_type === selAccountType && v.name === selVariantName).map(v => Number(v.selling_price || 0)));
+                        : Math.min(...activeVariants.filter(v => v.account_type === selAccountType).map(v => Number(v.selling_price || 0)));
                       return (
                         <button
                           key={d}
                           type="button"
-                          onClick={() => setSelDuration(d)}
+                          onClick={() => handleDuration(d)}
                           className={`px-3.5 py-2 rounded-xl text-xs transition-all border text-left ${
                             selDuration === d
                               ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
