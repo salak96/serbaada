@@ -3072,9 +3072,9 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     value={orderSearchQuery}
                     onChange={(e) => { setOrderSearchQuery(e.target.value); setOrdersCurrentPage(1); }}
                     placeholder="Cari nama customer, invoice, atau kontak..."
-                    className="w-full pl-9 pr-3 py-2 bg-[#111A2B] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                    className="w-full pl-9 pr-3 py-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#2583F7]"
                   />
-                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-2.5" />
                 </div>
                 <button
                   type="button"
@@ -3086,10 +3086,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </button>
               </div>
 
-              <div className="bg-[#111A2B] border border-[#26364D] rounded-2xl overflow-hidden shadow-card">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-card">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-[#0B1220] border-b border-[#26364D] text-[#94A3B8] font-bold uppercase text-[10px]">
+                    <thead className="bg-[var(--bg-panel)] border-b border-[var(--border)] text-[var(--text-muted)] font-bold uppercase text-[10px]">
                       <tr>
                         <th className="p-3.5 w-12">No</th>
                         <th className="p-3.5">Invoice</th>
@@ -3102,24 +3102,24 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         <th className="p-3.5 text-right">Aksi</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#26364D]/60">
+                    <tbody className="divide-y divide-[var(--border)]">
                       {orders.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="p-8 text-center text-[#94A3B8]">Belum ada transaksi pesanan yang masuk.</td>
+                          <td colSpan={9} className="p-8 text-center text-[var(--text-muted)]">Belum ada transaksi pesanan yang masuk.</td>
                         </tr>
                       ) : (
                         paginatedOrders.map((o, index) => (
-                          <tr key={o.id} className="hover:bg-[#1A263D]/40">
-                            <td className="p-3.5 font-mono text-[#94A3B8]">{(ordersCurrentPage - 1) * ordersPageSize + index + 1}</td>
-                           <td className="p-3.5 font-mono font-bold text-[#38BDF8]">{o.invoice_number}</td>
-                            <td className="p-3.5 font-bold text-[#F8FAFC]">{o.customer_name}</td>
-                            <td className="p-3.5 text-[#94A3B8]">{o.customer_phone}</td>
-                            <td className="p-3.5 font-mono font-bold text-[#10B981]">{formatPrice(o.total_amount)}</td>
+                          <tr key={o.id} className="hover:bg-[var(--bg-hover)]">
+                            <td className="p-3.5 font-mono text-[var(--text-muted)]">{(ordersCurrentPage - 1) * ordersPageSize + index + 1}</td>
+                           <td className="p-3.5 font-mono font-bold text-[var(--accent-soft)]">{o.invoice_number}</td>
+                            <td className="p-3.5 font-bold text-[var(--text)]">{o.customer_name}</td>
+                            <td className="p-3.5 text-[var(--text-muted)]">{o.customer_phone}</td>
+                            <td className="p-3.5 font-mono font-bold text-[var(--success)]">{formatPrice(o.total_amount)}</td>
                              <td className="p-3.5">
                                <button
                                  type="button"
                                  onClick={() => setSelectedOrderDetail(o)}
-                                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1677FF]/15 hover:bg-[#1677FF] text-[#22C7FF] hover:text-white border border-[#1677FF]/40 text-[11px] font-bold transition-all"
+                                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--info-bg)] hover:bg-[#1677FF] text-[var(--accent-soft)] hover:text-white border border-[#1677FF]/40 text-[11px] font-bold transition-all"
                                >
                                  <Eye className="w-3.5 h-3.5" />
                                  <span>Lihat Detail</span>
@@ -3127,34 +3127,38 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                              </td>
                             <td className="p-3.5">
                               <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                o.order_status === 'delivered' ? 'bg-[#10B981]/20 text-[#10B981]' :
-                                o.order_status === 'waiting_verification' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' :
-                                'bg-[#2583F7]/20 text-[#38BDF8]'
+                                o.order_status === 'delivered' ? 'bg-[var(--success-bg)] text-[var(--success)]' :
+                                o.order_status === 'waiting_verification' ? 'bg-[var(--warn-bg)] text-[var(--warn)] border border-[var(--warn)]' :
+                                'bg-[var(--info-bg)] text-[var(--accent-soft)]'
                               }`}>
                                 {o.order_status === 'waiting_verification' ? 'Menunggu Verifikasi' : o.order_status}
                               </span>
                             </td>
                             <td className="p-3.5">
-                              {o.payment_proof_url ? (
+                              {o.payment_status === 'paid' || o.payment_status === 'verified' ? (
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[var(--success-bg)] text-[var(--success)] text-[11px] font-bold whitespace-nowrap">
+                                  ✓ Terverifikasi
+                                </span>
+                              ) : o.payment_proof_url ? (
                                 <div className="flex items-center gap-2">
                                   <img
                                     src={o.payment_proof_url}
                                     alt="Thumbnail"
                                     onClick={() => setSelectedOrderProof(o)}
-                                    className="w-10 h-10 rounded-lg object-cover border border-[#26364D] cursor-pointer hover:scale-105 transition-transform flex-shrink-0 shadow-xs"
+                                    className="w-10 h-10 rounded-lg object-cover border border-[var(--border)] cursor-pointer hover:scale-105 transition-transform flex-shrink-0 shadow-xs"
                                     title="Klik untuk perbesar bukti"
                                   />
                                   <button
                                     type="button"
                                     onClick={() => setSelectedOrderProof(o)}
-                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2583F7]/20 hover:bg-[#2583F7] text-[#38BDF8] hover:text-white border border-[#2583F7]/40 text-[11px] font-bold transition-all"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[var(--info-bg)] hover:bg-[#2583F7] text-[var(--accent-soft)] hover:text-white border border-[#2583F7]/40 text-[11px] font-bold transition-all"
                                   >
                                     <Eye className="w-3.5 h-3.5" />
                                     <span>Lihat Bukti</span>
                                   </button>
                                 </div>
                               ) : (
-                                <span className="text-[11px] text-[#94A3B8] italic">Belum Ada Bukti</span>
+                                <span className="text-[11px] text-[var(--text-muted)] italic">Belum Ada Bukti</span>
                               )}
                             </td>
                             <td className="p-3.5 text-right space-x-1.5 whitespace-nowrap">
@@ -3182,7 +3186,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                   setEditOrderProofPreview(null);
                                   setIsEditOrderModalOpen(true);
                                 }}
-                                className="px-2.5 py-1 rounded-lg bg-[#1677FF]/20 hover:bg-[#1677FF] text-[#22C7FF] hover:text-white border border-[#1677FF]/40 text-[11px] font-bold transition-all"
+                                className="px-2.5 py-1 rounded-lg bg-[var(--info-bg)] hover:bg-[#1677FF] text-[var(--accent-soft)] hover:text-white border border-[#1677FF]/40 text-[11px] font-bold transition-all"
                                 title="Edit Pesanan"
                               >
                                 Edit
@@ -3193,7 +3197,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                   setTargetOrderForAction(o);
                                   setIsDeleteOrderModalOpen(true);
                                 }}
-                                className="px-2.5 py-1 rounded-lg bg-red-950/40 hover:bg-red-600 text-red-400 hover:text-white border border-red-800/60 text-[11px] font-bold transition-all"
+                                className="px-2.5 py-1 rounded-lg bg-[var(--danger-bg)] hover:bg-red-600 text-[var(--danger)] hover:text-white border border-[var(--danger-border)] text-[11px] font-bold transition-all"
                                 title="Hapus Pesanan"
                               >
                                 Hapus
@@ -4204,46 +4208,46 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {selectedOrderProof && (
         <div className="fixed inset-0 z-[90] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
-          <div className="w-full max-w-xl bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal overflow-hidden text-xs text-[#F8FAFC]">
-            <div className="px-5 py-4 bg-[#0B1220] border-b border-[#26364D] flex items-center justify-between">
+          <div className="w-full max-w-xl bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal overflow-hidden text-xs text-[var(--text)]">
+            <div className="px-5 py-4 bg-[var(--bg-panel)] border-b border-[var(--border)] flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-sm text-[#38BDF8]">Verifikasi Bukti Transfer</h3>
-                <span className="text-[10px] text-[#94A3B8]">Invoice: #{selectedOrderProof.invoice_number}</span>
+                <h3 className="font-bold text-sm text-[var(--accent-soft)]">Verifikasi Bukti Transfer</h3>
+                <span className="text-[10px] text-[var(--text-muted)]">Invoice: #{selectedOrderProof.invoice_number}</span>
               </div>
               <button type="button" onClick={() => setSelectedOrderProof(null)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
-              <div className="grid grid-cols-2 gap-3 p-3 bg-[#080D18] border border-[#26364D] rounded-xl">
+              <div className="grid grid-cols-2 gap-3 p-3 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl">
                 <div>
-                  <span className="text-[#94A3B8] block text-[10px]">Pelanggan:</span>
-                  <span className="font-bold text-[#F8FAFC]">{selectedOrderProof.customer_name}</span>
+                  <span className="text-[var(--text-muted)] block text-[10px]">Pelanggan:</span>
+                  <span className="font-bold text-[var(--text)]">{selectedOrderProof.customer_name}</span>
                 </div>
                 <div>
-                  <span className="text-[#94A3B8] block text-[10px]">WhatsApp:</span>
-                  <span className="font-bold text-[#38BDF8]">{selectedOrderProof.customer_phone}</span>
+                  <span className="text-[var(--text-muted)] block text-[10px]">WhatsApp:</span>
+                  <span className="font-bold text-[var(--accent-soft)]">{selectedOrderProof.customer_phone}</span>
                 </div>
                 <div>
-                  <span className="text-[#94A3B8] block text-[10px]">Total Tagihan:</span>
-                  <span className="font-bold text-[#10B981]">{formatPrice(selectedOrderProof.total_amount)}</span>
+                  <span className="text-[var(--text-muted)] block text-[10px]">Total Tagihan:</span>
+                  <span className="font-bold text-[var(--success)]">{formatPrice(selectedOrderProof.total_amount)}</span>
                 </div>
                 <div>
-                  <span className="text-[#94A3B8] block text-[10px]">Waktu Pesan:</span>
-                  <span className="text-[#F8FAFC]">{new Date(selectedOrderProof.created_at).toLocaleString('id-ID')}</span>
+                  <span className="text-[var(--text-muted)] block text-[10px]">Waktu Pesan:</span>
+                  <span className="text-[var(--text)]">{new Date(selectedOrderProof.created_at).toLocaleString('id-ID')}</span>
                 </div>
               </div>
 
               {selectedOrderProof.customer_notes && (
-                <div className="p-2.5 bg-[#111A2B] rounded-xl border border-[#26364D] text-[#94A3B8]">
-                  <strong className="text-[#F8FAFC]">Catatan:</strong> {selectedOrderProof.customer_notes}
+                <div className="p-2.5 bg-[var(--bg-card)] rounded-xl border border-[var(--border)] text-[var(--text-muted)]">
+                  <strong className="text-[var(--text)]">Catatan:</strong> {selectedOrderProof.customer_notes}
                 </div>
               )}
 
               {/* High-res Image Preview */}
               <div
-                className="relative aspect-video w-full bg-[#080D18] border border-[#26364D] rounded-xl overflow-hidden flex items-center justify-center p-2 cursor-zoom-in group"
+                className="relative aspect-video w-full bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl overflow-hidden flex items-center justify-center p-2 cursor-zoom-in group"
                 onClick={() => setIsProofLightboxOpen(true)}
               >
                 <img
@@ -4256,22 +4260,26 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </span>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-[#26364D] flex-wrap gap-2">
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--border)] flex-wrap gap-2">
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
                     onClick={async () => {
                       try {
-                        await fetch(`/api/admin/orders/${selectedOrderProof.id}`, {
+                        const res = await fetch(`/api/admin/orders/${selectedOrderProof.id}`, {
                           method: 'PUT',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ payment_status: 'paid', order_status: 'processing' })
                         });
+                        const data = await res.json().catch(() => null);
+                        if (!res.ok || !data?.success || !data?.data) {
+                          throw new Error(data?.message || 'Server menolak permintaan.');
+                        }
                         showNotification('success', `Pembayaran untuk #${selectedOrderProof.invoice_number} disetujui!`);
                         setSelectedOrderProof(null);
                         loadAllData();
-                      } catch {
-                        showNotification('error', 'Gagal menyetujui pembayaran.');
+                      } catch (e) {
+                        showNotification('error', `Gagal menyetujui pembayaran: ${(e as Error).message}`);
                       }
                     }}
                     className="px-4 py-2 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-bold text-xs"
@@ -4283,19 +4291,23 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     type="button"
                     onClick={async () => {
                       try {
-                        await fetch(`/api/admin/orders/${selectedOrderProof.id}`, {
+                        const res = await fetch(`/api/admin/orders/${selectedOrderProof.id}`, {
                           method: 'PUT',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({ payment_status: 'rejected', order_status: 'rejected' })
                         });
+                        const data = await res.json().catch(() => null);
+                        if (!res.ok || !data?.success || !data?.data) {
+                          throw new Error(data?.message || 'Server menolak permintaan.');
+                        }
                         showNotification('error', `Pembayaran untuk #${selectedOrderProof.invoice_number} ditolak.`);
                         setSelectedOrderProof(null);
                         loadAllData();
-                      } catch {
-                        showNotification('error', 'Gagal menolak pembayaran.');
+                      } catch (e) {
+                        showNotification('error', `Gagal menolak pembayaran: ${(e as Error).message}`);
                       }
                     }}
-                    className="px-4 py-2 rounded-xl bg-red-900/50 hover:bg-red-800 text-red-300 font-bold border border-red-700 text-xs"
+                    className="px-4 py-2 rounded-xl bg-[var(--danger-bg)] hover:opacity-80 text-[var(--danger)] font-bold border border-[var(--danger-border)] text-xs"
                   >
                     ✕ Tolak Pembayaran
                   </button>
@@ -4315,7 +4327,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   <button
                     type="button"
                     onClick={() => setSelectedOrderProof(null)}
-                    className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8] text-xs font-bold"
+                    className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)] text-xs font-bold"
                   >
                     Tutup
                   </button>

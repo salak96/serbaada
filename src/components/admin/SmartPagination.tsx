@@ -53,11 +53,11 @@ export function SmartPagination({
   };
 
   return (
-    <div className="w-full px-4 sm:px-5 py-4 bg-[#13243C] border-t border-[#243650] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#94A3B8]">
+    <div className="w-full px-4 sm:px-5 py-4 bg-[var(--bg-panel)] border-t border-[var(--border)] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[var(--text-muted)]">
       <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3">
         <span>
-          Menampilkan <strong className="text-[#F8FAFC]">{startItem}–{endItem}</strong> dari{' '}
-          <strong className="text-[#F8FAFC]">{totalItems}</strong> data
+          Menampilkan <strong className="text-[var(--text)]">{startItem}–{endItem}</strong> dari{' '}
+          <strong className="text-[var(--text)]">{totalItems}</strong> data
         </span>
         <label className="flex items-center gap-1.5 whitespace-nowrap">
           Per halaman:
@@ -65,7 +65,7 @@ export function SmartPagination({
             value={pageSize}
             onChange={(event) => handlePageSizeChange(Number(event.target.value))}
             disabled={loading}
-            className="bg-[#080F1F] border border-[#243650] rounded-lg px-2 py-1 text-[#F8FAFC] text-xs focus:outline-none focus:border-[#1677FF]"
+            className="bg-[var(--bg-nested)] border border-[var(--border)] rounded-lg px-2 py-1 text-[var(--text)] text-xs focus:outline-none focus:border-[#1677FF]"
           >
             {pageSizeOptions.map((size) => (
               <option key={size} value={size}>{size}</option>
@@ -79,7 +79,7 @@ export function SmartPagination({
           type="button"
           disabled={loading || !hasItems || safePage === 1}
           onClick={() => onPageChange(safePage - 1)}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#080F1F] hover:bg-[#1A263D] disabled:opacity-30 border border-[#243650] text-[#F8FAFC] font-bold transition-colors"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] disabled:opacity-30 border border-[var(--border)] text-[var(--text)] font-bold transition-colors"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">Sebelumnya</span>
@@ -87,7 +87,7 @@ export function SmartPagination({
 
         <div className="hidden sm:flex items-center gap-1">
           {pageItems.map((item, index) => item === 'ellipsis' ? (
-            <span key={`ellipsis-${index}`} className="px-1.5 text-[#94A3B8]">…</span>
+            <span key={`ellipsis-${index}`} className="px-1.5 text-[var(--text-muted)]">…</span>
           ) : (
             <button
               key={item}
@@ -97,7 +97,7 @@ export function SmartPagination({
               className={`w-7 h-7 rounded-lg font-bold flex items-center justify-center transition-colors ${
                 safePage === item
                   ? 'bg-[#1677FF] text-white shadow-sm'
-                  : 'bg-[#080F1F] text-[#94A3B8] hover:text-white border border-[#243650]'
+                  : 'bg-[var(--bg-nested)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]'
               }`}
             >
               {item}
@@ -105,13 +105,13 @@ export function SmartPagination({
           ))}
         </div>
 
-        <span className="sm:hidden px-2 font-bold text-[#F8FAFC]">{safePage} / {totalPages}</span>
+        <span className="sm:hidden px-2 font-bold text-[var(--text)]">{safePage} / {totalPages}</span>
 
         <button
           type="button"
           disabled={loading || !hasItems || safePage === totalPages}
           onClick={() => onPageChange(safePage + 1)}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#080F1F] hover:bg-[#1A263D] disabled:opacity-30 border border-[#243650] text-[#F8FAFC] font-bold transition-colors"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] disabled:opacity-30 border border-[var(--border)] text-[var(--text)] font-bold transition-colors"
         >
           <span className="hidden sm:inline">Berikutnya</span>
           <ChevronRight className="w-3.5 h-3.5" />

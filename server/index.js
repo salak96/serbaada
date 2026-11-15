@@ -868,6 +868,7 @@ app.get('/api/admin/orders/:id/proof-url', async (req, res) => {
 app.put('/api/admin/orders/:id', async (req, res) => {
   try {
     const updated = await updateOrderStatus(req.params.id, req.body);
+    if (!updated) return res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan.' });
     res.json({ success: true, data: updated });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
