@@ -166,15 +166,6 @@ function timeAgo(iso: string | null | undefined): string {
   return new Date(iso).toLocaleDateString('id-ID');
 }
 
-// Ambil angka "baru / diupdate" dari ringkasan sinkronisasi backend,
-// mis. "Sinkronisasi selesai: 58 produk (0 baru, 58 diupdate)".
-// Kembalikan null bila format tidak dikenali (bukan data dummy).
-function parseSyncSummary(summary: string | null | undefined): { total: number; baru: number; diupdate: number } | null {
-  if (!summary) return null;
-  const m = summary.match(/(\d+)\s*produk\s*\((\d+)\s*baru,\s*(\d+)\s*diupdate\)/i);
-  if (!m) return null;
-  return { total: Number(m[1]), baru: Number(m[2]), diupdate: Number(m[3]) };
-}
 
 // Uraikan item produk dari satu order (untuk Produk Terlaris).
 // Utamakan array `products` (punya nama, qty, subtotal per item).
@@ -999,29 +990,30 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     return days;
   }, []);
 
-  // Aktivitas sinkronisasi per hari (dari api_logs nyata: created_at + is_success).
-  // "Produk baru" diambil dari ringkasan backend "(X baru, Y diupdate)" bila ada.
-  const syncDaily = useMemo(() => {
-    const byDay = new Map<string, { total: number; sukses: number; gagal: number; baru: number }>();
-    logs.forEach(log => {
-      const key = String(log.created_at || '').slice(0, 10);
-      if (!key) return;
-      const cur = byDay.get(key) || { total: 0, sukses: 0, gagal: 0, baru: 0 };
-      cur.total += 1;
-      if (log.is_success) cur.sukses += 1; else cur.gagal += 1;
-      const parsed = parseSyncSummary(log.response_summary);
-      if (parsed) cur.baru += parsed.baru;
-      byDay.set(key, cur);
+  // Produk Terlaris 7 hari terakhir — agregasi dari orders nyata yang lunas/delivered
+  // dan dibuat dalam 7 hari terakhir (kunci tanggal dari last7Days).
+  // Peringkat by jumlah unit terjual, sama seperti topProducts (semua waktu).
+  const topProducts7d = useMemo(() => {
+    const dayKeys = new Set(last7Days.map(d => d.key));
+    const map = new Map<string, { name: string; provider: string; qty: number; revenue: number; orders: number }>();
+    orders.forEach(o => {
+      const key = String(o.created_at || '').slice(0, 10);
+      if (!dayKeys.has(key)) return;
+      const isPaid = o.payment_status === 'paid' || o.order_status === 'delivered';
+      if (!isPaid) return;
+      getOrderItems(o).forEach(item => {
+        const k = item.name.toLowerCase();
+        const cur = map.get(k) || { name: item.name, provider: item.provider, qty: 0, revenue: 0, orders: 0 };
+        cur.qty += item.qty;
+        cur.revenue += item.revenue;
+        cur.orders += 1;
+        map.set(k, cur);
+      });
     });
-    return last7Days.map(d => ({
-      label: d.label,
-      key: d.key,
-      total: byDay.get(d.key)?.total ?? 0,
-      sukses: byDay.get(d.key)?.sukses ?? 0,
-      gagal: byDay.get(d.key)?.gagal ?? 0,
-      baru: byDay.get(d.key)?.baru ?? 0,
-    }));
-  }, [logs, last7Days]);
+    return [...map.values()]
+      .sort((a, b) => b.qty - a.qty || b.revenue - a.revenue)
+      .slice(0, 5);
+  }, [orders, last7Days]);
 
   // Distribusi status produk (donut) — kategori saling lepas, jumlah = total produk.
   const productStatus = useMemo(() => {
@@ -1081,6 +1073,27 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     });
     return [...map.values()]
       .sort((a, b) => b.qty - a.qty || b.revenue - a.revenue)
+      .slice(0, 5);
+  }, [orders]);
+
+  // Top Buyer — pembeli yang paling sering beli (by jumlah order lunas/delivered).
+  // Dikelompokkan by nama pelanggan (case-insensitive); nomor HP yang pertama tercatat.
+  // Peringkat by jumlah order, lalu total belanja.
+  const topBuyers = useMemo(() => {
+    const map = new Map<string, { name: string; phone: string; orders: number; total: number }>();
+    orders.forEach(o => {
+      const isPaid = o.payment_status === 'paid' || o.order_status === 'delivered';
+      if (!isPaid) return;
+      const rawName = String(o.customer_name || '').trim() || 'Tanpa Nama';
+      const key = rawName.toLowerCase();
+      const cur = map.get(key) || { name: rawName, phone: String(o.customer_phone || ''), orders: 0, total: 0 };
+      if (!cur.phone && o.customer_phone) cur.phone = String(o.customer_phone);
+      cur.orders += 1;
+      cur.total += Number(o.total_amount || 0);
+      map.set(key, cur);
+    });
+    return [...map.values()]
+      .sort((a, b) => b.orders - a.orders || b.total - a.total)
       .slice(0, 5);
   }, [orders]);
 
@@ -1864,41 +1877,44 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
 
-              {/* ===== Grafik: Aktivitas Sinkronisasi + Status Produk ===== */}
+              {/* ===== Grafik: Produk Terlaris 7 Hari Terakhir + Status Produk ===== */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <h3 className="font-bold text-sm text-[var(--text)]">Aktivitas Sinkronisasi</h3>
-                      <p className="text-[11px] text-[var(--text-muted)]">7 hari terakhir · dari api_logs nyata</p>
+                      <h3 className="font-bold text-sm text-[var(--text)]">Produk Terlaris — 7 Hari Terakhir</h3>
+                      <p className="text-[11px] text-[var(--text-muted)]">Top 5 by unit terjual — hanya order lunas / delivered</p>
                     </div>
                     <span className="text-[11px] font-bold px-2 py-1 rounded-lg bg-[var(--bg-nested)] border border-[var(--border)] text-[var(--text-muted)] flex-shrink-0">7 Hari Terakhir</span>
                   </div>
-                  {syncDaily.every(d => d.total === 0) ? (
+                  {topProducts7d.length === 0 ? (
                     <div className="mt-4 p-6 rounded-xl bg-[var(--bg-nested)] border border-dashed border-[var(--border)] text-center">
                       <BarChart3 className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
-                      <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada aktivitas sinkronisasi</p>
-                      <p className="text-[11px] text-[var(--text-muted)] mt-1">Tidak ada api_logs dalam 7 hari terakhir. Grafik muncul setelah sinkronisasi berjalan.</p>
+                      <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada penjualan dalam 7 hari terakhir</p>
+                      <p className="text-[11px] text-[var(--text-muted)] mt-1">Grafik muncul setelah ada order yang lunas / delivered dalam 7 hari terakhir.</p>
                     </div>
                   ) : (
                     <div className="h-64 mt-4">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={syncDaily} margin={{ top: 5, right: 5, left: -15, bottom: 0 }}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-                          <XAxis dataKey="label" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} />
-                          <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                        <BarChart data={topProducts7d} layout="vertical" margin={{ top: 5, right: 12, left: 0, bottom: 0 }}>
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+                          <XAxis type="number" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                          <YAxis type="category" dataKey="name" width={170} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} axisLine={false} tickLine={false} tickFormatter={(v: string) => (v.length > 24 ? v.slice(0, 24) + '…' : v)} />
                           <Tooltip
                             contentStyle={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: 12, fontSize: 12, color: 'var(--text)' }}
                             labelStyle={{ color: 'var(--text)', fontWeight: 700 }}
+                            formatter={(value, name, _item, _index, payload) => {
+                              const rev = Number((payload as { revenue?: number } | undefined)?.revenue || 0);
+                              return [value + ' unit · Rp' + rev.toLocaleString('id-ID'), name];
+                            }}
                           />
-                          <Bar dataKey="total" name="Request Sinkronisasi" fill="#2583F7" radius={[6, 6, 0, 0]} maxBarSize={28} />
-                          <Bar dataKey="baru" name="Produk Baru" fill="#10B981" radius={[6, 6, 0, 0]} maxBarSize={28} />
+                          <Bar dataKey="qty" name="Terjual" fill="#2583F7" radius={[0, 6, 6, 0]} maxBarSize={28} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
                   )}
                   <p className="text-[11px] text-[var(--text-muted)] mt-2">
-                    “Produk Baru” = produk baru per hari dari ringkasan sinkronisasi backend “(X baru, Y diupdate)”. Riwayat jumlah total produk belum terlacak (produk tidak punya created_at) — butuh kolom created_at di master_products untuk grafik pertumbuhan kumulatif.
+                    Diurutkan by unit terjual dari order lunas / delivered 7 hari terakhir. Daftar lengkap semua waktu ada di panel Produk Terlaris di bawah.
                   </p>
                 </div>
 
@@ -1949,65 +1965,53 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </div>
               </div>
 
-              {/* ===== Status Supplier + Aktivitas Sinkronisasi ===== */}
+              {/* ===== Top Buyer + Aktivitas Sinkronisasi ===== */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
                   <div className="flex items-center justify-between gap-3">
-                    <h3 className="font-bold text-sm text-[var(--text)]">Status Supplier Terdaftar</h3>
+                    <div>
+                      <h3 className="font-bold text-sm text-[var(--text)]">Top Buyer</h3>
+                      <p className="text-[11px] text-[var(--text-muted)]">Pembeli terbanyak — hanya order lunas / delivered</p>
+                    </div>
                     <button
                       type="button"
-                      onClick={() => setActiveTab('sellers')}
+                      onClick={() => setActiveTab('orders')}
                       className="text-xs font-bold text-[var(--accent-soft)] hover:underline flex-shrink-0"
                     >
-                      Kelola Seller →
+                      Lihat Semua Pesanan →
                     </button>
                   </div>
-                  {sellers.length === 0 ? (
+                  {topBuyers.length === 0 ? (
                     <div className="mt-4 p-6 rounded-xl bg-[var(--bg-nested)] border border-dashed border-[var(--border)] text-center">
-                      <Store className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
-                      <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada seller terdaftar</p>
-                      <p className="text-[11px] text-[var(--text-muted)] mt-1">Tambahkan seller di Manajemen Seller untuk mulai sinkronisasi produk.</p>
+                      <Users className="w-6 h-6 mx-auto text-[var(--text-muted)]" />
+                      <p className="text-xs font-bold text-[var(--text)] mt-2">Belum ada pembeli</p>
+                      <p className="text-[11px] text-[var(--text-muted)] mt-1">Top Buyer muncul setelah ada order yang lunas / delivered.</p>
                     </div>
                   ) : (
                     <div className="overflow-x-auto mt-4 -mx-1 px-1">
                       <table className="w-full text-left text-xs min-w-[540px]">
                         <thead>
                           <tr className="text-[10px] uppercase tracking-wide text-[var(--text-muted)] border-b border-[var(--border)]">
-                            <th className="pb-2 pr-3 font-bold">Supplier / API URL</th>
-                            <th className="pb-2 pr-3 font-bold">Status</th>
-                            <th className="pb-2 pr-3 font-bold">Produk</th>
-                            <th className="pb-2 font-bold text-right">Aksi</th>
+                            <th className="pb-2 pr-3 font-bold w-10">#</th>
+                            <th className="pb-2 pr-3 font-bold">Nama Pelanggan</th>
+                            <th className="pb-2 pr-3 font-bold text-right">Pesanan</th>
+                            <th className="pb-2 font-bold text-right">Total Belanja</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[var(--border)]">
-                          {sellers.map(s => (
-                            <tr key={s.id}>
-                              <td className="py-3 pr-3 min-w-0">
-                                <span className="font-bold text-[var(--text)] block truncate">{s.name}</span>
-                                <span className="text-[11px] text-[var(--text-muted)] font-mono block truncate max-w-[260px]">{s.base_url}</span>
-                                <span className="text-[10px] text-[var(--text-muted)] block">Sync terakhir: {timeAgo(s.last_synced_at)}</span>
-                              </td>
+                          {topBuyers.map((b, i) => (
+                            <tr key={b.name.toLowerCase()}>
                               <td className="py-3 pr-3">
-                                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded whitespace-nowrap ${
-                                  s.last_status === 'connected'
-                                    ? 'bg-[var(--success-bg)] text-[var(--success)] border border-[#10B981]/40'
-                                    : 'bg-red-500/15 text-[var(--danger)] border border-red-500/40'
-                                }`}>
-                                  {s.last_status === 'connected' ? 'Connected' : 'Error'}
+                                <span className={'inline-flex items-center justify-center w-6 h-6 rounded-lg text-[11px] font-black ' + (i === 0 ? 'bg-[var(--warn-bg)] text-[var(--warn)]' : i === 1 ? 'bg-slate-400/20 text-[var(--text-muted)]' : i === 2 ? 'bg-orange-500/20 text-[var(--warn)]' : 'bg-[var(--bg-nested)] text-[var(--text-muted)]')}>
+                                  {i + 1}
                                 </span>
                               </td>
-                              <td className="py-3 pr-3 font-bold text-[var(--text)] tabular-nums">
-                                {sellerProductCounts.get(s.id)?.master ?? 0}
+                              <td className="py-3 pr-3 min-w-0">
+                                <span className="font-bold text-[var(--text)] block truncate max-w-[280px]">{b.name}</span>
+                                <span className="text-[10px] text-[var(--text-muted)]">{b.phone || '—'}</span>
                               </td>
-                              <td className="py-3 text-right">
-                                <button
-                                  type="button"
-                                  onClick={() => handleTestConnection(s.id)}
-                                  className="px-3 py-1 rounded-lg bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[11px] font-bold text-[var(--accent-soft)] border border-[var(--border)] transition-colors"
-                                >
-                                  Test
-                                </button>
-                              </td>
+                              <td className="py-3 pr-3 font-bold text-[var(--text)] tabular-nums text-right whitespace-nowrap">{b.orders}×</td>
+                              <td className="py-3 font-bold text-[var(--text)] tabular-nums text-right whitespace-nowrap">Rp{b.total.toLocaleString('id-ID')}</td>
                             </tr>
                           ))}
                         </tbody>
