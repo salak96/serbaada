@@ -24,6 +24,15 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
   const [turnstileToken, setTurnstileToken] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  // Tema light/dark mengikuti preferensi tersimpan (sama seperti dashboard).
+  // Modal ini dirender di luar AdminDashboard, jadi baca langsung dari storage.
+  const [theme] = useState<'dark' | 'light'>(() => {
+    try {
+      return localStorage.getItem('serbadigital_admin_theme') === 'light' ? 'light' : 'dark';
+    } catch {
+      return 'dark';
+    }
+  });
 
   useEffect(() => {
     if (!isOpen) return;
@@ -79,7 +88,7 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div data-theme={theme} className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
       <div className="w-full max-w-sm bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal overflow-hidden text-xs text-[var(--text)]">
         <div className="px-5 py-4 bg-[var(--bg-panel)] border-b border-[var(--border)] flex items-center justify-between">
           <div className="flex items-center gap-2.5">

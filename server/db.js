@@ -103,6 +103,8 @@ function getDefaultStore() {
       store_name: 'Androidstore.web.id',
       whatsapp_number: '6285867336036',
       default_markup_percent: '25',
+      default_markup_mode: 'percent',
+      default_markup_nominal: '25000',
       maintenance_mode: 'false',
       auto_sync_enabled: 'true'
     }
@@ -626,7 +628,7 @@ export async function deleteMultipleMasterProducts(ids) {
 // ==========================================
 // IMPORT SUPPLIER PRODUCT TO MASTER
 // ==========================================
-export async function importSupplierToMaster(supplierProductId, markupPercent = 25) {
+export async function importSupplierToMaster(supplierProductId, markupValue = 25, markupMode = 'percent') {
   const store = loadLocalStore();
   const suppProd = store.supplier_products.find(p => p.id === Number(supplierProductId));
   if (!suppProd) throw new Error('Supplier product not found');
@@ -642,7 +644,8 @@ export async function importSupplierToMaster(supplierProductId, markupPercent = 
 
   const cleanName = cleanProductName(suppProd.name);
   const cost = suppProd.cost_price;
-  const markup = Number(markupPercent || 25);
+  const mode = markupMode === 'nominal' ? 'nominal' : 'percent';
+  const markup = Number(markupValue || (mode === 'nominal' ? 25000 : 25));
   const now = new Date().toISOString();
 
   if (existingMaster) {
@@ -663,7 +666,7 @@ export async function importSupplierToMaster(supplierProductId, markupPercent = 
   // Infer canonical category
   const category = inferCategoryServer(cleanName, suppProd.description || suppProd.original_category || '');
 
-  const selling = Math.round((cost * (1 + markup / 100)) / 500) * 500;
+  const selling = mode === 'nominal' ? cost + markup : Math.round((cost * (1 + markup / 100)) / 500) * 500;
   const oldPrice = Math.round((selling * 1.35) / 1000) * 1000;
   const newId = store.master_products.length ? Math.max(...store.master_products.map(p => p.id || 0)) + 1 : 1;
 
@@ -677,7 +680,7 @@ export async function importSupplierToMaster(supplierProductId, markupPercent = 
     selling_price: selling,
     old_price: oldPrice,
     discount: Math.round(((oldPrice - selling) / oldPrice) * 100),
-    pricing_mode: 'markup_percent',
+    pricing_mode: mode === 'nominal' ? 'markup_nominal' : 'markup_percent',
     markup_value: markup,
     primary_seller_id: suppProd.seller_id,
     supplier_product_id: suppProd.id,

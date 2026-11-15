@@ -340,8 +340,9 @@ app.get('/api/admin/supplier-products', async (req, res) => {
 
 app.post('/api/admin/supplier-products/:id/import', async (req, res) => {
   try {
-    const markup = Number(req.body.markup_percent || 25);
-    const master = await importSupplierToMaster(req.params.id, markup);
+    const mode = req.body.markup_mode === 'nominal' ? 'nominal' : 'percent';
+    const value = Number(mode === 'nominal' ? (req.body.markup_nominal ?? req.body.markup_value ?? 25000) : (req.body.markup_percent ?? 25));
+    const master = await importSupplierToMaster(req.params.id, value, mode);
     res.json({ success: true, message: 'Produk berhasil diimpor ke Master Katalog', data: master });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -350,14 +351,15 @@ app.post('/api/admin/supplier-products/:id/import', async (req, res) => {
 
 app.post('/api/admin/supplier-products/import-all', async (req, res) => {
   try {
-    const markup = Number(req.body.markup_percent || 25);
+    const mode = req.body.markup_mode === 'nominal' ? 'nominal' : 'percent';
+    const value = Number(mode === 'nominal' ? (req.body.markup_nominal ?? req.body.markup_value ?? 25000) : (req.body.markup_percent ?? 25));
     const supplierProducts = await getSupplierProducts({});
     let importedCount = 0;
     let skippedCount = 0;
 
     for (const item of supplierProducts) {
       try {
-        await importSupplierToMaster(item.id, markup);
+        await importSupplierToMaster(item.id, value, mode);
         importedCount++;
       } catch {
         skippedCount++;

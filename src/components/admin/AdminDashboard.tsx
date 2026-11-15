@@ -376,6 +376,8 @@ interface WebsiteSettings {
   store_name: string;
   whatsapp_number: string;
   default_markup_percent: string;
+  default_markup_mode: string;
+  default_markup_nominal: string;
   maintenance_mode: string;
 }
 
@@ -410,6 +412,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     store_name: 'Androidstore.web.id',
     whatsapp_number: '6285867336036',
     default_markup_percent: '25',
+    default_markup_mode: 'percent',
+    default_markup_nominal: '25000',
     maintenance_mode: 'false'
   });
   const [profilePasswordForm, setProfilePasswordForm] = useState({
@@ -1068,7 +1072,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
         const res = await fetch(`/api/admin/supplier-products/${id}/import`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ markup_percent: settings.default_markup_percent || 25 })
+          body: JSON.stringify({ markup_mode: settings.default_markup_mode || 'percent', markup_percent: settings.default_markup_percent || 25, markup_nominal: settings.default_markup_nominal || 25000 })
         });
         const json = await res.json();
         if (json.success) {
@@ -1244,7 +1248,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       const res = await fetch(`/api/admin/supplier-products/${supplierProductId}/import`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ markup_percent: settings.default_markup_percent || 25 })
+        body: JSON.stringify({ markup_mode: settings.default_markup_mode || 'percent', markup_percent: settings.default_markup_percent || 25, markup_nominal: settings.default_markup_nominal || 25000 })
       });
       const json = await res.json();
       if (json.success) {
@@ -1267,7 +1271,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       const res = await fetch('/api/admin/supplier-products/import-all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ markup_percent: settings.default_markup_percent || 25 })
+        body: JSON.stringify({ markup_mode: settings.default_markup_mode || 'percent', markup_percent: settings.default_markup_percent || 25, markup_nominal: settings.default_markup_nominal || 25000 })
       });
       const json = await res.json();
       if (json.success) {
@@ -3869,13 +3873,48 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   </div>
 
                   <div>
-                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Default Markup Impor Produk (%)</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Default Markup Impor Produk</label>
+                    <div className="grid grid-cols-2 gap-2 mb-2">
+                      {[
+                        { id: 'percent', label: 'Markup %' },
+                        { id: 'nominal', label: 'Markup Rp' },
+                      ].map(m => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setSettings({ ...settings, default_markup_mode: m.id })}
+                          className={`py-2 rounded-xl border font-bold text-xs ${
+                            (settings.default_markup_mode || 'percent') === m.id ? 'bg-[#2583F7] text-white border-[#2583F7]' : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-muted)]'
+                          }`}
+                        >
+                          {m.label}
+                        </button>
+                      ))}
+                    </div>
                     <input
                       type="number"
-                      value={settings.default_markup_percent || 25}
-                      onChange={(e) => setSettings({ ...settings, default_markup_percent: e.target.value })}
+                      value={(settings.default_markup_mode || 'percent') === 'percent' ? (settings.default_markup_percent || 25) : (settings.default_markup_nominal || 25000)}
+                      onChange={(e) => (settings.default_markup_mode || 'percent') === 'percent'
+                        ? setSettings({ ...settings, default_markup_percent: e.target.value })
+                        : setSettings({ ...settings, default_markup_nominal: e.target.value })}
                       className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                     />
+                    <p className="text-[11px] text-[var(--text-muted)] mt-1.5 leading-relaxed">
+                      {(() => {
+                        const costs = masterProducts.map(p => Number(p.cost_price || 0)).filter(c => c > 0);
+                        if (!costs.length) return 'Berlaku untuk semua produk yang diimpor setelah pengaturan disimpan.';
+                        const avg = Math.round(costs.reduce((a, b) => a + b, 0) / costs.length);
+                        if ((settings.default_markup_mode || 'percent') === 'percent') {
+                          const pct = Number(settings.default_markup_percent || 25);
+                          const profit = Math.round((avg * pct) / 100 / 500) * 500;
+                          const pctFor25k = Math.max(1, Math.round((25000 / avg) * 100));
+                          return `Modal rata-rata ${formatPrice(avg)} → untung ${formatPrice(profit)} / produk. Untuk untung Rp25.000, atur sekitar ${pctFor25k}%.`;
+                        }
+                        const nominal = Number(settings.default_markup_nominal || 25000);
+                        const eqPct = Math.round((nominal / avg) * 100);
+                        return `Harga jual = modal + ${formatPrice(nominal)} / produk (≈ ${eqPct}% dari modal rata-rata ${formatPrice(avg)}). Berlaku untuk semua produk yang diimpor setelah pengaturan disimpan.`;
+                      })()}
+                    </p>
                   </div>
                 </div>
 
@@ -3883,14 +3922,18 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   type="button"
                   onClick={async () => {
                     try {
-                      await fetch('/api/admin/settings', {
+                      const res = await fetch('/api/admin/settings', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(settings)
                       });
+                      const data = await res.json().catch(() => null);
+                      if (!res.ok || !data?.success) {
+                        throw new Error(data?.message || 'Server menolak permintaan.');
+                      }
                       showNotification('success', 'Pengaturan berhasil disimpan!');
-                    } catch {
-                      showNotification('error', 'Gagal menyimpan pengaturan.');
+                    } catch (e) {
+                      showNotification('error', `Gagal menyimpan pengaturan: ${(e as Error).message}`);
                     }
                   }}
                   className="px-5 py-2.5 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold text-xs"
