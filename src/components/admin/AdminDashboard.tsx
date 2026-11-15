@@ -568,6 +568,18 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     order_status: 'pending',
     payment_status: 'unpaid'
   });
+  const [newOrderProductId, setNewOrderProductId] = useState<string>('');
+  const [newOrderProofFile, setNewOrderProofFile] = useState<File | null>(null);
+  const [newOrderProofPreview, setNewOrderProofPreview] = useState<string | null>(null);
+  const [newOrderSuggestOpen, setNewOrderSuggestOpen] = useState(false);
+
+  // Saran produk dari katalog saat mengetik (hanya produk aktif, maks 8).
+  const newOrderSuggestions = useMemo(() => {
+    const q = newOrderForm.product_name.trim().toLowerCase();
+    return masterProducts
+      .filter(p => p.is_active !== 0 && (!q || p.name.toLowerCase().includes(q)))
+      .slice(0, 8);
+  }, [masterProducts, newOrderForm.product_name]);
 
   const handleSaveSupplierProduct = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -614,13 +626,39 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   const handleCreateManualOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const selectedProd = newOrderProductId
+        ? masterProducts.find(p => String(p.id) === newOrderProductId)
+        : null;
+      const payload: Record<string, unknown> = { ...newOrderForm };
+      if (selectedProd) {
+        payload.products = [{
+          name: selectedProd.name,
+          quantity: 1,
+          price: selectedProd.selling_price,
+          provider: selectedProd.primary_seller_name || 'Produk Manual'
+        }];
+      }
       const res = await fetch('/api/admin/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newOrderForm)
+        body: JSON.stringify(payload)
       });
       const json = await res.json();
       if (json.success) {
+        // Upload bukti pembayaran (bila admin memilih file) — endpoint admin
+        // hanya mengisi payment_proof_url, tidak mengubah status pesanan.
+        if (newOrderProofFile && json.order) {
+          const proofData = new FormData();
+          proofData.append('file', newOrderProofFile);
+          const proofRes = await fetch(`/api/admin/orders/${json.order.id}/proof`, {
+            method: 'POST',
+            body: proofData
+          });
+          const proofJson = await proofRes.json();
+          if (!proofJson.success) {
+            showNotification('error', 'Pesanan dibuat, tapi bukti gagal diunggah: ' + (proofJson.message || ''));
+          }
+        }
         showNotification('success', 'Pesanan manual berhasil dibuat!');
         setIsCreateOrderModalOpen(false);
         setNewOrderForm({
@@ -632,6 +670,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           order_status: 'pending',
           payment_status: 'unpaid'
         });
+        setNewOrderProductId('');
+        setNewOrderProofFile(null);
+        setNewOrderProofPreview(null);
+        setNewOrderSuggestOpen(false);
         loadAllData();
       } else {
         showNotification('error', json.message);
@@ -3089,7 +3131,22 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </div>
                 <button
                   type="button"
-                  onClick={() => setIsCreateOrderModalOpen(true)}
+                  onClick={() => {
+                    setNewOrderForm({
+                      customer_name: '',
+                      customer_phone: '',
+                      product_name: '',
+                      total_amount: 25000,
+                      payment_method: 'QRIS Instant',
+                      order_status: 'pending',
+                      payment_status: 'unpaid'
+                    });
+                    setNewOrderProductId('');
+                    setNewOrderProofFile(null);
+                    setNewOrderProofPreview(null);
+                    setNewOrderSuggestOpen(false);
+                    setIsCreateOrderModalOpen(true);
+                  }}
                   className="px-4 py-2.5 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-md flex items-center gap-2 transition-all flex-shrink-0"
                 >
                   <Plus className="w-4 h-4" />
@@ -4858,16 +4915,49 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 />
               </div>
 
-              <div>
+              <div className="relative">
                 <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Produk / Paket</label>
                 <input
                   type="text"
                   required
+                  autoComplete="off"
                   value={newOrderForm.product_name}
-                  onChange={(e) => setNewOrderForm({ ...newOrderForm, product_name: e.target.value })}
-                  placeholder="Contoh: Netflix Premium 1 Bulan"
+                  onChange={(e) => {
+                    setNewOrderForm({ ...newOrderForm, product_name: e.target.value });
+                    setNewOrderProductId('');
+                    setNewOrderSuggestOpen(true);
+                  }}
+                  onFocus={() => setNewOrderSuggestOpen(true)}
+                  onBlur={() => setTimeout(() => setNewOrderSuggestOpen(false), 150)}
+                  placeholder="Ketik nama produk... (pilih dari saran)"
                   className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
+                {newOrderSuggestOpen && newOrderSuggestions.length > 0 && (
+                  <ul className="absolute z-10 mt-1 w-full max-h-56 overflow-y-auto bg-[var(--bg-panel)] border border-[var(--border)] rounded-xl shadow-modal">
+                    {newOrderSuggestions.map(p => (
+                      <li key={p.id}>
+                        <button
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            setNewOrderProductId(String(p.id));
+                            setNewOrderForm({ ...newOrderForm, product_name: p.name, total_amount: p.selling_price });
+                            setNewOrderSuggestOpen(false);
+                          }}
+                          className="w-full text-left px-3 py-2 hover:bg-[var(--bg-hover)] flex items-center justify-between gap-2"
+                        >
+                          <span className="truncate">{cleanProductName(p.name)}</span>
+                          <span className="font-mono text-[var(--success)] whitespace-nowrap">{formatPrice(p.selling_price)}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {newOrderSuggestOpen && newOrderForm.product_name.trim() && newOrderSuggestions.length === 0 && (
+                  <div className="absolute z-10 mt-1 w-full px-3 py-2 bg-[var(--bg-panel)] border border-[var(--border)] rounded-xl shadow-modal text-[var(--text-muted)]">
+                    Tidak ada di katalog — akan disimpan sebagai produk manual.
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -4890,6 +4980,32 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Bukti Pembayaran (Opsional)</label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const f = e.target.files && e.target.files[0];
+                    setNewOrderProofFile(f || null);
+                    if (f) {
+                      const reader = new FileReader();
+                      reader.onload = () => setNewOrderProofPreview(String(reader.result));
+                      reader.readAsDataURL(f);
+                    } else {
+                      setNewOrderProofPreview(null);
+                    }
+                  }}
+                  className="w-full text-xs text-[var(--text-muted)] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1677FF] file:text-white hover:file:bg-[#1D4ED8]"
+                />
+                {newOrderProofPreview && (
+                  <div className="mt-2">
+                    <img src={newOrderProofPreview} alt="Preview Bukti" className="w-full max-h-40 object-contain rounded-xl bg-[var(--bg-nested)] border border-[var(--border)]" />
+                    <p className="text-[11px] text-[var(--text-muted)] mt-1">File baru: {newOrderProofFile?.name} — akan diunggah saat Buat Pesanan.</p>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
