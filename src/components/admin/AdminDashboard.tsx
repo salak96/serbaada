@@ -1439,10 +1439,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {statusMessage && (
         <div className={`fixed bottom-6 left-6 z-[100] px-4 py-3 rounded-xl border shadow-2xl flex items-center gap-2.5 text-xs font-bold animate-fadeIn ${
           statusMessage.type === 'success'
-            ? 'bg-[#111A2B] text-[#10B981] border-[#10B981]/50 shadow-[0_4px_20px_rgba(16,185,129,0.25)]'
-            : 'bg-[#111A2B] text-red-400 border-red-500/50 shadow-[0_4px_20px_rgba(239,68,68,0.25)]'
+            ? 'bg-[var(--bg-card)] text-[var(--success)] border-[#10B981]/50 shadow-[0_4px_20px_rgba(16,185,129,0.25)]'
+            : 'bg-[var(--bg-card)] text-[var(--danger)] border-red-500/50 shadow-[0_4px_20px_rgba(239,68,68,0.25)]'
         }`}>
-          {statusMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-[#10B981]" /> : <XCircle className="w-4 h-4 text-red-400" />}
+          {statusMessage.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-[var(--success)]" /> : <XCircle className="w-4 h-4 text-[var(--danger)]" />}
           <span>{statusMessage.text}</span>
         </div>
       )}
@@ -1595,7 +1595,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 type="button"
                 onClick={onClose}
                 title="Buka Toko Publik"
-                className="w-full flex items-center justify-center p-2.5 rounded-xl bg-[#2583F7]/10 hover:bg-[#2583F7]/20 border border-[#2583F7]/50 text-[var(--accent-soft)] transition-colors"
+                className="w-full flex items-center justify-center p-2.5 rounded-xl bg-[var(--info-bg)] hover:bg-[var(--info-bg)] border border-[#2583F7]/50 text-[var(--accent-soft)] transition-colors"
               >
                 <ShoppingCart className="w-4 h-4" />
               </button>
@@ -1603,7 +1603,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 type="button"
                 onClick={onClose}
                 title="Keluar Dashboard"
-                className="w-full flex items-center justify-center p-2.5 rounded-xl text-red-400 hover:bg-red-950/30 transition-colors"
+                className="w-full flex items-center justify-center p-2.5 rounded-xl text-[var(--danger)] hover:bg-[var(--danger-bg)] transition-colors"
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -1621,7 +1621,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[#2583F7]/10 hover:bg-[#2583F7]/20 border border-[#2583F7]/50 text-xs font-bold text-[var(--accent-soft)] transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl bg-[var(--info-bg)] hover:bg-[var(--info-bg)] border border-[#2583F7]/50 text-xs font-bold text-[var(--accent-soft)] transition-colors"
               >
                 <ShoppingCart className="w-4 h-4 flex-shrink-0" />
                 <span className="flex-1 text-left">Buka Toko Publik</span>
@@ -1630,7 +1630,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-red-400 hover:bg-red-950/30 transition-colors"
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold text-[var(--danger)] hover:bg-[var(--danger-bg)] transition-colors"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 <span>Keluar Dashboard</span>
@@ -1660,8 +1660,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
             </h1>
             <span className={`hidden sm:inline-block text-[10px] font-bold px-2 py-0.5 rounded-md border ${
               kpis.is_using_fallback
-                ? 'bg-amber-500/15 text-amber-500 border-amber-500/30'
-                : 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30'
+                ? 'bg-amber-500/15 text-[var(--warn)] border-amber-500/30'
+                : 'bg-[var(--success-bg)] text-[var(--success)] border-[#10B981]/30'
             }`}>
               {kpis.is_using_fallback ? 'Embedded Store / API Engine Live' : 'MySQL 8 / API Engine Live'}
             </span>
@@ -1749,12 +1749,12 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex flex-col gap-2">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs font-semibold text-[var(--text-muted)] truncate">Total Produk Master</span>
-                    <span className="w-8 h-8 rounded-xl bg-[#2583F7]/15 flex items-center justify-center flex-shrink-0">
+                    <span className="w-8 h-8 rounded-xl bg-[var(--info-bg)] flex items-center justify-center flex-shrink-0">
                       <Package className="w-4 h-4 text-[#2583F7]" />
                     </span>
                   </div>
                   <div className="text-2xl font-black text-[var(--text)] tabular-nums whitespace-nowrap leading-none">{kpis.total_products}</div>
-                  <div className="text-[11px] font-semibold text-[#10B981] leading-tight mt-auto">
+                  <div className="text-[11px] font-semibold text-[var(--success)] leading-tight mt-auto">
                     ✓ {kpis.active_products} aktif · {kpis.out_of_stock_products} stok habis
                   </div>
                 </div>
@@ -1776,12 +1776,12 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs font-semibold text-[var(--text-muted)] truncate">Total Pesanan</span>
                     <span className="w-8 h-8 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
-                      <ShoppingBag className="w-4 h-4 text-emerald-400" />
+                      <ShoppingBag className="w-4 h-4 text-[var(--success)]" />
                     </span>
                   </div>
                   <div className="text-2xl font-black text-[var(--text)] tabular-nums whitespace-nowrap leading-none">{kpis.total_orders}</div>
                   <div className="flex items-end justify-between gap-2 mt-auto">
-                    <span className="text-[11px] font-semibold text-[#10B981] leading-tight">Omzet: {formatPrice(kpis.total_revenue)}</span>
+                    <span className="text-[11px] font-semibold text-[var(--success)] leading-tight">Omzet: {formatPrice(kpis.total_revenue)}</span>
                     <Sparkline data={ordersDaily.map(d => d.orders)} color="#10B981" width={96} height={28} />
                   </div>
                 </div>
@@ -1790,10 +1790,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-xs font-semibold text-[var(--text-muted)] truncate">Estimasi Keuntungan</span>
                     <span className="w-8 h-8 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-                      <TrendingUp className="w-4 h-4 text-amber-400" />
+                      <TrendingUp className="w-4 h-4 text-[var(--warn)]" />
                     </span>
                   </div>
-                  <div className="text-2xl font-black text-[#10B981] tabular-nums whitespace-nowrap leading-none">{formatPrice(kpis.estimated_profit)}</div>
+                  <div className="text-2xl font-black text-[var(--success)] tabular-nums whitespace-nowrap leading-none">{formatPrice(kpis.estimated_profit)}</div>
                   <div className="flex items-end justify-between gap-2 mt-auto">
                     <span className="text-[11px] text-[var(--text-muted)] leading-tight">Margin ~28% (estimasi)</span>
                     <Sparkline data={ordersDaily.map(d => d.revenue)} color="#F59E0B" width={96} height={28} />
@@ -1928,8 +1928,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                               <td className="py-3 pr-3">
                                 <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded whitespace-nowrap ${
                                   s.last_status === 'connected'
-                                    ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40'
-                                    : 'bg-red-500/15 text-red-400 border border-red-500/40'
+                                    ? 'bg-[var(--success-bg)] text-[var(--success)] border border-[#10B981]/40'
+                                    : 'bg-red-500/15 text-[var(--danger)] border border-red-500/40'
                                 }`}>
                                   {s.last_status === 'connected' ? 'Connected' : 'Error'}
                                 </span>
@@ -1980,7 +1980,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         </div>
                         <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 mt-1">{log.response_summary || log.error_message || '—'}</p>
                         <div className="flex items-center justify-between mt-1.5">
-                          <span className={`text-[10px] font-bold ${log.is_success ? 'text-[#10B981]' : 'text-red-400'}`}>
+                          <span className={`text-[10px] font-bold ${log.is_success ? 'text-[var(--success)]' : 'text-[var(--danger)]'}`}>
                             {log.is_success ? '✓ Sukses' : '✗ Gagal'}
                           </span>
                           <span className="text-[10px] text-[var(--text-muted)] tabular-nums">{log.duration_ms}ms</span>
@@ -2037,11 +2037,11 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                             <td className="py-3 pr-3">
                               <span className={`inline-flex items-center justify-center w-6 h-6 rounded-lg text-[11px] font-black ${
                                 i === 0
-                                  ? 'bg-amber-500/20 text-amber-500'
+                                  ? 'bg-[var(--warn-bg)] text-[var(--warn)]'
                                   : i === 1
-                                    ? 'bg-slate-400/20 text-slate-400'
+                                    ? 'bg-slate-400/20 text-[var(--text-muted)]'
                                     : i === 2
-                                      ? 'bg-orange-500/20 text-orange-400'
+                                      ? 'bg-orange-500/20 text-[var(--warn)]'
                                       : 'bg-[var(--bg-nested)] text-[var(--text-muted)]'
                               }`}>
                                 {i + 1}
@@ -2053,7 +2053,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                             </td>
                             <td className="py-3 pr-3 text-[var(--text-muted)] whitespace-nowrap">{p.provider}</td>
                             <td className="py-3 pr-3 font-bold text-[var(--text)] tabular-nums text-right whitespace-nowrap">{p.qty} unit</td>
-                            <td className="py-3 font-bold text-[#10B981] tabular-nums text-right whitespace-nowrap">{formatPrice(p.revenue)}</td>
+                            <td className="py-3 font-bold text-[var(--success)] tabular-nums text-right whitespace-nowrap">{formatPrice(p.revenue)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -2069,8 +2069,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     <h3 className="font-bold text-sm text-[var(--text)]">Kesehatan Sistem</h3>
                     <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${
                       systemHealth.dbOk && systemHealth.apiOk && systemHealth.syncOk
-                        ? 'bg-[#10B981]/15 text-[#10B981] border-[#10B981]/30'
-                        : 'bg-amber-500/15 text-amber-500 border-amber-500/30'
+                        ? 'bg-[var(--success-bg)] text-[var(--success)] border-[#10B981]/30'
+                        : 'bg-amber-500/15 text-[var(--warn)] border-amber-500/30'
                     }`}>
                       {systemHealth.dbOk && systemHealth.apiOk && systemHealth.syncOk ? '✓ Sistem Normal' : '⚠ Perlu Perhatian'}
                     </span>
@@ -2083,7 +2083,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       </span>
                       <span className="flex items-center gap-1.5 text-[var(--text-muted)]">
                         {systemHealth.dbNote}
-                        <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                        <CheckCircle2 className="w-4 h-4 text-[var(--success)]" />
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
@@ -2093,7 +2093,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       </span>
                       <span className="flex items-center gap-1.5 text-[var(--text-muted)]">
                         Online
-                        <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                        <CheckCircle2 className="w-4 h-4 text-[var(--success)]" />
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
@@ -2104,8 +2104,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <span className="flex items-center gap-1.5 text-[var(--text-muted)]">
                         {systemHealth.syncNote}
                         {systemHealth.syncOk
-                          ? <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
-                          : <AlertTriangle className="w-4 h-4 text-amber-500" />}
+                          ? <CheckCircle2 className="w-4 h-4 text-[var(--success)]" />
+                          : <AlertTriangle className="w-4 h-4 text-[var(--warn)]" />}
                       </span>
                     </div>
                     <div className="flex items-center justify-between gap-2">
@@ -2115,7 +2115,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       </span>
                       <span className="flex items-center gap-1.5 text-[var(--text-muted)]" title="Backend belum menyediakan endpoint health storage">
                         Tidak tersedia
-                        <AlertTriangle className="w-4 h-4 text-amber-500" />
+                        <AlertTriangle className="w-4 h-4 text-[var(--warn)]" />
                       </span>
                     </div>
                   </div>
@@ -2143,7 +2143,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       }}
                       className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors"
                     >
-                      <span className="w-9 h-9 rounded-xl bg-[#2583F7]/15 flex items-center justify-center flex-shrink-0">
+                      <span className="w-9 h-9 rounded-xl bg-[var(--info-bg)] flex items-center justify-center flex-shrink-0">
                         <Plus className="w-4 h-4 text-[#2583F7]" />
                       </span>
                       <span>
@@ -2171,7 +2171,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors disabled:opacity-50"
                     >
                       <span className="w-9 h-9 rounded-xl bg-emerald-500/15 flex items-center justify-center flex-shrink-0">
-                        <RefreshCw className={`w-4 h-4 text-emerald-400 ${isLoading ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`w-4 h-4 text-[var(--success)] ${isLoading ? 'animate-spin' : ''}`} />
                       </span>
                       <span>
                         <span className="block text-xs font-bold text-[var(--text)]">Sinkronisasi Produk</span>
@@ -2184,7 +2184,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       className="flex items-center gap-3 p-3.5 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] text-left transition-colors"
                     >
                       <span className="w-9 h-9 rounded-xl bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-                        <BarChart3 className="w-4 h-4 text-amber-400" />
+                        <BarChart3 className="w-4 h-4 text-[var(--warn)]" />
                       </span>
                       <span>
                         <span className="block text-xs font-bold text-[var(--text)]">Monitoring API</span>
@@ -2209,16 +2209,16 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Cari produk di master katalog..."
-                      className="w-full pl-9 pr-3 py-2 bg-[#111A2B] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                      className="w-full pl-9 pr-3 py-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#2583F7]"
                     />
-                    <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
+                    <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-2.5" />
                   </div>
 
                   {/* Supplier Filter */}
                   <select
                     value={selectedMasterSellerFilter}
                     onChange={(e) => { setSelectedMasterSellerFilter(e.target.value); setMasterCurrentPage(1); }}
-                    className="px-3 py-2 bg-[#080F1F] border border-[#243650] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#1677FF]"
+                    className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#1677FF]"
                   >
                     <option value="">Semua Supplier</option>
                     {sellers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -2230,7 +2230,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     onClick={() => {
                       setMasterCurrencyMode(prev => prev === 'AUTO' ? 'USD' : prev === 'USD' ? 'IDR' : 'AUTO');
                     }}
-                    className="px-3 py-2 bg-[#080F1F] hover:bg-[#1A263D] text-[#22C7FF] border border-[#243650] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+                    className="px-3 py-2 bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[var(--accent-soft)] border border-[var(--border)] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
                     title="Ubah Mata Uang (Auto / USD $ / IDR Rp)"
                   >
                     <span>💱 Mata Uang: {masterCurrencyMode}</span>
@@ -2252,7 +2252,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   <button
                     type="button"
                     onClick={handleDeleteAllMasterProducts}
-                    className="px-3.5 py-2 rounded-xl bg-red-950/60 hover:bg-red-900 text-red-300 border border-red-800 text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all"
+                    className="px-3.5 py-2 rounded-xl bg-[var(--danger-bg)] hover:opacity-80 text-[var(--danger)] border border-[var(--danger-border)] text-xs font-bold shadow-sm flex items-center gap-1.5 transition-all"
                   >
                     <Trash2 className="w-4 h-4" />
                     <span>Hapus Semua Katalog</span>
@@ -2270,10 +2270,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
               {/* Master Products Table */}
-              <div className="bg-[#111A2B] border border-[#26364D] rounded-2xl overflow-hidden shadow-card">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-card">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-[#0B1220] border-b border-[#26364D] text-[#94A3B8] font-bold uppercase text-[10px]">
+                    <thead className="bg-[var(--bg-panel)] border-b border-[var(--border)] text-[var(--text-muted)] font-bold uppercase text-[10px]">
                       <tr>
                         <th className="p-3.5 w-12 text-center">
                           <input
@@ -2288,7 +2288,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 setSelectedMasterIds(prev => prev.filter(id => !pageIds.has(id)));
                               }
                             }}
-                            className="rounded bg-[#080F1F] border-[#26364D] text-[#1677FF] focus:ring-0 cursor-pointer"
+                            className="rounded bg-[var(--bg-nested)] border-[var(--border)] text-[#1677FF] focus:ring-0 cursor-pointer"
                           />
                         </th>
                         <th className="p-3.5 w-12">No</th>
@@ -2302,12 +2302,12 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         <th className="p-3.5 text-right">Aksi</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#26364D]/60">
+                    <tbody className="divide-y divide-[var(--border)]">
                      {paginatedMasterProducts.map((prod, index) => {
                           const profit = prod.selling_price - prod.cost_price;
                           const isLoss = profit < 0;
                           return (
-                      <tr key={prod.id} className="hover:bg-[#1A263D]/40 transition-colors">
+                      <tr key={prod.id} className="hover:bg-[var(--bg-hover)] transition-colors">
                         <td className="p-3.5 text-center">
                           <input
                             type="checkbox"
@@ -2319,31 +2319,31 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 setSelectedMasterIds(prev => prev.filter(id => id !== prod.id));
                               }
                             }}
-                            className="rounded bg-[#080F1F] border-[#26364D] text-[#1677FF] focus:ring-0 cursor-pointer"
+                            className="rounded bg-[var(--bg-nested)] border-[var(--border)] text-[#1677FF] focus:ring-0 cursor-pointer"
                           />
                         </td>
-                        <td className="p-3.5 font-mono text-[#94A3B8]">{(masterCurrentPage - 1) * masterPageSize + index + 1}</td>
+                        <td className="p-3.5 font-mono text-[var(--text-muted)]">{(masterCurrentPage - 1) * masterPageSize + index + 1}</td>
                         <td className="p-3.5">
                                 <div className="flex items-center gap-2.5">
-                                  <div className="w-9 h-9 rounded-lg bg-[#080D18] border border-[#26364D] overflow-hidden flex-shrink-0">
+                                  <div className="w-9 h-9 rounded-lg bg-[var(--bg-nested)] border border-[var(--border)] overflow-hidden flex-shrink-0">
                                     <img src={prod.custom_image_url || '/assets/default_produk.png'} alt="" className="w-full h-full object-cover" />
                                   </div>
                                   <div className="min-w-0">
-                                    <span className="font-bold text-[#F8FAFC] block truncate max-w-[220px]">{cleanProductName(prod.name)}</span>
-                                    <span className="text-[10px] text-[#94A3B8] font-mono">{prod.slug}</span>
+                                    <span className="font-bold text-[var(--text)] block truncate max-w-[220px]">{cleanProductName(prod.name)}</span>
+                                    <span className="text-[10px] text-[var(--text-muted)] font-mono">{prod.slug}</span>
                                   </div>
                                 </div>
                               </td>
-                              <td className="p-3.5 text-[#38BDF8] font-semibold">{prod.category}</td>
-                              <td className="p-3.5 font-mono text-[#94A3B8]">{formatMasterPrice(prod.cost_price)}</td>
-                              <td className="p-3.5 font-mono font-bold text-[#F8FAFC]">{formatMasterPrice(prod.selling_price)}</td>
+                              <td className="p-3.5 text-[var(--accent-soft)] font-semibold">{prod.category}</td>
+                              <td className="p-3.5 font-mono text-[var(--text-muted)]">{formatMasterPrice(prod.cost_price)}</td>
+                              <td className="p-3.5 font-mono font-bold text-[var(--text)]">{formatMasterPrice(prod.selling_price)}</td>
                               <td className="p-3.5 font-mono">
-                                <span className={isLoss ? 'text-red-400 font-bold' : 'text-[#10B981] font-bold'}>
+                                <span className={isLoss ? 'text-[var(--danger)] font-bold' : 'text-[var(--success)] font-bold'}>
                                   {isLoss ? 'RUGI: ' : '+'}{formatMasterPrice(profit)}
                                 </span>
                               </td>
                               <td className="p-3.5">
-                                <span className="px-2 py-0.5 rounded bg-[#080D18] border border-[#26364D] text-[10px] text-[#38BDF8]">
+                                <span className="px-2 py-0.5 rounded bg-[var(--bg-nested)] border border-[var(--border)] text-[10px] text-[var(--accent-soft)]">
                                   {prod.primary_seller_name || 'Auto'}
                                 </span>
                               </td>
@@ -2352,7 +2352,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                   type="button"
                                   onClick={() => handleToggleProductActive(prod)}
                                   className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                                    prod.is_active ? 'bg-[#10B981]/20 text-[#10B981]' : 'bg-red-950/40 text-red-400'
+                                    prod.is_active ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]'
                                   }`}
                                 >
                                   {prod.is_active ? 'Aktif' : 'Nonaktif'}
@@ -2365,7 +2365,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                     setEditingProductPrice(prod);
                                     setIsPricingModalOpen(true);
                                   }}
-                                  className="p-1.5 rounded-lg bg-[#080D18] hover:bg-[#2583F7] text-[#94A3B8] hover:text-white transition-colors"
+                                  className="p-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[#2583F7] text-[var(--text-muted)] hover:text-white transition-colors"
                                   title="Atur Harga Jual"
                                 >
                                   <BadgePercent className="w-3.5 h-3.5" />
@@ -2377,7 +2377,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                     setImageUrlInput(prod.custom_image_url || '');
                                     setIsImageModalOpen(true);
                                   }}
-                                  className="p-1.5 rounded-lg bg-[#080D18] hover:bg-[#38BDF8] text-[#94A3B8] hover:text-[#080D18] transition-colors"
+                                  className="p-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[#38BDF8] text-[var(--text-muted)] hover:text-[#080D18] transition-colors"
                                   title="Ganti Gambar"
                                 >
                                   <ImageIcon className="w-3.5 h-3.5" />
@@ -2385,7 +2385,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 <button
                                   type="button"
                                   onClick={() => handleDeleteMasterProduct(prod.id)}
-                                  className="p-1.5 rounded-lg bg-[#080D18] hover:bg-red-600 text-[#94A3B8] hover:text-white transition-colors"
+                                  className="p-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-red-600 text-[var(--text-muted)] hover:text-white transition-colors"
                                   title="Hapus"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -2413,15 +2413,15 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
             <div className="space-y-5 animate-fadeIn">
               
               {/* Summary Header Card */}
-              <div className="p-6 rounded-2xl bg-[#101D32] border border-[#243650] flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-card">
+              <div className="p-6 rounded-2xl bg-[var(--bg-panel)] border border-[var(--border)] flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-card">
                 <div>
                   <div className="flex items-center gap-2.5 mb-1">
-                    <h3 className="font-extrabold text-lg text-[#F8FAFC]">Produk Supplier Mentah</h3>
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30">
+                    <h3 className="font-extrabold text-lg text-[var(--text)]">Produk Supplier Mentah</h3>
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-md bg-[var(--success-bg)] text-[var(--success)] border border-[#10B981]/30">
                       MySQL 8 / API Engine Live
                     </span>
                   </div>
-                  <p className="text-xs text-[#94A3B8] max-w-xl leading-relaxed">
+                  <p className="text-xs text-[var(--text-muted)] max-w-xl leading-relaxed">
                     Kelola produk dari berbagai supplier API. Produk dapat diimpor ke katalog setelah dipilih. Gunakan filter dan pencarian untuk navigasi cepat.
                   </p>
                 </div>
@@ -2469,13 +2469,13 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
               {/* Toolbar Filter & Search */}
-              <div className="p-4 rounded-2xl bg-[#101D32] border border-[#243650] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+              <div className="p-4 rounded-2xl bg-[var(--bg-panel)] border border-[var(--border)] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2.5">
                   {/* Filter Supplier */}
                   <select
                     value={selectedSellerFilter}
                     onChange={(e) => { setSelectedSellerFilter(e.target.value); setSupplierCurrentPage(1); }}
-                    className="px-3 py-2 bg-[#080F1F] border border-[#243650] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#1677FF]"
+                    className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#1677FF]"
                   >
                     <option value="">Semua Supplier</option>
                     {sellers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -2485,7 +2485,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   <select
                     value={supplierCategoryFilter}
                     onChange={(e) => { setSupplierCategoryFilter(e.target.value); setSupplierCurrentPage(1); }}
-                    className="px-3 py-2 bg-[#080F1F] border border-[#243650] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#1677FF]"
+                    className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#1677FF]"
                   >
                     <option value="Semua">Semua Kategori</option>
                     {supplierCategories.map((cat: string) => <option key={cat} value={cat}>{cat}</option>)}
@@ -2495,7 +2495,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   <select
                     value={supplierStockFilter}
                     onChange={(e) => { setSupplierStockFilter(e.target.value); setSupplierCurrentPage(1); }}
-                    className="px-3 py-2 bg-[#080F1F] border border-[#243650] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#1677FF]"
+                    className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#1677FF]"
                   >
                     <option value="all">Semua Status Stok</option>
                     <option value="ready">Ready (Tersedia)</option>
@@ -2511,7 +2511,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         setSupplierStockFilter('all');
                         setSupplierCurrentPage(1);
                       }}
-                      className="px-3 py-2 text-xs font-bold text-[#22C7FF] hover:underline"
+                      className="px-3 py-2 text-xs font-bold text-[var(--accent-soft)] hover:underline"
                     >
                       Reset Filter
                     </button>
@@ -2522,7 +2522,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     onClick={() => {
                       setSupplierCurrencyMode(prev => prev === 'AUTO' ? 'USD' : prev === 'USD' ? 'IDR' : 'AUTO');
                     }}
-                    className="px-3 py-2 bg-[#080F1F] hover:bg-[#1A263D] text-[#22C7FF] border border-[#243650] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+                    className="px-3 py-2 bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[var(--accent-soft)] border border-[var(--border)] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
                     title="Ubah Mata Uang Harga Modal (Auto / USD $ / IDR Rp)"
                   >
                     <span>💱 Mata Uang: {supplierCurrencyMode}</span>
@@ -2536,14 +2536,14 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     value={searchQuery}
                     onChange={(e) => { setSearchQuery(e.target.value); setSupplierCurrentPage(1); }}
                     placeholder="Cari nama produk, kategori, atau ID..."
-                    className="w-full pl-9 pr-8 py-2 bg-[#080F1F] border border-[#243650] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#1677FF]"
+                    className="w-full pl-9 pr-8 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#1677FF]"
                   />
-                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5 pointer-events-none" />
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-2.5 pointer-events-none" />
                   {searchQuery && (
                     <button
                       type="button"
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-2.5 top-2.5 text-[#94A3B8] hover:text-white"
+                      className="absolute right-2.5 top-2.5 text-[var(--text-muted)] hover:text-[var(--text)]"
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
@@ -2553,9 +2553,9 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
               {/* Bulk Action Toolbar (Appears when items are selected) */}
               {selectedSupplierIds.length > 0 && (
-                <div className="p-3.5 rounded-2xl bg-[#1677FF]/15 border border-[#1677FF]/40 flex items-center justify-between text-xs animate-fadeIn">
-                  <div className="flex items-center gap-2 font-bold text-[#22C7FF]">
-                    <CheckCircle2 className="w-4 h-4 text-[#22C7FF]" />
+                <div className="p-3.5 rounded-2xl bg-[var(--info-bg)] border border-[#1677FF]/40 flex items-center justify-between text-xs animate-fadeIn">
+                  <div className="flex items-center gap-2 font-bold text-[var(--accent-soft)]">
+                    <CheckCircle2 className="w-4 h-4 text-[var(--accent-soft)]" />
                     <span>{selectedSupplierIds.length} produk supplier dipilih</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -2571,7 +2571,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     <button
                       type="button"
                       onClick={() => setSelectedSupplierIds([])}
-                      className="px-3 py-2 rounded-xl bg-[#080F1F] text-[#94A3B8] hover:text-white border border-[#243650]"
+                      className="px-3 py-2 rounded-xl bg-[var(--bg-nested)] text-[var(--text-muted)] hover:text-[var(--text)] border border-[var(--border)]"
                     >
                       Batalkan Pilihan
                     </button>
@@ -2580,10 +2580,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               )}
 
               {/* Raw Supplier Products Table (V2.0 Styler) */}
-              <div className="bg-[#101D32] border border-[#243650] rounded-2xl overflow-hidden shadow-card">
+              <div className="bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-card">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-[#13243C] border-b border-[#243650] text-[#94A3B8] font-bold uppercase text-[11px] tracking-wider sticky top-0 z-10">
+                    <thead className="bg-[var(--bg-panel)] border-b border-[var(--border)] text-[var(--text-muted)] font-bold uppercase text-[11px] tracking-wider sticky top-0 z-10">
                       <tr>
                         <th className="p-4 w-12 text-center">
                           <input
@@ -2598,7 +2598,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 setSelectedSupplierIds(prev => prev.filter(id => !pageIds.has(id)));
                               }
                             }}
-                            className="rounded bg-[#080F1F] border-[#243650] text-[#1677FF] focus:ring-0 cursor-pointer"
+                            className="rounded bg-[var(--bg-nested)] border-[var(--border)] text-[#1677FF] focus:ring-0 cursor-pointer"
                           />
                         </th>
                         <th className="p-4 w-12">No</th>
@@ -2610,10 +2610,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         <th className="p-4 text-right">Aksi Impor</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#243650]/60">
+                    <tbody className="divide-y divide-[var(--border)]">
                       {paginatedSupplierProducts.length === 0 ? (
                         <tr>
-                          <td colSpan={8} className="p-10 text-center text-[#94A3B8]">
+                          <td colSpan={8} className="p-10 text-center text-[var(--text-muted)]">
                             Tidak ada produk supplier yang cocok dengan filter atau pencarian Anda.
                           </td>
                         </tr>
@@ -2622,7 +2622,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                           const rowNum = (supplierCurrentPage - 1) * supplierPageSize + idx + 1;
                           const isSelected = selectedSupplierIds.includes(item.id);
                           return (
-                            <tr key={`${item.seller_id}-${item.external_product_id}`} className="hover:bg-[#1677FF]/5 transition-colors h-[76px]">
+                            <tr key={`${item.seller_id}-${item.external_product_id}`} className="hover:bg-[var(--info-bg)] transition-colors h-[76px]">
                               <td className="p-4 text-center">
                                 <input
                                   type="checkbox"
@@ -2634,26 +2634,26 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                       setSelectedSupplierIds(prev => prev.filter(id => id !== item.id));
                                     }
                                   }}
-                                  className="rounded bg-[#080F1F] border-[#243650] text-[#1677FF] focus:ring-0 cursor-pointer"
+                                  className="rounded bg-[var(--bg-nested)] border-[var(--border)] text-[#1677FF] focus:ring-0 cursor-pointer"
                                 />
                               </td>
-                              <td className="p-4 font-mono text-[#94A3B8]">{rowNum}</td>
-                              <td className="p-4 font-bold text-[#22C7FF]">{item.seller_name}</td>
+                              <td className="p-4 font-mono text-[var(--text-muted)]">{rowNum}</td>
+                              <td className="p-4 font-bold text-[var(--accent-soft)]">{item.seller_name}</td>
                               <td className="p-4">
                                 <div className="min-w-0">
-                                  <span className="font-bold text-[#F8FAFC] block truncate max-w-[240px]" title={cleanProductName(item.name)}>
+                                  <span className="font-bold text-[var(--text)] block truncate max-w-[240px]" title={cleanProductName(item.name)}>
                                     {cleanProductName(item.name)}
                                   </span>
-                                  <span className="text-[11px] text-[#94A3B8] truncate block max-w-[240px]">
+                                  <span className="text-[11px] text-[var(--text-muted)] truncate block max-w-[240px]">
                                     {item.description ? cleanProductName(item.description).replace(/[\r\n]+/g, ' ') : 'Ready instant process'}
                                   </span>
                                 </div>
                               </td>
-                              <td className="p-4 text-[#94A3B8] font-medium">{item.original_category}</td>
-                              <td className="p-4 font-mono font-bold text-[#F8FAFC]">{formatSupplierPrice(item.cost_price)}</td>
+                              <td className="p-4 text-[var(--text-muted)] font-medium">{item.original_category}</td>
+                              <td className="p-4 font-mono font-bold text-[var(--text)]">{formatSupplierPrice(item.cost_price)}</td>
                               <td className="p-4">
                                 <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-black ${
-                                  item.is_available ? 'bg-[#10B981]/20 text-[#10B981] border border-[#10B981]/40' : 'bg-[#EF4444]/20 text-[#EF4444] border border-[#EF4444]/40'
+                                  item.is_available ? 'bg-[var(--success-bg)] text-[var(--success)] border border-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)] border border-[var(--danger)]'
                                 }`}>
                                   <span className={`w-1.5 h-1.5 rounded-full ${item.is_available ? 'bg-[#10B981]' : 'bg-[#EF4444]'}`} />
                                   {item.is_available ? `Ready ${item.stock}` : 'Habis'}
@@ -2675,7 +2675,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                     setEditingSupplierProduct(item);
                                     setIsSupplierProductModalOpen(true);
                                   }}
-                                  className="px-2.5 py-1.5 rounded-xl bg-[#111A2B] hover:bg-[#2583F7] text-[#38BDF8] hover:text-white border border-[#26364D] text-xs font-bold transition-all"
+                                  className="px-2.5 py-1.5 rounded-xl bg-[var(--bg-card)] hover:bg-[#2583F7] text-[var(--accent-soft)] hover:text-white border border-[var(--border)] text-xs font-bold transition-all"
                                   title="Edit Produk"
                                 >
                                   Edit
@@ -2683,7 +2683,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 <button
                                   type="button"
                                   onClick={() => handleDeleteSupplierProduct(item.id)}
-                                  className="px-2.5 py-1.5 rounded-xl bg-red-950/40 hover:bg-red-600 text-red-400 hover:text-white border border-red-800/60 text-xs font-bold transition-all"
+                                  className="px-2.5 py-1.5 rounded-xl bg-[var(--danger-bg)] hover:bg-red-600 text-[var(--danger)] hover:text-white border border-[var(--danger-border)] text-xs font-bold transition-all"
                                   title="Hapus Produk"
                                 >
                                   Hapus
@@ -2714,8 +2714,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
             <div className="space-y-4 animate-fadeIn">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-sm text-[#F8FAFC]">Daftar API Supplier Digital</h3>
-                  <p className="text-xs text-[#94A3B8]">Dapat menambahkan seller ketiga, keempat, dst tanpa mengubah database.</p>
+                  <h3 className="font-bold text-sm text-[var(--text)]">Daftar API Supplier Digital</h3>
+                  <p className="text-xs text-[var(--text-muted)]">Dapat menambahkan seller ketiga, keempat, dst tanpa mengubah database.</p>
                 </div>
                 <button
                   type="button"
@@ -2741,39 +2741,39 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {sellers.map(s => (
-                  <div key={s.id} className="p-5 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-3">
+                  <div key={s.id} className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-3">
                     <div className="flex items-start justify-between">
                       <div>
-                        <h4 className="font-bold text-sm text-[#F8FAFC]">{s.name}</h4>
-                        <span className="font-mono text-xs text-[#38BDF8] break-all">{s.base_url}</span>
+                        <h4 className="font-bold text-sm text-[var(--text)]">{s.name}</h4>
+                        <span className="font-mono text-xs text-[var(--accent-soft)] break-all">{s.base_url}</span>
                       </div>
                       <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
-                        s.last_status === 'connected' ? 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/40' : 'bg-red-950/40 text-red-400 border-red-800'
+                        s.last_status === 'connected' ? 'bg-[var(--success-bg)] text-[var(--success)] border-[#10B981]/40' : 'bg-[var(--danger-bg)] text-[var(--danger)] border-[var(--danger-border)]'
                       }`}>
                         {s.last_status === 'connected' ? 'Connected' : 'Error'}
                       </span>
                     </div>
 
-                    <div className="p-3 bg-[#080D18] rounded-xl border border-[#26364D] text-xs space-y-1 font-mono">
-                      <div className="flex justify-between text-[#94A3B8]">
+                    <div className="p-3 bg-[var(--bg-nested)] rounded-xl border border-[var(--border)] text-xs space-y-1 font-mono">
+                      <div className="flex justify-between text-[var(--text-muted)]">
                         <span>Auth Type:</span>
-                        <span className="text-[#F8FAFC]">{s.auth_type} ({s.auth_header_key})</span>
+                        <span className="text-[var(--text)]">{s.auth_type} ({s.auth_header_key})</span>
                       </div>
-                      <div className="flex justify-between text-[#94A3B8]">
+                      <div className="flex justify-between text-[var(--text-muted)]">
                         <span>API Key:</span>
-                        <span className="text-[#38BDF8]">{s.masked_key}</span>
+                        <span className="text-[var(--accent-soft)]">{s.masked_key}</span>
                       </div>
-                      <div className="flex justify-between text-[#94A3B8]">
+                      <div className="flex justify-between text-[var(--text-muted)]">
                         <span>Sync Terakhir:</span>
-                        <span className="text-[#F8FAFC]">{s.last_synced_at ? new Date(s.last_synced_at).toLocaleString('id-ID') : 'Belum pernah'}</span>
+                        <span className="text-[var(--text)]">{s.last_synced_at ? new Date(s.last_synced_at).toLocaleString('id-ID') : 'Belum pernah'}</span>
                       </div>
-                      <div className="flex justify-between text-[#94A3B8] border-t border-[#26364D]/60 pt-1 mt-1">
+                      <div className="flex justify-between text-[var(--text-muted)] border-t border-[var(--border)]/60 pt-1 mt-1">
                         <span>Produk Supplier:</span>
-                        <span className="text-[#F8FAFC] font-bold">{sellerProductCounts.get(s.id)?.supplier ?? 0} produk</span>
+                        <span className="text-[var(--text)] font-bold">{sellerProductCounts.get(s.id)?.supplier ?? 0} produk</span>
                       </div>
-                      <div className="flex justify-between text-[#94A3B8]">
+                      <div className="flex justify-between text-[var(--text-muted)]">
                         <span>Produk Katalog:</span>
-                        <span className="text-[#F8FAFC] font-bold">{sellerProductCounts.get(s.id)?.master ?? 0} produk</span>
+                        <span className="text-[var(--text)] font-bold">{sellerProductCounts.get(s.id)?.master ?? 0} produk</span>
                       </div>
                     </div>
 
@@ -2789,7 +2789,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         <button
                           type="button"
                           onClick={() => handleSyncSeller(s.id)}
-                          className="px-3 py-1.5 rounded-lg bg-[#111A2B] hover:bg-[#1A263D] border border-[#26364D] text-xs font-bold text-[#38BDF8]"
+                          className="px-3 py-1.5 rounded-lg bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] border border-[var(--border)] text-xs font-bold text-[var(--accent-soft)]"
                         >
                           Sync Sekarang
                         </button>
@@ -2802,7 +2802,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                             setEditingSeller(s);
                             setIsSellerModalOpen(true);
                           }}
-                          className="p-1.5 text-[#94A3B8] hover:text-white"
+                          className="p-1.5 text-[var(--text-muted)] hover:text-[var(--text)]"
                           title="Edit Seller"
                         >
                           <Edit3 className="w-4 h-4" />
@@ -2810,7 +2810,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         <button
                           type="button"
                           onClick={() => handleDeleteSeller(s.id)}
-                          className="p-1.5 text-[#94A3B8] hover:text-red-400"
+                          className="p-1.5 text-[var(--text-muted)] hover:text-[var(--danger)]"
                           title="Hapus Seller"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -2827,11 +2827,11 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           {activeTab === 'api_keys' && (
             <div className="space-y-5 animate-fadeIn">
               {/* Telegram Bot Notification Test Card */}
-              <div className="p-5 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-4">
+              <div className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-4">
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <h4 className="font-bold text-sm text-[#F8FAFC]">Uji Coba Notifikasi Bot Telegram</h4>
-                    <p className="text-xs text-[#94A3B8] mt-0.5">Kirim pesan test order instan ke bot Telegram yang diatur di `.env`.</p>
+                    <h4 className="font-bold text-sm text-[var(--text)]">Uji Coba Notifikasi Bot Telegram</h4>
+                    <p className="text-xs text-[var(--text-muted)] mt-0.5">Kirim pesan test order instan ke bot Telegram yang diatur di `.env`.</p>
                   </div>
                   <button
                     type="button"
@@ -2845,28 +2845,28 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-[#0B1528] border border-[#2583F7] space-y-2">
-                <div className="flex items-center gap-2 text-xs font-bold text-[#38BDF8]">
+              <div className="p-4 rounded-2xl bg-[var(--bg-nested)] border border-[#2583F7] space-y-2">
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--accent-soft)]">
                   <ShieldCheck className="w-4 h-4 text-[#2583F7]" />
                   <span>KEAMANAN KREDENSIAL TERENKRIPSI (AES-256-GCM)</span>
                 </div>
-                <p className="text-xs text-[#94A3B8] leading-relaxed">
+                <p className="text-xs text-[var(--text-muted)] leading-relaxed">
                   Semua API Key dan Secret supplier disimpan dalam bentuk cipher terenkripsi di database. Kunci rahasia didekripsi secara aman di memori backend dan tidak pernah dikirim secara utuh ke browser klien.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {sellers.map(s => (
-                  <div key={s.id} className="p-5 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-3">
-                    <h4 className="font-bold text-sm text-[#F8FAFC]">{s.name}</h4>
-                    <div className="p-3 bg-[#080D18] border border-[#26364D] rounded-xl font-mono text-xs space-y-2">
+                  <div key={s.id} className="p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-3">
+                    <h4 className="font-bold text-sm text-[var(--text)]">{s.name}</h4>
+                    <div className="p-3 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl font-mono text-xs space-y-2">
                       <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Header Autentikasi:</span>
-                        <span className="text-[#38BDF8]">{s.auth_header_key}: {s.masked_key}</span>
+                        <span className="text-[10px] text-[var(--text-muted)] block">Header Autentikasi:</span>
+                        <span className="text-[var(--accent-soft)]">{s.auth_header_key}: {s.masked_key}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-[#94A3B8] block">Algoritma Enkripsi:</span>
-                        <span className="text-[#10B981] font-bold">AES-256-GCM + IV Hash</span>
+                        <span className="text-[10px] text-[var(--text-muted)] block">Algoritma Enkripsi:</span>
+                        <span className="text-[var(--success)] font-bold">AES-256-GCM + IV Hash</span>
                       </div>
                     </div>
                     <button
@@ -2875,7 +2875,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         setEditingSeller(s);
                         setIsSellerModalOpen(true);
                       }}
-                      className="w-full py-2 bg-[#2583F7]/15 hover:bg-[#2583F7] text-[#38BDF8] hover:text-white border border-[#2583F7]/30 rounded-xl text-xs font-bold transition-all"
+                      className="w-full py-2 bg-[var(--info-bg)] hover:bg-[#2583F7] text-[var(--accent-soft)] hover:text-white border border-[#2583F7]/30 rounded-xl text-xs font-bold transition-all"
                     >
                       Rotasi / Perbarui API Key
                     </button>
@@ -2888,10 +2888,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           {/* 6. TAB: SINKRONISASI PRODUK */}
           {activeTab === 'sync' && (
             <div className="space-y-5 animate-fadeIn">
-              <div className="flex items-center justify-between p-5 rounded-2xl bg-[#111A2B] border border-[#26364D]">
+              <div className="flex items-center justify-between p-5 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)]">
                 <div>
-                  <h3 className="font-bold text-sm text-[#F8FAFC]">Sinkronisasi Otomatis & Terjadwal</h3>
-                  <p className="text-xs text-[#94A3B8]">Tarik data harga modal dan stok aktual dari seluruh supplier secara berkala.</p>
+                  <h3 className="font-bold text-sm text-[var(--text)]">Sinkronisasi Otomatis & Terjadwal</h3>
+                  <p className="text-xs text-[var(--text-muted)]">Tarik data harga modal dan stok aktual dari seluruh supplier secara berkala.</p>
                 </div>
                 <button
                   type="button"
@@ -2907,15 +2907,15 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               {/* Sync per seller list */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {sellers.map(s => (
-                  <div key={s.id} className="p-4 rounded-xl bg-[#111A2B] border border-[#26364D] flex items-center justify-between">
+                  <div key={s.id} className="p-4 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-between">
                     <div>
-                      <span className="font-bold text-xs text-[#F8FAFC] block">{s.name}</span>
-                      <span className="text-[11px] text-[#94A3B8]">Interval: {s.sync_interval_minutes || 60} menit</span>
+                      <span className="font-bold text-xs text-[var(--text)] block">{s.name}</span>
+                      <span className="text-[11px] text-[var(--text-muted)]">Interval: {s.sync_interval_minutes || 60} menit</span>
                     </div>
                     <button
                       type="button"
                       onClick={() => handleSyncSeller(s.id)}
-                      className="px-3 py-1.5 rounded-lg bg-[#080D18] hover:bg-[#1A263D] text-xs font-bold text-[#38BDF8] border border-[#26364D]"
+                      className="px-3 py-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-xs font-bold text-[var(--accent-soft)] border border-[var(--border)]"
                     >
                       Sync {s.name}
                     </button>
@@ -2928,10 +2928,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           {/* 7. TAB: MANAJEMEN HARGA */}
           {activeTab === 'pricing' && (
             <div className="space-y-4 animate-fadeIn">
-              <div className="p-4 bg-[#111A2B] border border-[#26364D] rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                  <h3 className="font-bold text-sm text-[#F8FAFC]">Kebijakan Margin &amp; Pengaturan Harga Jual</h3>
-                  <p className="text-xs text-[#94A3B8]">Pelanggan hanya melihat harga jual Androidstore. Harga modal supplier bersifat rahasia.</p>
+                  <h3 className="font-bold text-sm text-[var(--text)]">Kebijakan Margin &amp; Pengaturan Harga Jual</h3>
+                  <p className="text-xs text-[var(--text-muted)]">Pelanggan hanya melihat harga jual Androidstore. Harga modal supplier bersifat rahasia.</p>
                 </div>
                 <div className="relative w-full sm:w-72 shrink-0">
                   <input
@@ -2939,16 +2939,16 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     value={priceSearchQuery}
                     onChange={(e) => { setPriceSearchQuery(e.target.value); setPriceCurrentPage(1); }}
                     placeholder="Cari produk..."
-                    className="w-full pl-9 pr-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                    className="w-full pl-9 pr-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#2583F7]"
                   />
-                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-2.5" />
                 </div>
               </div>
 
-              <div className="bg-[#111A2B] border border-[#26364D] rounded-2xl overflow-hidden shadow-card">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-card">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
-                  <thead className="bg-[#0B1220] border-b border-[#26364D] text-[#94A3B8] font-bold uppercase text-[10px]">
+                  <thead className="bg-[var(--bg-panel)] border-b border-[var(--border)] text-[var(--text-muted)] font-bold uppercase text-[10px]">
                       <tr>
                        <th className="p-3.5 w-12">No</th>
                        <th className="p-3.5">Produk</th>
@@ -2960,23 +2960,23 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <th className="p-3.5 text-right">Aksi</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#26364D]/60">
+                  <tbody className="divide-y divide-[var(--border)]">
                      {paginatedPriceProducts.map((p, index) => {
                       const margin = p.selling_price - p.cost_price;
                       const isDanger = margin < 0;
                       return (
-                         <tr key={p.id} className="hover:bg-[#1A263D]/40">
-                           <td className="p-3.5 font-mono text-[#94A3B8]">{(priceCurrentPage - 1) * pricePageSize + index + 1}</td>
-                           <td className="p-3.5 font-bold text-[#F8FAFC]">{cleanProductName(p.name)}</td>
-                          <td className="p-3.5 font-mono text-[#94A3B8]">{formatPrice(p.cost_price)}</td>
-                          <td className="p-3.5 capitalize text-[#38BDF8]">{p.pricing_mode.replace('_', ' ')}</td>
-                          <td className="p-3.5 font-mono font-bold text-[#F8FAFC]">{formatPrice(p.selling_price)}</td>
+                         <tr key={p.id} className="hover:bg-[var(--bg-hover)]">
+                           <td className="p-3.5 font-mono text-[var(--text-muted)]">{(priceCurrentPage - 1) * pricePageSize + index + 1}</td>
+                           <td className="p-3.5 font-bold text-[var(--text)]">{cleanProductName(p.name)}</td>
+                          <td className="p-3.5 font-mono text-[var(--text-muted)]">{formatPrice(p.cost_price)}</td>
+                          <td className="p-3.5 capitalize text-[var(--accent-soft)]">{p.pricing_mode.replace('_', ' ')}</td>
+                          <td className="p-3.5 font-mono font-bold text-[var(--text)]">{formatPrice(p.selling_price)}</td>
                           <td className="p-3.5 font-mono font-bold">
-                            <span className={isDanger ? 'text-red-400' : 'text-[#10B981]'}>
+                            <span className={isDanger ? 'text-[var(--danger)]' : 'text-[var(--success)]'}>
                               {isDanger ? '⚠️ ' : '+'}{formatPrice(margin)}
                             </span>
                           </td>
-                          <td className="p-3.5 font-mono text-[#94A3B8]">
+                          <td className="p-3.5 font-mono text-[var(--text-muted)]">
                             {p.is_wholesale ? formatPrice(p.wholesale_price) : '-'}
                           </td>
                           <td className="p-3.5 text-right">
@@ -3011,10 +3011,10 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
            {/* 8. TAB: MANAJEMEN GAMBAR */}
           {activeTab === 'images' && (
             <div className="space-y-4 animate-fadeIn">
-              <div className="p-4 bg-[#111A2B] border border-[#26364D] rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="p-4 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 <div>
-                  <h3 className="font-bold text-sm text-[#F8FAFC]">Manajemen Gambar Produk (Upload File &amp; URL Link)</h3>
-                  <p className="text-xs text-[#94A3B8]">Prioritas: 1. Upload Admin → 2. Link Custom Admin → 3. Gambar Supplier.</p>
+                  <h3 className="font-bold text-sm text-[var(--text)]">Manajemen Gambar Produk (Upload File &amp; URL Link)</h3>
+                  <p className="text-xs text-[var(--text-muted)]">Prioritas: 1. Upload Admin → 2. Link Custom Admin → 3. Gambar Supplier.</p>
                 </div>
                 <div className="relative w-full sm:w-72 shrink-0">
                   <input
@@ -3022,21 +3022,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     value={imageSearchQuery}
                     onChange={(e) => { setImageSearchQuery(e.target.value); setImagesCurrentPage(1); }}
                     placeholder="Cari produk..."
-                    className="w-full pl-9 pr-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                    className="w-full pl-9 pr-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#2583F7]"
                   />
-                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-2.5" />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                  {paginatedImageProducts.map(p => (
-                  <div key={p.id} className="bg-[#111A2B] border border-[#26364D] rounded-2xl overflow-hidden p-3 space-y-2 flex flex-col justify-between">
-                    <div className="aspect-square bg-[#080D18] rounded-xl overflow-hidden border border-[#26364D]/60 flex items-center justify-center">
+                  <div key={p.id} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden p-3 space-y-2 flex flex-col justify-between">
+                    <div className="aspect-square bg-[var(--bg-nested)] rounded-xl overflow-hidden border border-[var(--border)]/60 flex items-center justify-center">
                       <img src={p.custom_image_url || '/assets/default_produk.png'} alt="" className="w-full h-full object-cover" />
                     </div>
                     <div>
-                      <span className="font-bold text-xs text-[#F8FAFC] line-clamp-1">{cleanProductName(p.name)}</span>
-                      <span className="text-[10px] text-[#38BDF8] uppercase font-semibold">Tipe: {p.image_type}</span>
+                      <span className="font-bold text-xs text-[var(--text)] line-clamp-1">{cleanProductName(p.name)}</span>
+                      <span className="text-[10px] text-[var(--accent-soft)] uppercase font-semibold">Tipe: {p.image_type}</span>
                     </div>
                     <button
                       type="button"
@@ -3045,7 +3045,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         setImageUrlInput(p.custom_image_url || '');
                         setIsImageModalOpen(true);
                       }}
-                      className="w-full py-1.5 bg-[#080D18] hover:bg-[#2583F7] text-[#38BDF8] hover:text-white border border-[#26364D] rounded-xl text-xs font-bold transition-all"
+                      className="w-full py-1.5 bg-[var(--bg-nested)] hover:bg-[#2583F7] text-[var(--accent-soft)] hover:text-white border border-[var(--border)] rounded-xl text-xs font-bold transition-all"
                     >
                       Ganti Gambar
                     </button>
@@ -3226,21 +3226,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               {/* Header & Actions */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h3 className="font-extrabold text-base text-[#F8FAFC]">Riwayat Transaksi &amp; Laporan Keuntungan</h3>
-                  <span className="text-xs text-[#94A3B8]">Menampilkan rincian pesanan, modal supplier, dan analisis keuntungan bersih</span>
+                  <h3 className="font-extrabold text-base text-[var(--text)]">Riwayat Transaksi &amp; Laporan Keuntungan</h3>
+                  <span className="text-xs text-[var(--text-muted)]">Menampilkan rincian pesanan, modal supplier, dan analisis keuntungan bersih</span>
                 </div>
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <button
                     type="button"
                     onClick={handleExportCSV}
-                    className="px-3.5 py-2.5 rounded-xl bg-[#080F1F] hover:bg-[#1A263D] text-[#38BDF8] border border-[#243650] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
+                    className="px-3.5 py-2.5 rounded-xl bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[var(--accent-soft)] border border-[var(--border)] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
                   >
                     <span>📥 Export CSV</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleExportExcel}
-                    className="px-3.5 py-2.5 rounded-xl bg-[#080F1F] hover:bg-[#1A263D] text-[#10B981] border border-[#243650] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
+                    className="px-3.5 py-2.5 rounded-xl bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[var(--success)] border border-[var(--border)] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
                   >
                     <span>📊 Export Excel</span>
                   </button>
@@ -3249,58 +3249,58 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
               {/* Financial Stats Cards (Top) */}
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Total Transaksi</span>
-                  <span className="text-xl font-black text-[#F8FAFC] font-mono">{orderStats.totalTransactions}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Total Transaksi</span>
+                  <span className="text-xl font-black text-[var(--text)] font-mono">{orderStats.totalTransactions}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Total Omzet (Penjualan)</span>
-                  <span className="text-xl font-black text-[#10B981] font-mono">{formatPrice(orderStats.totalRevenue)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Total Omzet (Penjualan)</span>
+                  <span className="text-xl font-black text-[var(--success)] font-mono">{formatPrice(orderStats.totalRevenue)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Total Modal Supplier</span>
-                  <span className="text-xl font-black text-red-400 font-mono">{formatPrice(orderStats.totalCost)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Total Modal Supplier</span>
+                  <span className="text-xl font-black text-[var(--danger)] font-mono">{formatPrice(orderStats.totalCost)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Keuntungan Kotor</span>
-                  <span className="text-xl font-black text-[#38BDF8] font-mono">+{formatPrice(orderStats.grossProfit)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Keuntungan Kotor</span>
+                  <span className="text-xl font-black text-[var(--accent-soft)] font-mono">+{formatPrice(orderStats.grossProfit)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Keuntungan Bersih (Net)</span>
-                  <span className="text-xl font-black text-[#10B981] font-mono">+{formatPrice(orderStats.netProfit)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Keuntungan Bersih (Net)</span>
+                  <span className="text-xl font-black text-[var(--success)] font-mono">+{formatPrice(orderStats.netProfit)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Pending</span>
-                  <span className="text-xl font-black text-amber-400 font-mono">{orderStats.pendingCount}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Pending</span>
+                  <span className="text-xl font-black text-[var(--warn)] font-mono">{orderStats.pendingCount}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Berhasil (Success)</span>
-                  <span className="text-xl font-black text-[#10B981] font-mono">{orderStats.successCount}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Berhasil (Success)</span>
+                  <span className="text-xl font-black text-[var(--success)] font-mono">{orderStats.successCount}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Gagal / Batal</span>
-                  <span className="text-xl font-black text-red-400 font-mono">{orderStats.failedCount}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Gagal / Batal</span>
+                  <span className="text-xl font-black text-[var(--danger)] font-mono">{orderStats.failedCount}</span>
                 </div>
               </div>
 
               {/* Filters Toolbar */}
-              <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] flex flex-wrap items-center gap-3">
+              <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex flex-wrap items-center gap-3">
                 <div className="relative flex-1 min-w-[200px]">
                   <input
                     type="text"
                     value={orderSearchQuery}
                     onChange={(e) => { setOrderSearchQuery(e.target.value); setOrdersCurrentPage(1); }}
                     placeholder="Cari invoice, nama pelanggan, atau nomor kontak..."
-                    className="w-full pl-9 pr-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                    className="w-full pl-9 pr-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#2583F7]"
                   />
-                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-2.5" />
                 </div>
 
                 {/* Date Range Filter */}
                 <select
                   value={orderDateRange}
                   onChange={(e) => { setOrderDateRange(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Periode</option>
                   <option value="today">Hari Ini</option>
@@ -3315,7 +3315,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <select
                   value={orderPaymentFilter}
                   onChange={(e) => { setOrderPaymentFilter(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Status Bayar</option>
                   <option value="unpaid">Unpaid</option>
@@ -3330,7 +3330,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <select
                   value={orderStatusFilter}
                   onChange={(e) => { setOrderStatusFilter(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Status Order</option>
                   <option value="pending">Pending</option>
@@ -3346,7 +3346,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <select
                   value={orderSupplierFilter}
                   onChange={(e) => { setOrderSupplierFilter(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Supplier</option>
                   {sellers.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
@@ -3363,7 +3363,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       setOrderSupplierFilter('all');
                       setOrdersCurrentPage(1);
                     }}
-                    className="px-3 py-2 text-xs font-bold text-[#38BDF8] hover:underline"
+                    className="px-3 py-2 text-xs font-bold text-[var(--accent-soft)] hover:underline"
                   >
                     Reset Filter
                   </button>
@@ -3371,9 +3371,9 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
               {/* Transactions & Profit Audit Table */}
-              <div className="w-full min-w-0 bg-[#111A2B] border border-[#26364D] rounded-2xl overflow-x-auto overflow-y-visible shadow-card">
+              <div className="w-full min-w-0 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-x-auto overflow-y-visible shadow-card">
                 <table className="w-full min-w-[960px] text-left text-xs">
-                    <thead className="bg-[#0B1220] border-b border-[#26364D] text-[#94A3B8] font-bold uppercase text-[10px]">
+                    <thead className="bg-[var(--bg-panel)] border-b border-[var(--border)] text-[var(--text-muted)] font-bold uppercase text-[10px]">
                       <tr>
                         <th className="p-3.5 w-12">No</th>
                         <th className="p-3.5">Invoice / Tanggal</th>
@@ -3386,41 +3386,41 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         <th className="p-3.5 text-right">Aksi Detail</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#26364D]/60">
+                    <tbody className="divide-y divide-[var(--border)]">
                       {filteredOrders.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="p-10 text-center text-[#94A3B8]">Tidak ada transaksi yang cocok dengan filter atau pencarian Anda.</td>
+                          <td colSpan={9} className="p-10 text-center text-[var(--text-muted)]">Tidak ada transaksi yang cocok dengan filter atau pencarian Anda.</td>
                         </tr>
                       ) : (
                         paginatedOrders.map((o, index) => {
                           const rowNum = (ordersCurrentPage - 1) * ordersPageSize + index + 1;
                           const profit = Number(o.gross_profit || 0);
                           return (
-                            <tr key={o.id} className="hover:bg-[#1A263D]/40 transition-colors">
-                              <td className="p-3.5 font-mono text-[#94A3B8]">{rowNum}</td>
+                            <tr key={o.id} className="hover:bg-[var(--bg-hover)] transition-colors">
+                              <td className="p-3.5 font-mono text-[var(--text-muted)]">{rowNum}</td>
                               <td className="p-3.5">
-                                <span className="font-mono font-bold text-[#38BDF8] block">{o.invoice_number}</span>
-                                <span className="text-[10px] text-[#94A3B8] block">{new Date(o.created_at).toLocaleString('id-ID')}</span>
+                                <span className="font-mono font-bold text-[var(--accent-soft)] block">{o.invoice_number}</span>
+                                <span className="text-[10px] text-[var(--text-muted)] block">{new Date(o.created_at).toLocaleString('id-ID')}</span>
                               </td>
                               <td className="p-3.5">
-                                <span className="font-bold text-[#F8FAFC] block">{o.customer_name}</span>
-                                <span className="text-[10px] text-[#94A3B8] font-mono">{o.customer_phone}</span>
+                                <span className="font-bold text-[var(--text)] block">{o.customer_name}</span>
+                                <span className="text-[10px] text-[var(--text-muted)] font-mono">{o.customer_phone}</span>
                               </td>
                               <td className="p-3.5 font-medium">{o.payment_method || 'QRIS Instant'}</td>
-                              <td className="p-3.5 font-mono font-bold text-[#10B981]">{formatPrice(o.total_amount)}</td>
-                              <td className="p-3.5 font-mono text-red-400">{formatPrice(o.total_cost || 0)}</td>
-                              <td className="p-3.5 font-mono font-bold text-[#38BDF8]">+{formatPrice(profit)}</td>
+                              <td className="p-3.5 font-mono font-bold text-[var(--success)]">{formatPrice(o.total_amount)}</td>
+                              <td className="p-3.5 font-mono text-[var(--danger)]">{formatPrice(o.total_cost || 0)}</td>
+                              <td className="p-3.5 font-mono font-bold text-[var(--accent-soft)]">+{formatPrice(profit)}</td>
                               <td className="p-3.5">
                                 <div className="space-y-1">
                                   <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                                    o.order_status === 'delivered' || o.order_status === 'success' ? 'bg-[#10B981]/20 text-[#10B981]' :
-                                    o.order_status === 'waiting_verification' ? 'bg-amber-500/20 text-amber-400' :
-                                    'bg-[#2583F7]/20 text-[#38BDF8]'
+                                    o.order_status === 'delivered' || o.order_status === 'success' ? 'bg-[var(--success-bg)] text-[var(--success)]' :
+                                    o.order_status === 'waiting_verification' ? 'bg-[var(--warn-bg)] text-[var(--warn)]' :
+                                    'bg-[var(--info-bg)] text-[var(--accent-soft)]'
                                   }`}>
                                     {o.order_status}
                                   </span>
                                   <span className={`block px-2 py-0.5 rounded text-[9px] font-bold ${
-                                    o.payment_status === 'paid' || o.payment_status === 'verified' ? 'bg-[#10B981]/15 text-[#10B981]' : 'bg-red-950/40 text-red-400'
+                                    o.payment_status === 'paid' || o.payment_status === 'verified' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]'
                                   }`}>
                                     Pay: {o.payment_status}
                                   </span>
@@ -3430,7 +3430,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 <button
                                   type="button"
                                   onClick={() => setSelectedOrderDetail(o)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1677FF]/15 hover:bg-[#1677FF] text-[#22C7FF] hover:text-white border border-[#1677FF]/40 text-xs font-bold transition-all shadow-sm"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--info-bg)] hover:bg-[#1677FF] text-[var(--accent-soft)] hover:text-white border border-[#1677FF]/40 text-xs font-bold transition-all shadow-sm"
                                 >
                                   <Eye className="w-3.5 h-3.5" />
                                   <span>Detail</span>
@@ -3459,21 +3459,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               {/* Header & Actions */}
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h3 className="font-extrabold text-base text-[#F8FAFC]">Riwayat Transaksi &amp; Laporan Keuntungan</h3>
-                  <span className="text-xs text-[#94A3B8]">Menampilkan rincian pesanan, modal supplier, dan analisis keuntungan bersih</span>
+                  <h3 className="font-extrabold text-base text-[var(--text)]">Riwayat Transaksi &amp; Laporan Keuntungan</h3>
+                  <span className="text-xs text-[var(--text-muted)]">Menampilkan rincian pesanan, modal supplier, dan analisis keuntungan bersih</span>
                 </div>
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <button
                     type="button"
                     onClick={handleExportCSV}
-                    className="px-3.5 py-2.5 rounded-xl bg-[#080F1F] hover:bg-[#1A263D] text-[#38BDF8] border border-[#243650] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
+                    className="px-3.5 py-2.5 rounded-xl bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[var(--accent-soft)] border border-[var(--border)] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
                   >
                     <span>📥 Export CSV</span>
                   </button>
                   <button
                     type="button"
                     onClick={handleExportExcel}
-                    className="px-3.5 py-2.5 rounded-xl bg-[#080F1F] hover:bg-[#1A263D] text-[#10B981] border border-[#243650] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
+                    className="px-3.5 py-2.5 rounded-xl bg-[var(--bg-nested)] hover:bg-[var(--bg-hover)] text-[var(--success)] border border-[var(--border)] font-bold text-xs shadow-sm flex items-center gap-2 transition-all"
                   >
                     <span>📊 Export Excel</span>
                   </button>
@@ -3482,58 +3482,58 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
               {/* Financial Stats Cards (Top) */}
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Total Transaksi</span>
-                  <span className="text-xl font-black text-[#F8FAFC] font-mono">{orderStats.totalTransactions}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Total Transaksi</span>
+                  <span className="text-xl font-black text-[var(--text)] font-mono">{orderStats.totalTransactions}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Total Omzet (Penjualan)</span>
-                  <span className="text-xl font-black text-[#10B981] font-mono">{formatPrice(orderStats.totalRevenue)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Total Omzet (Penjualan)</span>
+                  <span className="text-xl font-black text-[var(--success)] font-mono">{formatPrice(orderStats.totalRevenue)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Total Modal Supplier</span>
-                  <span className="text-xl font-black text-red-400 font-mono">{formatPrice(orderStats.totalCost)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Total Modal Supplier</span>
+                  <span className="text-xl font-black text-[var(--danger)] font-mono">{formatPrice(orderStats.totalCost)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Keuntungan Kotor</span>
-                  <span className="text-xl font-black text-[#38BDF8] font-mono">+{formatPrice(orderStats.grossProfit)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Keuntungan Kotor</span>
+                  <span className="text-xl font-black text-[var(--accent-soft)] font-mono">+{formatPrice(orderStats.grossProfit)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Keuntungan Bersih (Net)</span>
-                  <span className="text-xl font-black text-[#10B981] font-mono">+{formatPrice(orderStats.netProfit)}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Keuntungan Bersih (Net)</span>
+                  <span className="text-xl font-black text-[var(--success)] font-mono">+{formatPrice(orderStats.netProfit)}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Pending</span>
-                  <span className="text-xl font-black text-amber-400 font-mono">{orderStats.pendingCount}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Pending</span>
+                  <span className="text-xl font-black text-[var(--warn)] font-mono">{orderStats.pendingCount}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Berhasil (Success)</span>
-                  <span className="text-xl font-black text-[#10B981] font-mono">{orderStats.successCount}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Berhasil (Success)</span>
+                  <span className="text-xl font-black text-[var(--success)] font-mono">{orderStats.successCount}</span>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] space-y-1">
-                  <span className="text-[11px] text-[#94A3B8] font-medium block">Gagal / Batal</span>
-                  <span className="text-xl font-black text-red-400 font-mono">{orderStats.failedCount}</span>
+                <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] space-y-1">
+                  <span className="text-[11px] text-[var(--text-muted)] font-medium block">Gagal / Batal</span>
+                  <span className="text-xl font-black text-[var(--danger)] font-mono">{orderStats.failedCount}</span>
                 </div>
               </div>
 
               {/* Filters Toolbar */}
-              <div className="p-4 rounded-2xl bg-[#111A2B] border border-[#26364D] flex flex-wrap items-center gap-3">
+              <div className="p-4 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex flex-wrap items-center gap-3">
                 <div className="relative flex-1 min-w-[200px]">
                   <input
                     type="text"
                     value={orderSearchQuery}
                     onChange={(e) => { setOrderSearchQuery(e.target.value); setOrdersCurrentPage(1); }}
                     placeholder="Cari invoice, nama pelanggan, atau nomor kontak..."
-                    className="w-full pl-9 pr-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7]"
+                    className="w-full pl-9 pr-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[#2583F7]"
                   />
-                  <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-2.5" />
+                  <Search className="w-4 h-4 text-[var(--text-muted)] absolute left-3 top-2.5" />
                 </div>
 
                 {/* Date Range Filter */}
                 <select
                   value={orderDateRange}
                   onChange={(e) => { setOrderDateRange(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Periode</option>
                   <option value="today">Hari Ini</option>
@@ -3548,7 +3548,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <select
                   value={orderPaymentFilter}
                   onChange={(e) => { setOrderPaymentFilter(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Status Bayar</option>
                   <option value="unpaid">Unpaid</option>
@@ -3563,7 +3563,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <select
                   value={orderStatusFilter}
                   onChange={(e) => { setOrderStatusFilter(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Status Order</option>
                   <option value="pending">Pending</option>
@@ -3579,7 +3579,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <select
                   value={orderSupplierFilter}
                   onChange={(e) => { setOrderSupplierFilter(e.target.value); setOrdersCurrentPage(1); }}
-                  className="px-3 py-2 bg-[#080F1F] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] focus:outline-none focus:border-[#2583F7]"
+                  className="px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-xs text-[var(--text)] focus:outline-none focus:border-[#2583F7]"
                 >
                   <option value="all">Semua Supplier</option>
                   {sellers.map(s => <option key={s.id} value={s.name}>{s.name}</option>)}
@@ -3596,7 +3596,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       setOrderSupplierFilter('all');
                       setOrdersCurrentPage(1);
                     }}
-                    className="px-3 py-2 text-xs font-bold text-[#38BDF8] hover:underline"
+                    className="px-3 py-2 text-xs font-bold text-[var(--accent-soft)] hover:underline"
                   >
                     Reset Filter
                   </button>
@@ -3604,9 +3604,9 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
               {/* Transactions & Profit Audit Table */}
-              <div className="bg-[#111A2B] border border-[#26364D] rounded-2xl overflow-hidden shadow-card">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-card">
                 <table className="w-full text-left text-xs">
-                    <thead className="bg-[#0B1220] border-b border-[#26364D] text-[#94A3B8] font-bold uppercase text-[10px]">
+                    <thead className="bg-[var(--bg-panel)] border-b border-[var(--border)] text-[var(--text-muted)] font-bold uppercase text-[10px]">
                       <tr>
                         <th className="p-3.5 w-12">No</th>
                         <th className="p-3.5">Invoice / Tanggal</th>
@@ -3619,41 +3619,41 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         <th className="p-3.5 text-right">Aksi Detail</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#26364D]/60">
+                    <tbody className="divide-y divide-[var(--border)]">
                       {filteredOrders.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="p-10 text-center text-[#94A3B8]">Tidak ada transaksi yang cocok dengan filter atau pencarian Anda.</td>
+                          <td colSpan={9} className="p-10 text-center text-[var(--text-muted)]">Tidak ada transaksi yang cocok dengan filter atau pencarian Anda.</td>
                         </tr>
                       ) : (
                         paginatedOrders.map((o, index) => {
                           const rowNum = (ordersCurrentPage - 1) * ordersPageSize + index + 1;
                           const profit = Number(o.gross_profit || 0);
                           return (
-                            <tr key={o.id} className="hover:bg-[#1A263D]/40 transition-colors">
-                              <td className="p-3.5 font-mono text-[#94A3B8]">{rowNum}</td>
+                            <tr key={o.id} className="hover:bg-[var(--bg-hover)] transition-colors">
+                              <td className="p-3.5 font-mono text-[var(--text-muted)]">{rowNum}</td>
                               <td className="p-3.5">
-                                <span className="font-mono font-bold text-[#38BDF8] block">{o.invoice_number}</span>
-                                <span className="text-[10px] text-[#94A3B8] block">{new Date(o.created_at).toLocaleString('id-ID')}</span>
+                                <span className="font-mono font-bold text-[var(--accent-soft)] block">{o.invoice_number}</span>
+                                <span className="text-[10px] text-[var(--text-muted)] block">{new Date(o.created_at).toLocaleString('id-ID')}</span>
                               </td>
                               <td className="p-3.5">
-                                <span className="font-bold text-[#F8FAFC] block">{o.customer_name}</span>
-                                <span className="text-[10px] text-[#94A3B8] font-mono">{o.customer_phone}</span>
+                                <span className="font-bold text-[var(--text)] block">{o.customer_name}</span>
+                                <span className="text-[10px] text-[var(--text-muted)] font-mono">{o.customer_phone}</span>
                               </td>
                               <td className="p-3.5 font-medium">{o.payment_method || 'QRIS Instant'}</td>
-                              <td className="p-3.5 font-mono font-bold text-[#10B981]">{formatPrice(o.total_amount)}</td>
-                              <td className="p-3.5 font-mono text-red-400">{formatPrice(o.total_cost || 0)}</td>
-                              <td className="p-3.5 font-mono font-bold text-[#38BDF8]">+{formatPrice(profit)}</td>
+                              <td className="p-3.5 font-mono font-bold text-[var(--success)]">{formatPrice(o.total_amount)}</td>
+                              <td className="p-3.5 font-mono text-[var(--danger)]">{formatPrice(o.total_cost || 0)}</td>
+                              <td className="p-3.5 font-mono font-bold text-[var(--accent-soft)]">+{formatPrice(profit)}</td>
                               <td className="p-3.5">
                                 <div className="space-y-1">
                                   <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                                    o.order_status === 'delivered' || o.order_status === 'success' ? 'bg-[#10B981]/20 text-[#10B981]' :
-                                    o.order_status === 'waiting_verification' ? 'bg-amber-500/20 text-amber-400' :
-                                    'bg-[#2583F7]/20 text-[#38BDF8]'
+                                    o.order_status === 'delivered' || o.order_status === 'success' ? 'bg-[var(--success-bg)] text-[var(--success)]' :
+                                    o.order_status === 'waiting_verification' ? 'bg-[var(--warn-bg)] text-[var(--warn)]' :
+                                    'bg-[var(--info-bg)] text-[var(--accent-soft)]'
                                   }`}>
                                     {o.order_status}
                                   </span>
                                   <span className={`block px-2 py-0.5 rounded text-[9px] font-bold ${
-                                    o.payment_status === 'paid' || o.payment_status === 'verified' ? 'bg-[#10B981]/15 text-[#10B981]' : 'bg-red-950/40 text-red-400'
+                                    o.payment_status === 'paid' || o.payment_status === 'verified' ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]'
                                   }`}>
                                     Pay: {o.payment_status}
                                   </span>
@@ -3663,7 +3663,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                 <button
                                   type="button"
                                   onClick={() => setSelectedOrderDetail(o)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1677FF]/15 hover:bg-[#1677FF] text-[#22C7FF] hover:text-white border border-[#1677FF]/40 text-xs font-bold transition-all shadow-sm"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[var(--info-bg)] hover:bg-[#1677FF] text-[var(--accent-soft)] hover:text-white border border-[#1677FF]/40 text-xs font-bold transition-all shadow-sm"
                                 >
                                   <Eye className="w-3.5 h-3.5" />
                                   <span>Detail</span>
@@ -3691,21 +3691,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
             <div className="space-y-4 animate-fadeIn">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-sm text-[#F8FAFC]">Audit Request API &amp; Health Monitoring</h3>
-                  <p className="text-xs text-[#94A3B8]">Setiap request HTTP ke seller dicatat dengan durasi dan response code aman.</p>
+                  <h3 className="font-bold text-sm text-[var(--text)]">Audit Request API &amp; Health Monitoring</h3>
+                  <p className="text-xs text-[var(--text-muted)]">Setiap request HTTP ke seller dicatat dengan durasi dan response code aman.</p>
                 </div>
                 <button
                   type="button"
                   onClick={loadAllData}
-                  className="px-3 py-1.5 rounded-xl bg-[#111A2B] hover:bg-[#1A263D] border border-[#26364D] text-xs font-bold text-[#38BDF8]"
+                  className="px-3 py-1.5 rounded-xl bg-[var(--bg-card)] hover:bg-[var(--bg-hover)] border border-[var(--border)] text-xs font-bold text-[var(--accent-soft)]"
                 >
                   Refresh Log
                 </button>
               </div>
 
-              <div className="bg-[#111A2B] border border-[#26364D] rounded-2xl overflow-hidden shadow-card">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-card">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-[#0B1220] border-b border-[#26364D] text-[#94A3B8] font-bold uppercase text-[10px]">
+                  <thead className="bg-[var(--bg-panel)] border-b border-[var(--border)] text-[var(--text-muted)] font-bold uppercase text-[10px]">
                     <tr>
                       <th className="p-3.5">Waktu</th>
                       <th className="p-3.5">Supplier</th>
@@ -3716,26 +3716,26 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <th className="p-3.5 text-right">Detail</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#26364D]/60 font-mono text-[11px]">
+                  <tbody className="divide-y divide-[var(--border)] font-mono text-[11px]">
                     {logs.map(log => (
-                      <tr key={log.id} className="hover:bg-[#1A263D]/40">
-                        <td className="p-3.5 text-[#94A3B8]">{new Date(log.created_at).toLocaleTimeString()}</td>
-                        <td className="p-3.5 font-bold text-[#38BDF8]">{log.seller_name}</td>
+                      <tr key={log.id} className="hover:bg-[var(--bg-hover)]">
+                        <td className="p-3.5 text-[var(--text-muted)]">{new Date(log.created_at).toLocaleTimeString()}</td>
+                        <td className="p-3.5 font-bold text-[var(--accent-soft)]">{log.seller_name}</td>
                         <td className="p-3.5 truncate max-w-xs">{log.request_method} {log.request_url}</td>
                         <td className="p-3.5">
                           <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                            log.is_success ? 'bg-[#10B981]/20 text-[#10B981]' : 'bg-red-950/40 text-red-400'
+                            log.is_success ? 'bg-[var(--success-bg)] text-[var(--success)]' : 'bg-[var(--danger-bg)] text-[var(--danger)]'
                           }`}>
                             {log.http_status || (log.is_success ? 200 : 500)}
                           </span>
                         </td>
-                        <td className="p-3.5 text-[#94A3B8]">{log.duration_ms}ms</td>
-                        <td className="p-3.5 text-[#94A3B8] truncate max-w-xs">{log.response_summary || log.error_message}</td>
+                        <td className="p-3.5 text-[var(--text-muted)]">{log.duration_ms}ms</td>
+                        <td className="p-3.5 text-[var(--text-muted)] truncate max-w-xs">{log.response_summary || log.error_message}</td>
                         <td className="p-3.5 text-right">
                           <button
                             type="button"
                             onClick={() => setSelectedLogDetail(log)}
-                            className="p-1 rounded bg-[#080D18] hover:bg-[#2583F7] text-[#94A3B8] hover:text-white"
+                            className="p-1 rounded bg-[var(--bg-nested)] hover:bg-[#2583F7] text-[var(--text-muted)] hover:text-white"
                           >
                             <Eye className="w-3.5 h-3.5" />
                           </button>
@@ -3751,24 +3751,24 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           {/* 12. TAB: PENGATURAN WEBSITE */}
           {activeTab === 'settings' && (
             <div className="space-y-4 max-w-2xl animate-fadeIn">
-              <form onSubmit={handleChangeAdminPassword} className="p-6 bg-[#111A2B] border border-[#26364D] rounded-2xl space-y-4">
+              <form onSubmit={handleChangeAdminPassword} className="p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl space-y-4">
                 <div>
-                  <h3 className="font-bold text-base text-[#F8FAFC]">Profil Administrator</h3>
-                  <p className="text-xs text-[#94A3B8] mt-1">Email admin tetap dan hanya password yang dapat diperbarui.</p>
+                  <h3 className="font-bold text-base text-[var(--text)]">Profil Administrator</h3>
+                  <p className="text-xs text-[var(--text-muted)] mt-1">Email admin tetap dan hanya password yang dapat diperbarui.</p>
                 </div>
 
                 <div className="space-y-3 text-xs">
                   <div>
-                    <label className="text-[#94A3B8] font-semibold block mb-1">Email Admin</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Email Admin</label>
                     <input
                       type="email"
                       value="androidstore279@gmail.com"
                       readOnly
-                      className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#94A3B8] cursor-not-allowed"
+                      className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text-muted)] cursor-not-allowed"
                     />
                   </div>
                   <div>
-                    <label className="text-[#94A3B8] font-semibold block mb-1">Password Lama</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Password Lama</label>
                     <div className="relative">
                       <input
                         type={visibleProfilePasswords.current ? 'text' : 'password'}
@@ -3776,12 +3776,12 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         autoComplete="current-password"
                         value={profilePasswordForm.current_password}
                         onChange={(event) => setProfilePasswordForm({ ...profilePasswordForm, current_password: event.target.value })}
-                        className="w-full px-3 pr-10 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                        className="w-full px-3 pr-10 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                       />
                       <button
                         type="button"
                         onClick={() => setVisibleProfilePasswords((visible) => ({ ...visible, current: !visible.current }))}
-                        className="absolute right-3 top-2 text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
+                        className="absolute right-3 top-2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
                         aria-label={visibleProfilePasswords.current ? 'Hide current password' : 'Show current password'}
                       >
                         {visibleProfilePasswords.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -3789,7 +3789,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     </div>
                   </div>
                   <div>
-                    <label className="text-[#94A3B8] font-semibold block mb-1">Password Baru</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Password Baru</label>
                     <div className="relative">
                       <input
                         type={visibleProfilePasswords.next ? 'text' : 'password'}
@@ -3798,21 +3798,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         autoComplete="new-password"
                         value={profilePasswordForm.new_password}
                         onChange={(event) => setProfilePasswordForm({ ...profilePasswordForm, new_password: event.target.value })}
-                        className="w-full px-3 pr-10 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                        className="w-full px-3 pr-10 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                       />
                       <button
                         type="button"
                         onClick={() => setVisibleProfilePasswords((visible) => ({ ...visible, next: !visible.next }))}
-                        className="absolute right-3 top-2 text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
+                        className="absolute right-3 top-2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
                         aria-label={visibleProfilePasswords.next ? 'Hide new password' : 'Show new password'}
                       >
                         {visibleProfilePasswords.next ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     </div>
-                    <span className="text-[10px] text-[#94A3B8] mt-1 block">Minimal 12 karakter.</span>
+                    <span className="text-[10px] text-[var(--text-muted)] mt-1 block">Minimal 12 karakter.</span>
                   </div>
                   <div>
-                    <label className="text-[#94A3B8] font-semibold block mb-1">Konfirmasi Password Baru</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Konfirmasi Password Baru</label>
                     <div className="relative">
                       <input
                         type={visibleProfilePasswords.confirmation ? 'text' : 'password'}
@@ -3821,12 +3821,12 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         autoComplete="new-password"
                         value={profilePasswordForm.confirm_password}
                         onChange={(event) => setProfilePasswordForm({ ...profilePasswordForm, confirm_password: event.target.value })}
-                        className="w-full px-3 pr-10 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                        className="w-full px-3 pr-10 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                       />
                       <button
                         type="button"
                         onClick={() => setVisibleProfilePasswords((visible) => ({ ...visible, confirmation: !visible.confirmation }))}
-                        className="absolute right-3 top-2 text-[#94A3B8] hover:text-[#F8FAFC] transition-colors"
+                        className="absolute right-3 top-2 text-[var(--text-muted)] hover:text-[var(--text)] transition-colors"
                         aria-label={visibleProfilePasswords.confirmation ? 'Hide password confirmation' : 'Show password confirmation'}
                       >
                         {visibleProfilePasswords.confirmation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -3844,37 +3844,37 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </button>
               </form>
 
-              <div className="p-6 bg-[#111A2B] border border-[#26364D] rounded-2xl space-y-4">
-                <h3 className="font-bold text-base text-[#F8FAFC]">Konfigurasi Toko &amp; Integrasi CS</h3>
+              <div className="p-6 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl space-y-4">
+                <h3 className="font-bold text-base text-[var(--text)]">Konfigurasi Toko &amp; Integrasi CS</h3>
                 
                 <div className="space-y-3 text-xs">
                   <div>
-                    <label className="text-[#94A3B8] font-semibold block mb-1">Nama Toko Online</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Nama Toko Online</label>
                     <input
                       type="text"
                       value={settings.store_name || ''}
                       onChange={(e) => setSettings({ ...settings, store_name: e.target.value })}
-                      className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                      className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[#94A3B8] font-semibold block mb-1">Nomor WhatsApp Resmi Admin</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Nomor WhatsApp Resmi Admin</label>
                     <input
                       type="text"
                       value={settings.whatsapp_number || ''}
                       onChange={(e) => setSettings({ ...settings, whatsapp_number: e.target.value })}
-                      className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                      className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[#94A3B8] font-semibold block mb-1">Default Markup Impor Produk (%)</label>
+                    <label className="text-[var(--text-muted)] font-semibold block mb-1">Default Markup Impor Produk (%)</label>
                     <input
                       type="number"
                       value={settings.default_markup_percent || 25}
                       onChange={(e) => setSettings({ ...settings, default_markup_percent: e.target.value })}
-                      className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                      className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                     />
                   </div>
                 </div>
@@ -3909,48 +3909,48 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isSellerModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal overflow-hidden text-xs text-[#F8FAFC]">
-            <div className="px-5 py-4 bg-[#0B1220] border-b border-[#26364D] flex items-center justify-between">
+          <div className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal overflow-hidden text-xs text-[var(--text)]">
+            <div className="px-5 py-4 bg-[var(--bg-panel)] border-b border-[var(--border)] flex items-center justify-between">
               <h3 className="font-bold text-sm">
                 {editingSeller.id ? 'Edit Konfigurasi Seller' : 'Tambah Seller / Supplier Baru'}
               </h3>
               <button type="button" onClick={() => setIsSellerModalOpen(false)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <form onSubmit={handleSaveSeller} className="p-5 space-y-3.5 max-h-[80vh] overflow-y-auto">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Nama Seller</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Seller</label>
                 <input
                   type="text"
                   required
                   value={editingSeller.name || ''}
                   onChange={(e) => setEditingSeller({ ...editingSeller, name: e.target.value })}
                   placeholder="Contoh: Seller 3 Telegram API"
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Base URL API Endpoint</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Base URL API Endpoint</label>
                 <input
                   type="url"
                   required
                   value={editingSeller.base_url || ''}
                   onChange={(e) => setEditingSeller({ ...editingSeller, base_url: e.target.value })}
                   placeholder="https://api.supplier.com/v1"
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Metode Autentikasi</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Metode Autentikasi</label>
                   <select
                     value={editingSeller.auth_type || 'header'}
                     onChange={(e) => setEditingSeller({ ...editingSeller, auth_type: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   >
                     <option value="header">Custom HTTP Header</option>
                     <option value="bearer">Bearer Token</option>
@@ -3958,56 +3958,56 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Nama Header Key</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Header Key</label>
                   <input
                     type="text"
                     value={editingSeller.auth_header_key || 'x-api-key'}
                     onChange={(e) => setEditingSeller({ ...editingSeller, auth_header_key: e.target.value })}
                     placeholder="x-api-key"
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">
-                  API Key / Token Rahasia <span className="text-[#10B981] text-[10px]">(Terenkripsi AES-256)</span>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">
+                  API Key / Token Rahasia <span className="text-[var(--success)] text-[10px]">(Terenkripsi AES-256)</span>
                 </label>
                 <input
                   type="password"
                   value={editingSeller.api_key || ''}
                   onChange={(e) => setEditingSeller({ ...editingSeller, api_key: e.target.value })}
                   placeholder={editingSeller.id ? '(Biarkan kosong jika tidak diubah)' : 'Masukkan API Key Anda'}
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Endpoint Produk</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Endpoint Produk</label>
                   <input
                     type="text"
                     value={editingSeller.endpoint_products || '/products'}
                     onChange={(e) => setEditingSeller({ ...editingSeller, endpoint_products: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Endpoint Order</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Endpoint Order</label>
                   <input
                     type="text"
                     value={editingSeller.endpoint_order || '/order'}
                     onChange={(e) => setEditingSeller({ ...editingSeller, endpoint_order: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-[#26364D]">
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setIsSellerModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8]"
+                  className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]"
                 >
                   Batal
                 </button>
@@ -4028,22 +4028,22 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isPricingModalOpen && editingProductPrice && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal p-5 text-xs text-[#F8FAFC] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#26364D] pb-3">
+          <div className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <h3 className="font-bold text-sm">Pengaturan Harga: {editingProductPrice.name}</h3>
               <button type="button" onClick={() => setIsPricingModalOpen(false)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <form onSubmit={handleSavePrice} className="space-y-3.5">
-              <div className="p-3 bg-[#080D18] rounded-xl border border-[#26364D] flex justify-between font-mono">
-                <span className="text-[#94A3B8]">Harga Modal Supplier:</span>
-                <span className="text-[#38BDF8] font-bold">{formatPrice(editingProductPrice.cost_price)}</span>
+              <div className="p-3 bg-[var(--bg-nested)] rounded-xl border border-[var(--border)] flex justify-between font-mono">
+                <span className="text-[var(--text-muted)]">Harga Modal Supplier:</span>
+                <span className="text-[var(--accent-soft)] font-bold">{formatPrice(editingProductPrice.cost_price)}</span>
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Metode Markup</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Metode Markup</label>
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     { id: 'percent', label: 'Markup %' },
@@ -4055,7 +4055,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       type="button"
                       onClick={() => setMarkupType(m.id as MarkupMode)}
                       className={`py-2 rounded-xl border font-bold text-xs ${
-                        markupType === m.id ? 'bg-[#2583F7] text-white border-[#2583F7]' : 'bg-[#111A2B] border-[#26364D] text-[#94A3B8]'
+                        markupType === m.id ? 'bg-[#2583F7] text-white border-[#2583F7]' : 'bg-[var(--bg-card)] border-[var(--border)] text-[var(--text-muted)]'
                       }`}
                     >
                       {m.label}
@@ -4066,20 +4066,20 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
               {markupType !== 'manual' && (
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">
                     Nilai Markup {markupType === 'percent' ? '(%)' : '(Rp)'}
                   </label>
                   <input
                     type="number"
                     value={markupVal}
                     onChange={(e) => setMarkupVal(Number(e.target.value))}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
               )}
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Harga Jual Akhir Androidstore</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Harga Jual Akhir Androidstore</label>
                 <input
                   type="number"
                   value={
@@ -4091,12 +4091,12 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   }
                   onChange={(e) => setEditingProductPrice({ ...editingProductPrice, selling_price: Number(e.target.value) })}
                   disabled={markupType !== 'manual'}
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#10B981] font-bold font-mono text-sm"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--success)] font-bold font-mono text-sm"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#26364D]">
-                <button type="button" onClick={() => setIsPricingModalOpen(false)} className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8]">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
+                <button type="button" onClick={() => setIsPricingModalOpen(false)} className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]">
                   Batal
                 </button>
                 <button type="submit" className="px-5 py-2 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold">
@@ -4113,17 +4113,17 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isImageModalOpen && editingProductImage && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal p-5 text-xs text-[#F8FAFC] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#26364D] pb-3">
+          <div className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <h3 className="font-bold text-sm">Ganti Gambar: {editingProductImage.name}</h3>
               <button type="button" onClick={() => setIsImageModalOpen(false)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <form onSubmit={handleSaveImage} className="space-y-4">
               {/* Preview Box */}
-              <div className="aspect-[16/10] bg-[#080D18] border border-[#26364D] rounded-xl overflow-hidden flex items-center justify-center">
+              <div className="aspect-[16/10] bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl overflow-hidden flex items-center justify-center">
                 <img
                   src={imagePreview || imageUrlInput || editingProductImage.custom_image_url || '/assets/default_produk.png'}
                   alt=""
@@ -4133,7 +4133,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
               {/* Metode 1: Upload File */}
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">METODE 1 — Upload File (JPG, PNG, WEBP, SVG)</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">METODE 1 — Upload File (JPG, PNG, WEBP, SVG)</label>
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp,image/svg+xml"
@@ -4144,13 +4144,13 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       setImagePreview(URL.createObjectURL(file));
                     }
                   }}
-                  className="w-full text-xs text-[#94A3B8] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#2583F7] file:text-white hover:file:bg-[#1D4ED8]"
+                  className="w-full text-xs text-[var(--text-muted)] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-[#2583F7] file:text-white hover:file:bg-[#1D4ED8]"
                 />
               </div>
 
               {/* Metode 2: Link URL */}
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">METODE 2 — Link URL Gambar Eksternal</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">METODE 2 — Link URL Gambar Eksternal</label>
                 <input
                   type="url"
                   value={imageUrlInput}
@@ -4160,12 +4160,12 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     setImagePreview(e.target.value);
                   }}
                   placeholder="https://domain.com/gambar-produk.jpg"
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#26364D]">
-                <button type="button" onClick={() => setIsImageModalOpen(false)} className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8]">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
+                <button type="button" onClick={() => setIsImageModalOpen(false)} className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]">
                   Batal
                 </button>
                 <button type="submit" className="px-5 py-2 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold">
@@ -4182,21 +4182,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {selectedLogDetail && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal p-5 text-xs text-[#F8FAFC] space-y-3 font-mono">
-            <div className="flex items-center justify-between border-b border-[#26364D] pb-3">
-              <span className="font-bold text-sm text-[#38BDF8]">Log #{selectedLogDetail.id} - {selectedLogDetail.seller_name}</span>
+          <div className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-3 font-mono">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
+              <span className="font-bold text-sm text-[var(--accent-soft)]">Log #{selectedLogDetail.id} - {selectedLogDetail.seller_name}</span>
               <button type="button" onClick={() => setSelectedLogDetail(null)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <div className="space-y-1.5 text-[11px]">
-              <div><strong className="text-[#94A3B8]">URL:</strong> {selectedLogDetail.request_method} {selectedLogDetail.request_url}</div>
-              <div><strong className="text-[#94A3B8]">HTTP Status:</strong> {selectedLogDetail.http_status}</div>
-              <div><strong className="text-[#94A3B8]">Durasi:</strong> {selectedLogDetail.duration_ms}ms</div>
-              <div><strong className="text-[#94A3B8]">Waktu:</strong> {new Date(selectedLogDetail.created_at).toLocaleString('id-ID')}</div>
-              <div><strong className="text-[#94A3B8]">Hasil Respons:</strong></div>
-              <div className="p-3 bg-[#080D18] rounded-xl border border-[#26364D] text-[#10B981] whitespace-pre-wrap">
+              <div><strong className="text-[var(--text-muted)]">URL:</strong> {selectedLogDetail.request_method} {selectedLogDetail.request_url}</div>
+              <div><strong className="text-[var(--text-muted)]">HTTP Status:</strong> {selectedLogDetail.http_status}</div>
+              <div><strong className="text-[var(--text-muted)]">Durasi:</strong> {selectedLogDetail.duration_ms}ms</div>
+              <div><strong className="text-[var(--text-muted)]">Waktu:</strong> {new Date(selectedLogDetail.created_at).toLocaleString('id-ID')}</div>
+              <div><strong className="text-[var(--text-muted)]">Hasil Respons:</strong></div>
+              <div className="p-3 bg-[var(--bg-nested)] rounded-xl border border-[var(--border)] text-[var(--success)] whitespace-pre-wrap">
                 {selectedLogDetail.response_summary || selectedLogDetail.error_message || 'Tidak ada detail error.'}
               </div>
             </div>
@@ -4347,16 +4347,16 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           <button
             type="button"
             onClick={() => setIsProofLightboxOpen(false)}
-            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-[#111A2B] text-white flex items-center justify-center border border-[#26364D] hover:bg-[#2583F7]"
+            className="absolute top-5 right-5 w-10 h-10 rounded-full bg-[var(--bg-card)] text-[var(--text)] flex items-center justify-center border border-[var(--border)] hover:bg-[#2583F7] hover:text-white"
           >
             <X className="w-5 h-5" />
           </button>
           <div onClick={(event) => event.stopPropagation()} className="max-w-[95vw] max-h-[92vh] flex flex-col items-center gap-4">
-            <span className="text-xs font-bold text-[#22C7FF]">Bukti Transfer #{selectedOrderProof.invoice_number}</span>
+            <span className="text-xs font-bold text-[var(--accent-soft)]">Bukti Transfer #{selectedOrderProof.invoice_number}</span>
             <img
               src={selectedOrderProof.payment_proof_url || '/assets/default_produk.png'}
               alt="Bukti Transfer diperbesar"
-              className="max-w-[95vw] max-h-[78vh] object-contain rounded-xl bg-[#080D18] border border-[#26364D] p-2"
+              className="max-w-[95vw] max-h-[78vh] object-contain rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] p-2"
             />
             <a
               href={selectedOrderProof.payment_proof_url || '#'}
@@ -4374,67 +4374,67 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* Modal Detail Pesanan & Audit Keuangan */}
       {selectedOrderDetail && (
         <div className="fixed inset-0 z-[90] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
-          <div className="w-full max-w-2xl bg-[#101D32] border border-[#243650] rounded-2xl shadow-modal overflow-hidden text-xs text-[#F8FAFC] max-h-[90vh] flex flex-col">
-            <div className="px-5 py-4 bg-[#0B1426] border-b border-[#243650] flex items-center justify-between flex-shrink-0">
+          <div className="w-full max-w-2xl bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal overflow-hidden text-xs text-[var(--text)] max-h-[90vh] flex flex-col">
+            <div className="px-5 py-4 bg-[var(--bg-nested)] border-b border-[var(--border)] flex items-center justify-between flex-shrink-0">
               <div>
-                <h3 className="font-bold text-sm text-[#22C7FF]">Detail Transaksi &amp; Audit Keuntungan</h3>
-                <span className="text-[10px] text-[#94A3B8]">Invoice: #{selectedOrderDetail.invoice_number} | Tanggal: {new Date(selectedOrderDetail.created_at).toLocaleString('id-ID')}</span>
+                <h3 className="font-bold text-sm text-[var(--accent-soft)]">Detail Transaksi &amp; Audit Keuntungan</h3>
+                <span className="text-[10px] text-[var(--text-muted)]">Invoice: #{selectedOrderDetail.invoice_number} | Tanggal: {new Date(selectedOrderDetail.created_at).toLocaleString('id-ID')}</span>
               </div>
-              <button type="button" onClick={() => setSelectedOrderDetail(null)} className="text-[#94A3B8] hover:text-white">
+              <button type="button" onClick={() => setSelectedOrderDetail(null)} className="text-[var(--text-muted)] hover:text-[var(--text)]">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="p-5 space-y-4 overflow-y-auto flex-1">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3.5 bg-[#080F1F] border border-[#243650] rounded-xl">
-                <div><span className="text-[#94A3B8] block text-[10px]">Pelanggan</span><strong className="text-sm">{selectedOrderDetail.customer_name}</strong></div>
-                <div><span className="text-[#94A3B8] block text-[10px]">Kontak</span><strong className="text-[#22C7FF]">{selectedOrderDetail.customer_phone}</strong></div>
-                <div><span className="text-[#94A3B8] block text-[10px]">Metode</span><strong>{selectedOrderDetail.payment_method || 'QRIS Instant'}</strong></div>
-                <div><span className="text-[#94A3B8] block text-[10px]">Total Pembayaran</span><strong className="text-[#10B981] text-sm">{formatPrice(selectedOrderDetail.total_amount)}</strong></div>
-                <div><span className="text-[#94A3B8] block text-[10px]">Status Pembayaran</span><span className="px-2 py-0.5 rounded bg-[#1677FF]/20 text-[#38BDF8] font-bold">{selectedOrderDetail.payment_status}</span></div>
-                <div><span className="text-[#94A3B8] block text-[10px]">Status Order</span><span className="px-2 py-0.5 rounded bg-[#10B981]/20 text-[#10B981] font-bold">{selectedOrderDetail.order_status}</span></div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-3.5 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl">
+                <div><span className="text-[var(--text-muted)] block text-[10px]">Pelanggan</span><strong className="text-sm">{selectedOrderDetail.customer_name}</strong></div>
+                <div><span className="text-[var(--text-muted)] block text-[10px]">Kontak</span><strong className="text-[var(--accent-soft)]">{selectedOrderDetail.customer_phone}</strong></div>
+                <div><span className="text-[var(--text-muted)] block text-[10px]">Metode</span><strong>{selectedOrderDetail.payment_method || 'QRIS Instant'}</strong></div>
+                <div><span className="text-[var(--text-muted)] block text-[10px]">Total Pembayaran</span><strong className="text-[var(--success)] text-sm">{formatPrice(selectedOrderDetail.total_amount)}</strong></div>
+                <div><span className="text-[var(--text-muted)] block text-[10px]">Status Pembayaran</span><span className="px-2 py-0.5 rounded bg-[var(--info-bg)] text-[var(--accent-soft)] font-bold">{selectedOrderDetail.payment_status}</span></div>
+                <div><span className="text-[var(--text-muted)] block text-[10px]">Status Order</span><span className="px-2 py-0.5 rounded bg-[var(--success-bg)] text-[var(--success)] font-bold">{selectedOrderDetail.order_status}</span></div>
               </div>
 
               <div className="space-y-3">
-                <h4 className="font-bold text-[#F8FAFC]">Produk dan Jumlah (Rincian Item Supplier)</h4>
+                <h4 className="font-bold text-[var(--text)]">Produk dan Jumlah (Rincian Item Supplier)</h4>
                 {Array.isArray(selectedOrderDetail.products) && selectedOrderDetail.products.length > 0 ? (
                   selectedOrderDetail.products.map((item: Record<string, unknown>, index: number) => {
                     const itemKey = `${selectedOrderDetail.id}-${index}`;
                     const isRevealed = !!revealedFormatIndices[itemKey];
                     const formatText = String(item.format || item.description || 'email | kata sandi - Akun Pro Team pri');
                     return (
-                      <div key={itemKey} className="p-3.5 bg-[#080F1F] border border-[#243650] rounded-xl space-y-2">
+                      <div key={itemKey} className="p-3.5 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl space-y-2">
                         <div className="flex items-start justify-between gap-2">
                           <div className="w-full">
-                            <span className="font-bold text-[#F8FAFC] text-sm block">{index + 1}. {cleanProductName(String(item.name || ''))}</span>
+                            <span className="font-bold text-[var(--text)] text-sm block">{index + 1}. {cleanProductName(String(item.name || ''))}</span>
                             
-                            <div className="mt-1.5 p-2.5 bg-[#1677FF]/10 rounded-xl border border-[#1677FF]/30 flex items-center justify-between gap-2">
-                              <span className="text-[11px] text-[#38BDF8] font-mono truncate">
+                            <div className="mt-1.5 p-2.5 bg-[var(--info-bg)] rounded-xl border border-[#1677FF]/30 flex items-center justify-between gap-2">
+                              <span className="text-[11px] text-[var(--accent-soft)] font-mono truncate">
                                 Format: {isRevealed ? formatText : '••••••••••••••••••••••••'}
                               </span>
                               <button
                                 type="button"
                                 onClick={() => toggleRevealFormat(itemKey)}
-                                className="p-1.5 rounded-lg bg-[#080D18] hover:bg-[#2583F7] text-[#38BDF8] hover:text-white transition-colors flex-shrink-0 flex items-center gap-1 text-[10px] font-bold"
+                                className="p-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[#2583F7] text-[var(--accent-soft)] hover:text-white transition-colors flex-shrink-0 flex items-center gap-1 text-[10px] font-bold"
                                 title={isRevealed ? 'Sembunyikan format' : 'Tampilkan format'}
                               >
                                 {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                               </button>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-3 mt-1.5 text-[11px] text-[#94A3B8]">
-                              <span className="px-2 py-0.5 rounded bg-[#1677FF]/15 text-[#38BDF8] font-semibold">Supplier: {String(item.supplier_name || item.provider || selectedOrderDetail.product_provider || '')}</span>
-                              <span>ID Supplier: <strong className="font-mono text-[#F8FAFC]">{String(item.supplier_product_id || '-')}</strong></span>
-                              <span>Qty: <strong className="text-[#10B981]">x{Number(item.quantity || 1)}</strong></span>
+                            <div className="flex flex-wrap items-center gap-3 mt-1.5 text-[11px] text-[var(--text-muted)]">
+                              <span className="px-2 py-0.5 rounded bg-[var(--info-bg)] text-[var(--accent-soft)] font-semibold">Supplier: {String(item.supplier_name || item.provider || selectedOrderDetail.product_provider || '')}</span>
+                              <span>ID Supplier: <strong className="font-mono text-[var(--text)]">{String(item.supplier_product_id || '-')}</strong></span>
+                              <span>Qty: <strong className="text-[var(--success)]">x{Number(item.quantity || 1)}</strong></span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2 border-t border-[#243650]/60 text-[11px] font-mono">
-                          <div><span className="text-[#94A3B8] block text-[10px]">Harga Modal/unit</span>{formatPrice(Number(item.supplier_cost || 0))}</div>
-                          <div><span className="text-[#94A3B8] block text-[10px]">Harga Jual/unit</span>{formatPrice(Number(item.customer_price || 0))}</div>
-                          <div><span className="text-[#94A3B8] block text-[10px]">Subtotal Modal</span>{formatPrice(Number(item.subtotal_cost || 0))}</div>
-                          <div><span className="text-[#94A3B8] block text-[10px]">Keuntungan</span><strong className="text-[#10B981]">+{formatPrice(Number(item.profit || 0))}</strong></div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2 border-t border-[var(--border)]/60 text-[11px] font-mono">
+                          <div><span className="text-[var(--text-muted)] block text-[10px]">Harga Modal/unit</span>{formatPrice(Number(item.supplier_cost || 0))}</div>
+                          <div><span className="text-[var(--text-muted)] block text-[10px]">Harga Jual/unit</span>{formatPrice(Number(item.customer_price || 0))}</div>
+                          <div><span className="text-[var(--text-muted)] block text-[10px]">Subtotal Modal</span>{formatPrice(Number(item.subtotal_cost || 0))}</div>
+                          <div><span className="text-[var(--text-muted)] block text-[10px]">Keuntungan</span><strong className="text-[var(--success)]">+{formatPrice(Number(item.profit || 0))}</strong></div>
                         </div>
                       </div>
                     );
@@ -4444,24 +4444,24 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     const fallbackKey = `fallback-${selectedOrderDetail.id}-${index}`;
                     const isRevealed = !!revealedFormatIndices[fallbackKey];
                     return (
-                      <div key={fallbackKey} className="p-3.5 bg-[#080F1F] border border-[#243650] rounded-xl space-y-2">
+                      <div key={fallbackKey} className="p-3.5 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="font-semibold block text-sm">{cleanProductName(item.name)}</span>
-                          <span className="text-[#22C7FF] font-bold">x{item.quantity}</span>
+                          <span className="text-[var(--accent-soft)] font-bold">x{item.quantity}</span>
                         </div>
-                        <div className="p-2.5 bg-[#1677FF]/10 rounded-xl border border-[#1677FF]/30 flex items-center justify-between gap-2">
-                          <span className="text-[11px] text-[#38BDF8] font-mono truncate">
+                        <div className="p-2.5 bg-[var(--info-bg)] rounded-xl border border-[#1677FF]/30 flex items-center justify-between gap-2">
+                          <span className="text-[11px] text-[var(--accent-soft)] font-mono truncate">
                             Format: {isRevealed ? 'email | kata sandi - Akun Pro Team pri' : '••••••••••••••••••••••••'}
                           </span>
                           <button
                             type="button"
                             onClick={() => toggleRevealFormat(fallbackKey)}
-                            className="p-1.5 rounded-lg bg-[#080D18] hover:bg-[#2583F7] text-[#38BDF8] hover:text-white transition-colors flex-shrink-0 flex items-center gap-1 text-[10px] font-bold"
+                            className="p-1.5 rounded-lg bg-[var(--bg-nested)] hover:bg-[#2583F7] text-[var(--accent-soft)] hover:text-white transition-colors flex-shrink-0 flex items-center gap-1 text-[10px] font-bold"
                           >
                             {isRevealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                           </button>
                         </div>
-                        <span className="text-[10px] text-[#94A3B8] block">Supplier: {selectedOrderDetail.product_provider || 'Produk Manual'}</span>
+                        <span className="text-[10px] text-[var(--text-muted)] block">Supplier: {selectedOrderDetail.product_provider || 'Produk Manual'}</span>
                       </div>
                     );
                   })
@@ -4469,39 +4469,39 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
               {/* Financial Summary Calculation */}
-              <div className="p-4 bg-[#080F1F] border border-[#243650] rounded-xl space-y-2.5">
-                <h4 className="font-bold text-sm text-[#22C7FF] border-b border-[#243650] pb-2">Ringkasan Keuangan Transaksi</h4>
+              <div className="p-4 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl space-y-2.5">
+                <h4 className="font-bold text-sm text-[var(--accent-soft)] border-b border-[var(--border)] pb-2">Ringkasan Keuangan Transaksi</h4>
                 <div className="space-y-1.5 text-xs">
-                  <div className="flex justify-between text-[#94A3B8]">
+                  <div className="flex justify-between text-[var(--text-muted)]">
                     <span>Total Pembayaran Pelanggan (Omzet)</span>
-                    <strong className="font-mono text-[#F8FAFC]">{formatPrice(selectedOrderDetail.total_amount)}</strong>
+                    <strong className="font-mono text-[var(--text)]">{formatPrice(selectedOrderDetail.total_amount)}</strong>
                   </div>
-                  <div className="flex justify-between text-[#94A3B8]">
+                  <div className="flex justify-between text-[var(--text-muted)]">
                     <span>Total Modal Seluruh Supplier</span>
-                    <strong className="font-mono text-red-400">-{formatPrice(selectedOrderDetail.total_cost || 0)}</strong>
+                    <strong className="font-mono text-[var(--danger)]">-{formatPrice(selectedOrderDetail.total_cost || 0)}</strong>
                   </div>
-                  <div className="flex justify-between text-[#94A3B8] border-t border-[#243650]/60 pt-1.5 font-bold">
+                  <div className="flex justify-between text-[var(--text-muted)] border-t border-[var(--border)]/60 pt-1.5 font-bold">
                     <span>Total Keuntungan Kotor</span>
-                    <strong className="font-mono text-[#10B981]">+{formatPrice(selectedOrderDetail.gross_profit || 0)}</strong>
+                    <strong className="font-mono text-[var(--success)]">+{formatPrice(selectedOrderDetail.gross_profit || 0)}</strong>
                   </div>
-                  <div className="flex justify-between text-[#94A3B8]">
+                  <div className="flex justify-between text-[var(--text-muted)]">
                     <span>Biaya Payment Gateway</span>
-                    <strong className="font-mono text-amber-400">-{formatPrice(selectedOrderDetail.gateway_fee || 0)}</strong>
+                    <strong className="font-mono text-[var(--warn)]">-{formatPrice(selectedOrderDetail.gateway_fee || 0)}</strong>
                   </div>
-                  <div className="flex justify-between text-[#94A3B8]">
+                  <div className="flex justify-between text-[var(--text-muted)]">
                     <span>Biaya Tambahan Lainnya</span>
-                    <strong className="font-mono text-amber-400">-{formatPrice(selectedOrderDetail.additional_fee || 0)}</strong>
+                    <strong className="font-mono text-[var(--warn)]">-{formatPrice(selectedOrderDetail.additional_fee || 0)}</strong>
                   </div>
-                  <div className="flex justify-between text-sm font-black text-white border-t border-[#243650] pt-2">
-                    <span className="text-[#10B981]">KEUNTUNGAN BERSIH</span>
-                    <span className="font-mono text-[#10B981]">+{formatPrice(selectedOrderDetail.net_profit || selectedOrderDetail.gross_profit || 0)}</span>
+                  <div className="flex justify-between text-sm font-black text-[var(--text)] border-t border-[var(--border)] pt-2">
+                    <span className="text-[var(--success)]">KEUNTUNGAN BERSIH</span>
+                    <span className="font-mono text-[var(--success)]">+{formatPrice(selectedOrderDetail.net_profit || selectedOrderDetail.gross_profit || 0)}</span>
                   </div>
                 </div>
               </div>
 
               {selectedOrderDetail.customer_notes && (
-                <div className="p-3 bg-[#080F1F] border border-[#243650] rounded-xl text-[#94A3B8]">
-                  <strong className="text-white">Catatan:</strong> {selectedOrderDetail.customer_notes}
+                <div className="p-3 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text-muted)]">
+                  <strong className="text-[var(--text)]">Catatan:</strong> {selectedOrderDetail.customer_notes}
                 </div>
               )}
             </div>
@@ -4514,29 +4514,29 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {selectedOrderDelivery && (
         <div className="fixed inset-0 z-[90] bg-black/85 backdrop-blur-md flex items-center justify-center p-4 animate-fadeIn">
-          <div className="w-full max-w-lg bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal overflow-hidden text-xs text-[#F8FAFC]">
-            <div className="px-5 py-4 bg-[#0B1220] border-b border-[#26364D] flex items-center justify-between">
+          <div className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal overflow-hidden text-xs text-[var(--text)]">
+            <div className="px-5 py-4 bg-[var(--bg-panel)] border-b border-[var(--border)] flex items-center justify-between">
               <div>
-                <h3 className="font-bold text-sm text-[#10B981]">Kirim Detail Pesanan ke Pembeli</h3>
-                <span className="text-[10px] text-[#94A3B8]">Invoice: #{selectedOrderDelivery.invoice_number} | Telp: {selectedOrderDelivery.customer_phone}</span>
+                <h3 className="font-bold text-sm text-[var(--success)]">Kirim Detail Pesanan ke Pembeli</h3>
+                <span className="text-[10px] text-[var(--text-muted)]">Invoice: #{selectedOrderDelivery.invoice_number} | Telp: {selectedOrderDelivery.customer_phone}</span>
               </div>
               <button type="button" onClick={() => setSelectedOrderDelivery(null)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <div className="p-5 space-y-4">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Pesan WhatsApp Manual untuk Pelanggan</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Pesan WhatsApp Manual untuk Pelanggan</label>
                 <textarea
                   rows={6}
                   defaultValue={`Halo Kak ${selectedOrderDelivery.customer_name}, Terima kasih telah berbelanja di Androidstore.web.id! 🙌\nPesanan Anda dengan Invoice #${selectedOrderDelivery.invoice_number} telah kami verifikasi dan proses.\n\n📦 Detail Akun / Lisensi:\n[Isi email, password, atau link akses produk di sini...]\n\nSilakan login dan nikmati layanannya. Jika ada kendala, hubungi admin kami ya kak. Terima kasih!`}
                   id="whatsapp-delivery-message"
-                  className="w-full p-3 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC] font-mono text-xs focus:outline-none focus:border-[#2583F7]"
+                  className="w-full p-3 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)] font-mono text-xs focus:outline-none focus:border-[#2583F7]"
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-[#26364D]">
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={async () => {
@@ -4571,7 +4571,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <button
                   type="button"
                   onClick={() => setSelectedOrderDelivery(null)}
-                  className="px-4 py-2.5 rounded-xl bg-[#111A2B] text-[#94A3B8]"
+                  className="px-4 py-2.5 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]"
                 >
                   Batal
                 </button>
@@ -4586,47 +4586,47 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isSupplierProductModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-lg bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal overflow-hidden text-xs text-[#F8FAFC]">
-            <div className="px-5 py-4 bg-[#0B1220] border-b border-[#26364D] flex items-center justify-between">
+          <div className="w-full max-w-lg bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal overflow-hidden text-xs text-[var(--text)]">
+            <div className="px-5 py-4 bg-[var(--bg-panel)] border-b border-[var(--border)] flex items-center justify-between">
               <h3 className="font-bold text-sm">
                 {editingSupplierProduct.id ? 'Edit Produk Supplier' : 'Tambah Produk Supplier Manual'}
               </h3>
               <button type="button" onClick={() => setIsSupplierProductModalOpen(false)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <form onSubmit={handleSaveSupplierProduct} className="p-5 space-y-3.5 max-h-[80vh] overflow-y-auto">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Pilih Supplier / Seller</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Pilih Supplier / Seller</label>
                 <select
                   value={editingSupplierProduct.seller_id || sellers[0]?.id || 1}
                   onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, seller_id: Number(e.target.value) })}
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 >
                   {sellers.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                 </select>
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Nama Produk</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Produk</label>
                 <input
                   type="text"
                   required
                   value={editingSupplierProduct.name || ''}
                   onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, name: e.target.value })}
                   placeholder="Contoh: Netflix Premium 1 Month"
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Kategori (Dari Database / Seller API)</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Kategori (Dari Database / Seller API)</label>
                   <select
                     value={editingSupplierProduct.original_category || 'Voucher & Digital'}
                     onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, original_category: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   >
                     {Array.from(new Set(['Voucher & Digital', 'Editing & Desain', 'AI & Edukasi', 'Streaming & Hiburan', ...supplierCategories])).map((cat: string) => (
                       <option key={cat} value={cat}>{cat}</option>
@@ -4634,55 +4634,55 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   </select>
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Harga Modal (Rp)</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Harga Modal (Rp)</label>
                   <input
                     type="number"
                     required
                     value={editingSupplierProduct.cost_price || 15000}
                     onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, cost_price: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Stok</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Stok</label>
                   <input
                     type="number"
                     required
                     value={editingSupplierProduct.stock || 25}
                     onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, stock: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">External ID</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">External ID</label>
                   <input
                     type="text"
                     value={editingSupplierProduct.external_product_id || `manual_${Date.now()}`}
                     onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, external_product_id: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Deskripsi</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Deskripsi</label>
                 <textarea
                   rows={3}
                   value={editingSupplierProduct.description || ''}
                   onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, description: e.target.value })}
                   placeholder="Deskripsi produk supplier..."
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
-              <div className="pt-3 flex items-center justify-end gap-2 border-t border-[#26364D]">
+              <div className="pt-3 flex items-center justify-end gap-2 border-t border-[var(--border)]">
                 <button
                   type="button"
                   onClick={() => setIsSupplierProductModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8]"
+                  className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]"
                 >
                   Batal
                 </button>
@@ -4703,75 +4703,75 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isCreateOrderModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal p-5 text-xs text-[#F8FAFC] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#26364D] pb-3">
+          <div className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <h3 className="font-bold text-sm">Tambah Pesanan Manual</h3>
               <button type="button" onClick={() => setIsCreateOrderModalOpen(false)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <form onSubmit={handleCreateManualOrder} className="space-y-3">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Nama Pelanggan</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Pelanggan</label>
                 <input
                   type="text"
                   required
                   value={newOrderForm.customer_name}
                   onChange={(e) => setNewOrderForm({ ...newOrderForm, customer_name: e.target.value })}
                   placeholder="Contoh: Budi Santoso"
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Nomor WhatsApp</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nomor WhatsApp</label>
                 <input
                   type="tel"
                   required
                   value={newOrderForm.customer_phone}
                   onChange={(e) => setNewOrderForm({ ...newOrderForm, customer_phone: e.target.value })}
                   placeholder="08123456789"
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Nama Produk / Paket</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Produk / Paket</label>
                 <input
                   type="text"
                   required
                   value={newOrderForm.product_name}
                   onChange={(e) => setNewOrderForm({ ...newOrderForm, product_name: e.target.value })}
                   placeholder="Contoh: Netflix Premium 1 Bulan"
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Total Tagihan (Rp)</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Total Tagihan (Rp)</label>
                   <input
                     type="number"
                     required
                     value={newOrderForm.total_amount}
                     onChange={(e) => setNewOrderForm({ ...newOrderForm, total_amount: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Metode Pembayaran</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Metode Pembayaran</label>
                   <input
                     type="text"
                     value={newOrderForm.payment_method}
                     onChange={(e) => setNewOrderForm({ ...newOrderForm, payment_method: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#26364D]">
-                <button type="button" onClick={() => setIsCreateOrderModalOpen(false)} className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8]">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
+                <button type="button" onClick={() => setIsCreateOrderModalOpen(false)} className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]">
                   Batal
                 </button>
                 <button type="submit" className="px-5 py-2 rounded-xl bg-[#2583F7] text-white font-bold">
@@ -4788,44 +4788,44 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isEditOrderModalOpen && targetOrderForAction && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal p-5 text-xs text-[#F8FAFC] space-y-4">
-            <div className="flex items-center justify-between border-b border-[#26364D] pb-3">
+          <div className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
+            <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <h3 className="font-bold text-sm">Edit Pesanan: #{targetOrderForAction.invoice_number}</h3>
               <button type="button" onClick={() => setIsEditOrderModalOpen(false)}>
-                <X className="w-4 h-4 text-[#94A3B8]" />
+                <X className="w-4 h-4 text-[var(--text-muted)]" />
               </button>
             </div>
 
             <form onSubmit={handleUpdateOrderSubmit} className="space-y-3">
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Nama Pelanggan</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Pelanggan</label>
                 <input
                   type="text"
                   required
                   value={editOrderForm.customer_name || ''}
                   onChange={(e) => setEditOrderForm({ ...editOrderForm, customer_name: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Nomor WhatsApp</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nomor WhatsApp</label>
                 <input
                   type="tel"
                   required
                   value={editOrderForm.customer_phone || ''}
                   onChange={(e) => setEditOrderForm({ ...editOrderForm, customer_phone: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Status Pembayaran</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Status Pembayaran</label>
                   <select
                     value={editOrderForm.payment_status || 'pending'}
                     onChange={(e) => setEditOrderForm({ ...editOrderForm, payment_status: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   >
                     <option value="unpaid">Unpaid</option>
                     <option value="pending">Pending</option>
@@ -4836,11 +4836,11 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </div>
 
                 <div>
-                  <label className="block text-[#94A3B8] mb-1 font-semibold">Status Order</label>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Status Order</label>
                   <select
                     value={editOrderForm.order_status || 'pending'}
                     onChange={(e) => setEditOrderForm({ ...editOrderForm, order_status: e.target.value })}
-                    className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   >
                     <option value="pending">Pending</option>
                     <option value="waiting_verification">Menunggu Verifikasi</option>
@@ -4853,14 +4853,14 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Bukti Transfer (Upload Manual)</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Bukti Transfer (Upload Manual)</label>
                 {targetOrderForAction.payment_proof_url ? (
                   <div className="mb-2 flex items-center gap-2">
-                    <img src={targetOrderForAction.payment_proof_url} alt="Bukti Transfer" className="w-16 h-16 object-cover rounded-lg border border-[#26364D]" />
-                    <span className="text-[11px] text-[#10B981]">Bukti sudah ada — pilih file baru untuk mengganti.</span>
+                    <img src={targetOrderForAction.payment_proof_url} alt="Bukti Transfer" className="w-16 h-16 object-cover rounded-lg border border-[var(--border)]" />
+                    <span className="text-[11px] text-[var(--success)]">Bukti sudah ada — pilih file baru untuk mengganti.</span>
                   </div>
                 ) : (
-                  <p className="mb-2 text-[11px] text-[#F59E0B]">Belum ada bukti transfer — upload manual di sini.</p>
+                  <p className="mb-2 text-[11px] text-[var(--warn)]">Belum ada bukti transfer — upload manual di sini.</p>
                 )}
                 <input
                   type="file"
@@ -4876,28 +4876,28 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       setEditOrderProofPreview(null);
                     }
                   }}
-                  className="w-full text-xs text-[#94A3B8] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1677FF] file:text-white hover:file:bg-[#1D4ED8]"
+                  className="w-full text-xs text-[var(--text-muted)] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1677FF] file:text-white hover:file:bg-[#1D4ED8]"
                 />
                 {editOrderProofPreview && (
                   <div className="mt-2">
-                    <img src={editOrderProofPreview} alt="Preview Bukti" className="w-full max-h-40 object-contain rounded-xl bg-[#080D18] border border-[#26364D]" />
-                    <p className="text-[11px] text-[#94A3B8] mt-1">File baru: {editOrderProofFile?.name} — akan diunggah saat Simpan Perubahan.</p>
+                    <img src={editOrderProofPreview} alt="Preview Bukti" className="w-full max-h-40 object-contain rounded-xl bg-[var(--bg-nested)] border border-[var(--border)]" />
+                    <p className="text-[11px] text-[var(--text-muted)] mt-1">File baru: {editOrderProofFile?.name} — akan diunggah saat Simpan Perubahan.</p>
                   </div>
                 )}
               </div>
 
               <div>
-                <label className="block text-[#94A3B8] mb-1 font-semibold">Catatan Admin</label>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Catatan Admin</label>
                 <textarea
                   rows={2}
                   value={editOrderForm.customer_notes || ''}
                   onChange={(e) => setEditOrderForm({ ...editOrderForm, customer_notes: e.target.value })}
-                  className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC]"
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#26364D]">
-                <button type="button" onClick={() => setIsEditOrderModalOpen(false)} className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8]">
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
+                <button type="button" onClick={() => setIsEditOrderModalOpen(false)} className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]">
                   Batal
                 </button>
                 <button type="submit" className="px-5 py-2 rounded-xl bg-[#2583F7] text-white font-bold">
@@ -4914,14 +4914,14 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isDeleteOrderModalOpen && targetOrderForAction && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-sm bg-[#101827] border border-[#26364D] rounded-2xl shadow-modal p-5 text-xs text-[#F8FAFC] space-y-4 text-center">
-            <div className="w-12 h-12 rounded-2xl bg-red-950/60 text-red-400 border border-red-800 flex items-center justify-center mx-auto">
+          <div className="w-full max-w-sm bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4 text-center">
+            <div className="w-12 h-12 rounded-2xl bg-[var(--danger-bg)] text-[var(--danger)] border border-[var(--danger-border)] flex items-center justify-center mx-auto">
               <Trash2 className="w-6 h-6" />
             </div>
 
             <div>
-              <h3 className="font-bold text-sm text-[#F8FAFC] mb-1">Hapus Pesanan?</h3>
-              <p className="text-[#94A3B8]">
+              <h3 className="font-bold text-sm text-[var(--text)] mb-1">Hapus Pesanan?</h3>
+              <p className="text-[var(--text-muted)]">
                 Apakah Anda yakin ingin menghapus pesanan <strong>#{targetOrderForAction.invoice_number}</strong> milik <strong>{targetOrderForAction.customer_name}</strong>? Data akan diarsipkan (soft delete).
               </p>
             </div>
@@ -4930,7 +4930,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               <button
                 type="button"
                 onClick={() => setIsDeleteOrderModalOpen(false)}
-                className="px-4 py-2 rounded-xl bg-[#111A2B] text-[#94A3B8] font-bold"
+                className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)] font-bold"
               >
                 Batal
               </button>
