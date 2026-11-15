@@ -164,6 +164,22 @@ app.put('/api/admin/settings', async (req, res) => {
   }
 });
 
+// Info toko publik untuk storefront (tanpa data admin): nomor WhatsApp CS + nama toko.
+app.get('/api/settings/public', async (_req, res) => {
+  try {
+    const settings = await getSettings();
+    res.json({
+      success: true,
+      data: {
+        store_name: settings.store_name || 'Androidstore.web.id',
+        whatsapp_number: settings.whatsapp_number || '6285867336036'
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 app.post('/api/admin/telegram/test', async (_req, res) => {
   try {
     const testOrder = {

@@ -22,6 +22,7 @@ interface MenuModalProps {
   onLogoClick?: () => void;
   isDarkMode?: boolean;
   onToggleDarkMode?: () => void;
+  whatsappNumber?: string;
 }
 
 const CATEGORIES = [
@@ -49,7 +50,8 @@ export function MenuModal({
   onOpenAdminLogin,
   onLogoClick,
   isDarkMode = false,
-  onToggleDarkMode
+  onToggleDarkMode,
+  whatsappNumber = '6285867336036'
 }: MenuModalProps) {
   const [isKategoriExpanded, setIsKategoriExpanded] = useState(true);
 
@@ -84,6 +86,10 @@ export function MenuModal({
     if (onLogoClick) onLogoClick();
     onClose();
   };
+
+  // Nomor CS dari Pengaturan website: hanya digit, awalan 0 diubah ke 62.
+  const waNumber = (whatsappNumber || '6285867336036').replace(/\D/g, '').replace(/^0/, '62');
+  const whatsappUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent('Halo Admin Androidstore.web.id! Saya butuh bantuan terkait produk digital.')}`;
 
   // Palet sidebar mengikuti Mode Tampilan (dark = navy seperti sebelumnya, light = putih).
   const c = {
@@ -276,7 +282,7 @@ export function MenuModal({
                   Layanan live support resmi Androidstore.web.id siap melayani 24/7.
                 </p>
                 <a
-                  href="https://wa.me/6285867336036?text=Halo%20Admin%20Androidstore.web.id!%20Saya%20butuh%20bantuan%20terkait%20produk%20digital."
+                  href={whatsappUrl}
                   target="_blank"
                   rel="noreferrer"
                   aria-label="Hubungi CS via WhatsApp"

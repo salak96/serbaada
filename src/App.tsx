@@ -107,6 +107,19 @@ function App() {
 
   const { isDarkMode, toggleDarkMode } = useTheme();
 
+  // Nomor WhatsApp CS dari Pengaturan website (fallback: nomor default).
+  const [whatsappNumber, setWhatsappNumber] = useState('6285867336036');
+  useEffect(() => {
+    fetch('/api/settings/public')
+      .then(r => r.json())
+      .then(json => {
+        if (json?.success && json.data?.whatsapp_number) {
+          setWhatsappNumber(String(json.data.whatsapp_number));
+        }
+      })
+      .catch(() => { /* tetap pakai nomor default */ });
+  }, []);
+
   // Dedicated Admin routing check on load and hash/search change
   useEffect(() => {
     const checkAdminRoute = () => {
@@ -697,6 +710,7 @@ function App() {
         onLogoClick={handleGoHome}
         isDarkMode={isDarkMode}
         onToggleDarkMode={toggleDarkMode}
+        whatsappNumber={whatsappNumber}
       />
 
       {/* Shopping Cart Drawer */}
