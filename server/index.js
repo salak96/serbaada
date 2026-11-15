@@ -744,12 +744,45 @@ app.get('/api/public/products/:slug', async (req, res) => {
 // ==========================================
 // ORDERS & TRANSACTION CHECKING
 // ==========================================
+// Tampilan publik sebuah pesanan untuk pelacakan (Cek Status Transaksi):
+// hanya field yang aman ditampilkan. Email akun disensor, password TIDAK
+// pernah dikirim ke publik (hanya penanda ada/tidak). Email akun diambil dari
+// field terstruktur, atau diekstrak dari pesan pengiriman lama.
+function maskEmail(email) {
+  const e = String(email || '');
+  const at = e.indexOf('@');
+  if (at <= 0) return e ? '••••••' : '';
+  return e.slice(0, 2) + '••••••' + e.slice(at);
+}
+function extractEmail(text) {
+  const m = String(text || '').match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+  return m ? m[0] : '';
+}
+function publicOrderView(order) {
+  const products = Array.isArray(order.products) && order.products.length
+    ? order.products.map(p => ({ name: p.name, quantity: Number(p.quantity || 1), price: Number(p.customer_price || 0) }))
+    : [{ name: order.product_name || 'Produk Digital', quantity: Number(order.quantity || 1), price: Number(order.total_amount || 0) }];
+  const rawEmail = order.delivery_email || extractEmail(order.delivered_credentials);
+  return {
+    id: order.id,
+    invoice_number: order.invoice_number,
+    product_name: order.product_name || products[0]?.name || 'Produk Digital',
+    products,
+    total_amount: Number(order.total_amount || 0),
+    payment_status: order.payment_status,
+    order_status: order.order_status,
+    created_at: order.created_at,
+    delivery_email_masked: rawEmail ? maskEmail(rawEmail) : '',
+    has_delivery_password: !!order.delivery_password
+  };
+}
+
 app.get('/api/orders/:id', async (req, res) => {
   try {
     const orders = await getOrders();
     const order = orders.find(o => o.invoice_number === req.params.id || String(o.id) === req.params.id);
     if (!order) return res.status(404).json({ success: false, message: 'Pesanan tidak ditemukan' });
-    res.json({ success: true, order });
+    res.json({ success: true, order: publicOrderView(order) });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

@@ -728,6 +728,8 @@ function App() {
       <TransactionCheckerModal
         isOpen={isCheckTransactionOpen}
         onClose={() => setIsCheckTransactionOpen(false)}
+        isDarkMode={isDarkMode}
+        whatsappNumber={whatsappNumber}
       />
 
       {/* Top Sultan Modal */}

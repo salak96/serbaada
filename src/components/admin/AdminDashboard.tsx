@@ -325,6 +325,8 @@ interface OrderItem {
   payment_proof_url?: string;
   payment_method: string;
   delivered_credentials?: string;
+  delivery_email?: string;
+  delivery_password?: string;
   created_at: string;
 }
 
@@ -561,9 +563,6 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     order_status: 'pending',
     payment_status: 'unpaid'
   });
-  const [newOrderProductId, setNewOrderProductId] = useState<string>('');
-  const [newOrderProofFile, setNewOrderProofFile] = useState<File | null>(null);
-  const [newOrderProofPreview, setNewOrderProofPreview] = useState<string | null>(null);
 
   const handleSaveSupplierProduct = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -610,39 +609,13 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   const handleCreateManualOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const selectedProd = newOrderProductId && newOrderProductId !== 'manual'
-        ? masterProducts.find(p => String(p.id) === newOrderProductId)
-        : null;
-      const payload: Record<string, unknown> = { ...newOrderForm };
-      if (selectedProd) {
-        payload.products = [{
-          name: selectedProd.name,
-          quantity: 1,
-          price: selectedProd.selling_price,
-          provider: selectedProd.primary_seller_name || 'Produk Manual'
-        }];
-      }
       const res = await fetch('/api/admin/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(newOrderForm)
       });
       const json = await res.json();
       if (json.success) {
-        // Upload bukti pembayaran (bila admin memilih file) — endpoint admin
-        // hanya mengisi payment_proof_url, tidak mengubah status pesanan.
-        if (newOrderProofFile && json.order) {
-          const proofData = new FormData();
-          proofData.append('file', newOrderProofFile);
-          const proofRes = await fetch(`/api/admin/orders/${json.order.id}/proof`, {
-            method: 'POST',
-            body: proofData
-          });
-          const proofJson = await proofRes.json();
-          if (!proofJson.success) {
-            showNotification('error', 'Pesanan dibuat, tapi bukti gagal diunggah: ' + (proofJson.message || ''));
-          }
-        }
         showNotification('success', 'Pesanan manual berhasil dibuat!');
         setIsCreateOrderModalOpen(false);
         setNewOrderForm({
@@ -654,9 +627,6 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           order_status: 'pending',
           payment_status: 'unpaid'
         });
-        setNewOrderProductId('');
-        setNewOrderProofFile(null);
-        setNewOrderProofPreview(null);
         loadAllData();
       } else {
         showNotification('error', json.message);
@@ -3114,21 +3084,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 </div>
                 <button
                   type="button"
-                  onClick={() => {
-                    setNewOrderForm({
-                      customer_name: '',
-                      customer_phone: '',
-                      product_name: '',
-                      total_amount: 25000,
-                      payment_method: 'QRIS Instant',
-                      order_status: 'pending',
-                      payment_status: 'unpaid'
-                    });
-                    setNewOrderProductId('');
-                    setNewOrderProofFile(null);
-                    setNewOrderProofPreview(null);
-                    setIsCreateOrderModalOpen(true);
-                  }}
+                  onClick={() => setIsCreateOrderModalOpen(true)}
                   className="px-4 py-2.5 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold text-xs shadow-md flex items-center gap-2 transition-all flex-shrink-0"
                 >
                   <Plus className="w-4 h-4" />
@@ -4557,6 +4513,37 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 )}
               </div>
 
+              {(selectedOrderDetail.delivery_email || selectedOrderDetail.delivery_password || selectedOrderDetail.delivered_credentials) && (
+                <div className="p-3.5 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl space-y-2">
+                  <h4 className="font-bold text-[var(--text)]">🔐 Data Akun Terkirim <span className="text-[10px] font-semibold text-[var(--success)]">(tersimpan — tidak bisa diubah/dihapus)</span></h4>
+                  {selectedOrderDetail.delivery_email && (
+                    <div className="flex justify-between gap-2 text-xs">
+                      <span className="text-[var(--text-muted)]">Email Akun:</span>
+                      <code className="font-mono text-[var(--text)] break-all text-right">{selectedOrderDetail.delivery_email}</code>
+                    </div>
+                  )}
+                  {selectedOrderDetail.delivery_password && (
+                    <div className="flex justify-between gap-2 text-xs items-center">
+                      <span className="text-[var(--text-muted)]">Password Akun:</span>
+                      <span className="flex items-center gap-2">
+                        <code className="font-mono text-[var(--text)]">{revealedFormatIndices[`delivery-pw-${selectedOrderDetail.id}`] ? selectedOrderDetail.delivery_password : '••••••••'}</code>
+                        <button
+                          type="button"
+                          onClick={() => toggleRevealFormat(`delivery-pw-${selectedOrderDetail.id}`)}
+                          className="p-1 rounded-lg bg-[var(--bg-card)] text-[var(--accent-soft)] hover:text-white hover:bg-[#2583F7] transition-colors"
+                          title="Tampilkan/sembunyikan password"
+                        >
+                          {revealedFormatIndices[`delivery-pw-${selectedOrderDetail.id}`] ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </span>
+                    </div>
+                  )}
+                  {!selectedOrderDetail.delivery_email && !selectedOrderDetail.delivery_password && selectedOrderDetail.delivered_credentials && (
+                    <p className="text-[11px] text-[var(--text-muted)]">Belum ada email/password tersimpan (pesanan lama). Isi lewat tombol <strong className="text-[var(--text)]">Kirim</strong> di tabel pesanan.</p>
+                  )}
+                </div>
+              )}
+
               {/* Financial Summary Calculation */}
               <div className="p-4 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl space-y-2.5">
                 <h4 className="font-bold text-sm text-[var(--accent-soft)] border-b border-[var(--border)] pb-2">Ringkasan Keuangan Transaksi</h4>
@@ -4615,6 +4602,35 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
             </div>
 
             <div className="p-5 space-y-4">
+              {(selectedOrderDelivery.delivery_email || selectedOrderDelivery.delivery_password) && (
+                <div className="p-2.5 rounded-xl bg-[var(--success-bg)] border border-[var(--success)]/30 text-[11px] text-[var(--success)] font-semibold">
+                  🔒 Email &amp; password akun sudah tersimpan di database — tidak bisa diubah atau dihapus.
+                </div>
+              )}
+              <div className="grid grid-cols-1 gap-3">
+                <div>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold" htmlFor="delivery-email">Email Akun</label>
+                  <input
+                    type="email"
+                    id="delivery-email"
+                    defaultValue={selectedOrderDelivery.delivery_email || ''}
+                    disabled={!!selectedOrderDelivery.delivery_email}
+                    placeholder="email akun produk..."
+                    className="w-full px-3 py-2.5 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[#2583F7] disabled:opacity-60"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold" htmlFor="delivery-password">Password Akun</label>
+                  <input
+                    type="text"
+                    id="delivery-password"
+                    defaultValue={selectedOrderDelivery.delivery_password || ''}
+                    disabled={!!selectedOrderDelivery.delivery_password}
+                    placeholder="password akun produk..."
+                    className="w-full px-3 py-2.5 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)] focus:outline-none focus:border-[#2583F7] disabled:opacity-60"
+                  />
+                </div>
+              </div>
               <div>
                 <label className="block text-[var(--text-muted)] mb-1 font-semibold">Pesan WhatsApp Manual untuk Pelanggan</label>
                 <textarea
@@ -4630,25 +4646,41 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   type="button"
                   onClick={async () => {
                     const textarea = document.getElementById('whatsapp-delivery-message') as HTMLTextAreaElement;
-                    const msg = textarea ? textarea.value : '';
+                    const emailInput = document.getElementById('delivery-email') as HTMLInputElement;
+                    const passwordInput = document.getElementById('delivery-password') as HTMLInputElement;
+                    const deliveryEmail = emailInput?.value.trim() || '';
+                    const deliveryPassword = passwordInput?.value.trim() || '';
+                    let msg = textarea ? textarea.value : '';
                     const phone = selectedOrderDelivery.customer_phone;
 
+                    // Masukkan email/password ke pesan bila placeholder masih ada.
+                    if (msg.includes('[Isi email, password, atau link akses produk di sini...]')) {
+                      const accountLines = `🔐 DATA AKUN / PRODUK:\nEmail/User: ${deliveryEmail || '-'}\nPassword: ${deliveryPassword || '-'}`;
+                      msg = msg.replace('[Isi email, password, atau link akses produk di sini...]', accountLines);
+                    }
+
                     try {
-                      await fetch(`/api/admin/orders/${selectedOrderDelivery.id}`, {
+                      const res = await fetch(`/api/admin/orders/${selectedOrderDelivery.id}`, {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
                           order_status: 'delivered',
                           payment_status: 'paid',
-                          delivered_credentials: msg
+                          delivered_credentials: msg,
+                          ...(selectedOrderDelivery.delivery_email ? {} : (deliveryEmail ? { delivery_email: deliveryEmail } : {})),
+                          ...(selectedOrderDelivery.delivery_password ? {} : (deliveryPassword ? { delivery_password: deliveryPassword } : {}))
                         })
                       });
+                      const data = await res.json().catch(() => null);
+                      if (!res.ok || !data?.success) {
+                        throw new Error(data?.message || 'Server menolak permintaan.');
+                      }
                       showNotification('success', `Pesanan #${selectedOrderDelivery.invoice_number} ditandai Selesai (Delivered)!`);
                       setSelectedOrderDelivery(null);
                       loadAllData();
                       window.open(`https://wa.me/${phone}?text=${encodeURIComponent(msg)}`, '_blank');
-                    } catch {
-                      showNotification('error', 'Gagal memperbarui status pesanan.');
+                    } catch (e) {
+                      showNotification('error', `Gagal memperbarui status pesanan: ${(e as Error).message}`);
                     }
                   }}
                   className="px-5 py-2.5 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-bold flex items-center gap-2"
@@ -4827,46 +4859,14 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
 
               <div>
                 <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Produk / Paket</label>
-                <select
+                <input
+                  type="text"
                   required
-                  value={newOrderProductId}
-                  onChange={(e) => {
-                    const val = e.target.value;
-                    setNewOrderProductId(val);
-                    if (val === 'manual') {
-                      setNewOrderForm({ ...newOrderForm, product_name: '', total_amount: 25000 });
-                    } else if (val) {
-                      const prod = masterProducts.find(p => String(p.id) === val);
-                      if (prod) {
-                        setNewOrderForm({ ...newOrderForm, product_name: prod.name, total_amount: prod.selling_price });
-                      }
-                    } else {
-                      setNewOrderForm({ ...newOrderForm, product_name: '', total_amount: 25000 });
-                    }
-                  }}
+                  value={newOrderForm.product_name}
+                  onChange={(e) => setNewOrderForm({ ...newOrderForm, product_name: e.target.value })}
+                  placeholder="Contoh: Netflix Premium 1 Bulan"
                   className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
-                >
-                  <option value="">— Pilih produk / paket dari katalog —</option>
-                  {masterProducts.filter(p => p.is_active === 1).map(p => (
-                    <option key={p.id} value={String(p.id)}>
-                      {p.name} — Rp{Number(p.selling_price).toLocaleString('id-ID')}
-                    </option>
-                  ))}
-                  <option value="manual">Lainnya — ketik manual</option>
-                </select>
-                {newOrderProductId === 'manual' && (
-                  <input
-                    type="text"
-                    required
-                    value={newOrderForm.product_name}
-                    onChange={(e) => setNewOrderForm({ ...newOrderForm, product_name: e.target.value })}
-                    placeholder="Contoh: Netflix Premium 1 Bulan"
-                    className="w-full px-3 py-2 mt-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
-                  />
-                )}
-                {newOrderProductId && newOrderProductId !== 'manual' && (
-                  <p className="text-[11px] text-[#10B981] mt-1">Terpilih: {newOrderForm.product_name} — harga otomatis terisi di Total Tagihan (bisa diubah).</p>
-                )}
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -4889,32 +4889,6 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Bukti Pembayaran (Opsional)</label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const f = e.target.files && e.target.files[0];
-                    setNewOrderProofFile(f || null);
-                    if (f) {
-                      const reader = new FileReader();
-                      reader.onload = () => setNewOrderProofPreview(String(reader.result));
-                      reader.readAsDataURL(f);
-                    } else {
-                      setNewOrderProofPreview(null);
-                    }
-                  }}
-                  className="w-full text-xs text-[var(--text-muted)] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1677FF] file:text-white hover:file:bg-[#1D4ED8]"
-                />
-                {newOrderProofPreview && (
-                  <div className="mt-2">
-                    <img src={newOrderProofPreview} alt="Preview Bukti" className="w-full max-h-40 object-contain rounded-xl bg-[var(--bg-nested)] border border-[var(--border)]" />
-                    <p className="text-[11px] text-[var(--text-muted)] mt-1">File: {newOrderProofFile?.name} — akan diunggah saat Buat Pesanan.</p>
-                  </div>
-                )}
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">

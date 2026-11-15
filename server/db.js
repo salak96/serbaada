@@ -936,9 +936,14 @@ export async function updateOrderStatus(id, updates, options = {}) {
   const targetId = String(id);
   const idx = store.orders.findIndex(o => String(o.id) === targetId || o.invoice_number === targetId);
   if (idx !== -1) {
+    const existing = store.orders[idx];
+    // Kredensial akun yang sudah tersimpan tidak bisa diubah/dihapus.
+    const locked = { ...updates };
+    if (existing.delivery_email) delete locked.delivery_email;
+    if (existing.delivery_password) delete locked.delivery_password;
     store.orders[idx] = {
-      ...store.orders[idx],
-      ...updates,
+      ...existing,
+      ...locked,
       updated_at: new Date().toISOString()
     };
     saveLocalStore(store);
