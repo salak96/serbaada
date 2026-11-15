@@ -16,15 +16,15 @@ import {
   ShieldCheck,
   Share2
 } from 'lucide-react';
-import { Product } from '../types/product';
+import { Product, ProductVariant } from '../types/product';
 import { FormattedDescription } from './FormattedDescription';
 
 interface ProductDetailPageProps {
   product: Product;
   allProducts?: Product[];
   onBack: () => void;
-  onAddToCart: (product: Product, quantity: number, recipientEmail?: string, recipientId?: string) => void;
-  onInstantBuy: (product: Product, quantity: number, recipientEmail?: string, recipientId?: string) => void;
+  onAddToCart: (product: Product, quantity: number, recipientEmail?: string, recipientId?: string, variant?: ProductVariant) => void;
+  onInstantBuy: (product: Product, quantity: number, recipientEmail?: string, recipientId?: string, variant?: ProductVariant) => void;
   onSelectProduct?: (product: Product) => void;
   onCategorySelect?: (category: string) => void;
   isDarkMode?: boolean;
@@ -49,6 +49,36 @@ export function ProductDetailPage({
   isDarkMode = false
 }: ProductDetailPageProps) {
   const [quantity, setQuantity] = useState(1);
+  // ---- Varian produk (Tipe Akun · Varian · Durasi) ----
+  const activeVariants = (product.variants || []).filter(v => v.is_active !== 0);
+  const hasVariants = activeVariants.length > 0;
+  const [selAccountType, setSelAccountType] = useState<string>(activeVariants[0]?.account_type || 'private');
+  const [selVariantName, setSelVariantName] = useState<string>(activeVariants[0]?.name || '');
+  const [selDuration, setSelDuration] = useState<string>(activeVariants[0]?.duration || 'Semua');
+  const accountTypes = [...new Set(activeVariants.map(v => v.account_type))];
+  const variantNames = [...new Set(activeVariants.filter(v => v.account_type === selAccountType).map(v => v.name))];
+  const durations = [...new Set(activeVariants.filter(v => v.account_type === selAccountType && v.name === selVariantName).map(v => v.duration))];
+  const selectedVariant: ProductVariant | null = hasVariants
+    ? (activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName && v.duration === selDuration)
+      || activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName)
+      || activeVariants.find(v => v.account_type === selAccountType)
+      || activeVariants[0])
+    : null;
+  const handleAccountType = (at: string) => {
+    setSelAccountType(at);
+    const next = activeVariants.find(v => v.account_type === at && v.name === selVariantName)
+      || activeVariants.find(v => v.account_type === at);
+    if (next) { setSelVariantName(next.name); setSelDuration(next.duration); }
+  };
+  const handleVariantName = (name: string) => {
+    setSelVariantName(name);
+    const next = activeVariants.find(v => v.account_type === selAccountType && v.name === name)
+      || activeVariants.find(v => v.name === name);
+    if (next) setSelDuration(next.duration);
+  };
+  const displayName = hasVariants && selectedVariant
+    ? `${product.name} ${selectedVariant.name} ${selectedVariant.account_type === 'private' ? 'Private' : 'Shared'}`
+    : product.name;
   const [recipientEmail, setRecipientEmail] = useState('');
   const [recipientId, setRecipientId] = useState('');
   const [activeTab, setActiveTab] = useState<'desc' | 'terms'>('desc');
@@ -60,20 +90,32 @@ export function ProductDetailPage({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setQuantity(1);
+    const first = (product.variants || []).find(v => v.is_active !== 0);
+    if (first) {
+      setSelAccountType(first.account_type);
+      setSelVariantName(first.name);
+      setSelDuration(first.duration);
+    }
   }, [product.id]);
 
-  const maxStock = typeof product.stock === 'number' && product.stock > 0 ? product.stock : 25;
-  const isUnconfigured = !product.price || product.price <= 0;
-  const isOutOfStock = product.availability === 'out_of_stock' || (typeof product.stock === 'number' && product.stock <= 0) || isUnconfigured;
+  const effectiveStock = hasVariants && selectedVariant ? Number(selectedVariant.stock || 0) : product.stock;
+  const maxStock = typeof effectiveStock === 'number' && effectiveStock > 0 ? effectiveStock : 25;
+  const effectivePrice = hasVariants && selectedVariant ? Number(selectedVariant.selling_price || 0) : product.price;
+  const isUnconfigured = hasVariants ? (!selectedVariant || effectivePrice <= 0) : (!product.price || product.price <= 0);
+  const isOutOfStock = hasVariants
+    ? (!selectedVariant || Number(selectedVariant.stock || 0) <= 0 || isUnconfigured)
+    : (product.availability === 'out_of_stock' || (typeof product.stock === 'number' && product.stock <= 0) || isUnconfigured);
 
-  // Wholesale calculation
-  const isWholesaleApplied = !!(
+  // Wholesale calculation (hanya untuk produk tanpa varian)
+  const isWholesaleApplied = !hasVariants && !!(
     product.isWholesale &&
     product.wholesaleMin &&
     quantity >= product.wholesaleMin &&
     product.wholesalePrice
   );
-  const unitPrice = isWholesaleApplied ? (product.wholesalePrice || product.price) : product.price;
+  const unitPrice = hasVariants
+    ? effectivePrice
+    : (isWholesaleApplied ? (product.wholesalePrice || product.price) : product.price);
   const subtotal = unitPrice * quantity;
 
   const formatPrice = (price: number) => {
@@ -115,7 +157,7 @@ export function ProductDetailPage({
       return;
     }
 
-    onAddToCart(product, quantity, recipientEmail, recipientId);
+    onAddToCart(product, quantity, recipientEmail, recipientId, selectedVariant || undefined);
     setShowSuccessNotification(true);
     setTimeout(() => setShowSuccessNotification(false), 2500);
   };
@@ -129,7 +171,7 @@ export function ProductDetailPage({
       alert('Mohon masukkan email penerima untuk aktivasi pesanan ini.');
       return;
     }
-    onInstantBuy(product, quantity, recipientEmail, recipientId);
+    onInstantBuy(product, quantity, recipientEmail, recipientId, selectedVariant || undefined);
   };
 
   const handleShare = () => {
@@ -409,8 +451,13 @@ export function ProductDetailPage({
             {/* 1. Nama Produk */}
             <div>
               <h1 className="text-xl sm:text-2xl lg:text-[26px] font-bold text-[#0F172A] dark:text-[#F8FAFC] leading-snug tracking-tight">
-                {product.name}
+                {displayName}
               </h1>
+              {hasVariants && selectedVariant && (
+                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1">
+                  Tipe akun {selectedVariant.account_type === 'private' ? 'Private' : 'Shared'} · Varian {selectedVariant.name} · {selectedVariant.duration}
+                </p>
+              )}
 
               {/* 2 & 3. SKU & Badges */}
               <div className="flex items-center gap-3 mt-2 flex-wrap text-xs">
@@ -477,6 +524,80 @@ export function ProductDetailPage({
               </div>
             </div>
 
+            {hasVariants && (
+              <>
+                {/* Tipe Akun */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">Tipe akun</span>
+                  <div className="flex flex-wrap gap-2">
+                    {accountTypes.map(at => (
+                      <button
+                        key={at}
+                        type="button"
+                        onClick={() => handleAccountType(at)}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                          selAccountType === at
+                            ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
+                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#2583F7]'
+                        }`}
+                      >
+                        {at === 'private' ? 'Private' : 'Shared'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* Varian */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">Varian</span>
+                  <div className="flex flex-wrap gap-2">
+                    {variantNames.map(n => (
+                      <button
+                        key={n}
+                        type="button"
+                        onClick={() => handleVariantName(n)}
+                        className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                          selVariantName === n
+                            ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
+                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#2583F7]'
+                        }`}
+                      >
+                        {n}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {/* Pilih Durasi */}
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">Pilih durasi</span>
+                  <div className="flex flex-wrap gap-2">
+                    {durations.map(d => {
+                      const dv = activeVariants.find(v => v.account_type === selAccountType && v.name === selVariantName && v.duration === d);
+                      const dPrice = dv
+                        ? Number(dv.selling_price || 0)
+                        : Math.min(...activeVariants.filter(v => v.account_type === selAccountType && v.name === selVariantName).map(v => Number(v.selling_price || 0)));
+                      return (
+                        <button
+                          key={d}
+                          type="button"
+                          onClick={() => setSelDuration(d)}
+                          className={`px-3.5 py-2 rounded-xl text-xs transition-all border text-left ${
+                            selDuration === d
+                              ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
+                              : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#2583F7]'
+                          }`}
+                        >
+                          <span className="block font-bold">{d}</span>
+                          <span className="block text-[11px] opacity-80">{d === 'Semua' ? `mulai ${formatPrice(dPrice)}` : formatPrice(dPrice)}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {!hasVariants && (
+            <>
             {/* 7. Pilihan Variasi Produk (Tombol Pill) */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
@@ -526,6 +647,8 @@ export function ProductDetailPage({
                 )}
               </div>
             </div>
+            </>
+            )}
 
             {/* 8. Kotak Promo atau Harga Grosir (Border Putus-Putus) */}
             <div className="p-3.5 rounded-xl border-2 border-dashed border-[#2583F7]/50 bg-[#EFF6FF]/60 dark:bg-[#2583F7]/10 text-xs text-[#1E40AF] dark:text-[#93C5FD] space-y-1">

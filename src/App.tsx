@@ -23,7 +23,7 @@ import { AdminLoginModal } from './components/admin/AdminLoginModal';
 import { useCart } from './hooks/useCart';
 import { useTheme } from './hooks/useTheme';
 import { fetchProductsFromApi } from './services/productService';
-import { Product } from './types/product';
+import { Product, ProductVariant } from './types/product';
 
 const CANONICAL_CATEGORIES = [
   'Semua',
@@ -230,11 +230,27 @@ function App() {
     product: Product,
     quantity = 1,
     recipientEmail?: string,
-    recipientId?: string
+    recipientId?: string,
+    variant?: ProductVariant
   ) => {
+    // Produk bervarian: id komposit per varian agar tiap varian jadi baris
+    // keranjang sendiri, nama + harga + stok mengikuti varian terpilih.
+    const cartProduct: Product = variant
+      ? {
+        ...product,
+        id: `${product.id}_${variant.id}`,
+        name: `${product.name} ${variant.name} (${variant.account_type === 'private' ? 'Private' : 'Shared'})${variant.duration && variant.duration !== 'Semua' ? ` - ${variant.duration}` : ''}`,
+        price: Number(variant.selling_price || 0),
+        stock: Number(variant.stock || 0),
+        variantId: variant.id,
+        variantName: variant.name,
+        variantAccountType: variant.account_type,
+        variantDuration: variant.duration
+      }
+      : product;
     for (let i = 0; i < quantity; i++) {
       addToCart({
-        ...product,
+        ...cartProduct,
         recipientEmail,
         recipientId
       });
@@ -347,8 +363,8 @@ function App() {
             onBack={handleBackToCatalog}
             onCategorySelect={(cat) => setSelectedCategory(cat)}
             onAddToCart={handleAddWithDetails}
-            onInstantBuy={(prod, qty, email, id) => {
-              handleAddWithDetails(prod, qty, email, id);
+            onInstantBuy={(prod, qty, email, id, variant) => {
+              handleAddWithDetails(prod, qty, email, id, variant);
               setIsCartOpen(true);
             }}
             onSelectProduct={(p) => handleOpenProductDetail(p)}

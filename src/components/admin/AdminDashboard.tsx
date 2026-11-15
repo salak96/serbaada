@@ -257,6 +257,17 @@ interface SupplierProductItem {
   image_url: string;
 }
 
+interface ProductVariant {
+  id: string;
+  name: string;
+  account_type: 'private' | 'share';
+  duration: string;
+  selling_price: number;
+  cost_price: number;
+  stock: number;
+  is_active: number;
+}
+
 interface MasterProductItem {
   id: number;
   slug: string;
@@ -278,6 +289,7 @@ interface MasterProductItem {
   custom_image_url: string;
   is_active: number;
   custom_stock: number;
+  variants?: ProductVariant[];
 }
 
 interface ApiLogItem {
@@ -565,6 +577,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     payment_status: 'unpaid'
   });
   const [newOrderProductId, setNewOrderProductId] = useState<string>('');
+  const [newOrderVariantId, setNewOrderVariantId] = useState<string>('');
+  const newOrderSelectedProd = newOrderProductId ? masterProducts.find(p => String(p.id) === newOrderProductId) || null : null;
   const [newOrderProofFile, setNewOrderProofFile] = useState<File | null>(null);
   const [newOrderProofPreview, setNewOrderProofPreview] = useState<string | null>(null);
   const [newOrderSuggestOpen, setNewOrderSuggestOpen] = useState(false);
@@ -639,11 +653,21 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
         : null;
       const payload: Record<string, unknown> = { ...newOrderForm };
       if (selectedProd) {
+        const selVariant = newOrderVariantId
+          ? (selectedProd.variants || []).find(v => String(v.id) === newOrderVariantId)
+          : null;
+        const prodName = selVariant
+          ? `${selectedProd.name} ${selVariant.name} (${selVariant.account_type === 'private' ? 'Private' : 'Shared'})${selVariant.duration && selVariant.duration !== 'Semua' ? ` - ${selVariant.duration}` : ''}`
+          : selectedProd.name;
         payload.products = [{
-          name: selectedProd.name,
+          name: prodName,
           quantity: 1,
-          price: selectedProd.selling_price,
-          provider: selectedProd.primary_seller_name || 'Produk Manual'
+          price: selVariant ? Number(selVariant.selling_price || 0) : selectedProd.selling_price,
+          provider: selectedProd.primary_seller_name || 'Produk Manual',
+          variant_id: selVariant ? selVariant.id : null,
+          variant_name: selVariant ? selVariant.name : null,
+          account_type: selVariant ? selVariant.account_type : null,
+          duration: selVariant ? selVariant.duration : null
         }];
       }
       const res = await fetch('/api/admin/orders', {
@@ -1446,6 +1470,38 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
   // -------------------------------------------------------------
   // Pricing Handlers
   // -------------------------------------------------------------
+  // -------------------------------------------------------------
+  // Varian Produk (Varian + Tipe Akun + Durasi)
+  // -------------------------------------------------------------
+  const updateVariantField = (idx: number, patch: Partial<ProductVariant>) => {
+    if (!editingProductPrice) return;
+    const variants = [...(editingProductPrice.variants || [])];
+    variants[idx] = { ...variants[idx], ...patch };
+    setEditingProductPrice({ ...editingProductPrice, variants });
+  };
+
+  const addVariant = () => {
+    if (!editingProductPrice) return;
+    const nv: ProductVariant = {
+      id: 'v_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+      name: '',
+      account_type: 'private',
+      duration: 'Semua',
+      selling_price: editingProductPrice.selling_price || 0,
+      cost_price: editingProductPrice.cost_price || 0,
+      stock: 25,
+      is_active: 1
+    };
+    setEditingProductPrice({ ...editingProductPrice, variants: [...(editingProductPrice.variants || []), nv] });
+  };
+
+  const removeVariant = (idx: number) => {
+    if (!editingProductPrice) return;
+    const variants = [...(editingProductPrice.variants || [])];
+    variants.splice(idx, 1);
+    setEditingProductPrice({ ...editingProductPrice, variants });
+  };
+
   const handleSavePrice = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingProductPrice) return;
@@ -1470,7 +1526,8 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
           old_price: editingProductPrice.old_price,
           is_wholesale: editingProductPrice.is_wholesale,
           wholesale_min: editingProductPrice.wholesale_min,
-          wholesale_price: editingProductPrice.wholesale_price
+          wholesale_price: editingProductPrice.wholesale_price,
+          variants: editingProductPrice.variants || []
         })
       });
       const json = await res.json();
@@ -2412,6 +2469,9 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                                   <div className="min-w-0">
                                     <span className="font-bold text-[var(--text)] block truncate max-w-[220px]">{cleanProductName(prod.name)}</span>
                                     <span className="text-[10px] text-[var(--text-muted)] font-mono">{prod.slug}</span>
+                                    {(prod.variants || []).length > 0 && (
+                                      <span className="text-[10px] font-bold text-[#2583F7] block mt-0.5">{(prod.variants || []).length} varian · mulai {formatMasterPrice(Math.min(...(prod.variants || []).filter(v => v.is_active).map(v => Number(v.selling_price || 0))))}</span>
+                                    )}
                                   </div>
                                 </div>
                               </td>
@@ -4178,7 +4238,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       {/* ========================================================= */}
       {isPricingModalOpen && editingProductPrice && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="w-full max-w-md bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[var(--bg-panel)] border border-[var(--border)] rounded-2xl shadow-modal p-5 text-xs text-[var(--text)] space-y-4">
             <div className="flex items-center justify-between border-b border-[var(--border)] pb-3">
               <h3 className="font-bold text-sm">Pengaturan Harga: {editingProductPrice.name}</h3>
               <button type="button" onClick={() => setIsPricingModalOpen(false)}>
@@ -4245,6 +4305,109 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 />
               </div>
 
+              {/* Varian Produk: Tipe Akun · Varian · Durasi */}
+              <div className="pt-3 border-t border-[var(--border)]">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="font-bold">Varian Produk</span>
+                  <button
+                    type="button"
+                    onClick={addVariant}
+                    className="px-3 py-1.5 rounded-lg bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-bold text-[11px]"
+                  >
+                    + Tambah Varian
+                  </button>
+                </div>
+                <p className="text-[11px] text-[var(--text-muted)] mb-2 leading-relaxed">
+                  Satu varian = satu kombinasi nama, tipe akun, dan durasi — masing-masing dengan harga jual, modal, dan stok sendiri. Pembeli memilih ketiganya di halaman produk.
+                </p>
+                {(editingProductPrice.variants || []).map((v, idx) => (
+                  <div key={v.id} className="p-2.5 bg-[var(--bg-nested)] rounded-xl border border-[var(--border)] space-y-2 mb-2">
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Nama Varian</label>
+                        <input
+                          type="text"
+                          value={v.name}
+                          placeholder="Plus / Go / Invite"
+                          onChange={(e) => updateVariantField(idx, { name: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Tipe Akun</label>
+                        <select
+                          value={v.account_type}
+                          onChange={(e) => updateVariantField(idx, { account_type: e.target.value as 'private' | 'share' })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)]"
+                        >
+                          <option value="private">Private</option>
+                          <option value="share">Shared</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Durasi</label>
+                        <input
+                          type="text"
+                          value={v.duration}
+                          placeholder="Semua / 1 bulan / 3 bulan"
+                          onChange={(e) => updateVariantField(idx, { duration: e.target.value })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)]"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Harga Jual (Rp)</label>
+                        <input
+                          type="number"
+                          value={v.selling_price}
+                          onChange={(e) => updateVariantField(idx, { selling_price: Number(e.target.value) })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Harga Modal (Rp)</label>
+                        <input
+                          type="number"
+                          value={v.cost_price}
+                          onChange={(e) => updateVariantField(idx, { cost_price: Number(e.target.value) })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Stok</label>
+                        <input
+                          type="number"
+                          value={v.stock}
+                          onChange={(e) => updateVariantField(idx, { stock: Number(e.target.value) })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center gap-1.5 text-[11px] text-[var(--text-muted)] cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={v.is_active === 1}
+                          onChange={(e) => updateVariantField(idx, { is_active: e.target.checked ? 1 : 0 })}
+                          className="rounded"
+                        />
+                        Aktif (tampil di toko)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(idx)}
+                        className="text-[var(--danger)] text-[11px] font-bold hover:underline"
+                      >
+                        Hapus varian
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                {(editingProductPrice.variants || []).length === 0 && (
+                  <p className="text-[11px] text-[var(--text-muted)]">Belum ada varian — produk dijual dengan satu harga di atas.</p>
+                )}
+              </div>
               <div className="flex items-center justify-end gap-2 pt-2 border-t border-[var(--border)]">
                 <button type="button" onClick={() => setIsPricingModalOpen(false)} className="px-4 py-2 rounded-xl bg-[var(--bg-card)] text-[var(--text-muted)]">
                   Batal
@@ -4989,6 +5152,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   onChange={(e) => {
                     setNewOrderForm({ ...newOrderForm, product_name: e.target.value });
                     setNewOrderProductId('');
+                    setNewOrderVariantId('');
                     setNewOrderSuggestOpen(true);
                   }}
                   onFocus={() => setNewOrderSuggestOpen(true)}
@@ -5005,6 +5169,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                           onMouseDown={(e) => {
                             e.preventDefault();
                             setNewOrderProductId(String(p.id));
+                            setNewOrderVariantId('');
                             setNewOrderForm({ ...newOrderForm, product_name: p.name, total_amount: p.selling_price });
                             setNewOrderSuggestOpen(false);
                           }}
@@ -5023,6 +5188,29 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                   </div>
                 )}
               </div>
+
+              {newOrderSelectedProd && (newOrderSelectedProd.variants || []).filter(v => v.is_active).length > 0 && (
+                <div>
+                  <label className="block text-[var(--text-muted)] mb-1 font-semibold">Varian (Tipe Akun · Varian · Durasi)</label>
+                  <select
+                    value={newOrderVariantId}
+                    onChange={(e) => {
+                      const vid = e.target.value;
+                      setNewOrderVariantId(vid);
+                      const v = (newOrderSelectedProd.variants || []).find(v => String(v.id) === vid);
+                      if (v) setNewOrderForm({ ...newOrderForm, total_amount: Number(v.selling_price || 0) });
+                    }}
+                    className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
+                  >
+                    <option value="">— Pilih varian —</option>
+                    {(newOrderSelectedProd.variants || []).filter(v => v.is_active).map(v => (
+                      <option key={v.id} value={v.id}>
+                        {v.name} ({v.account_type === 'private' ? 'Private' : 'Shared'}) — {v.duration} — {formatPrice(Number(v.selling_price || 0))}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>

@@ -194,7 +194,11 @@ export function CheckoutModal({
         name: i.name,
         quantity: i.quantity,
         price: i.price,
-        provider: i.provider || 'Produk Manual'
+        provider: i.provider || 'Produk Manual',
+        variant_id: i.variantId || null,
+        variant_name: i.variantName || null,
+        account_type: i.variantAccountType || null,
+        duration: i.variantDuration || null
       }))));
 
       const res = await fetch(`/api/orders/${orderId}/payment-proof`, {

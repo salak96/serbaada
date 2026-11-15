@@ -491,7 +491,7 @@ app.post('/api/admin/products/batch-delete', async (req, res) => {
 // Manage Product Price (Manual / Markup Nominal / Markup Percent)
 app.put('/api/admin/products/:id/price', async (req, res) => {
   try {
-    const { pricing_mode, markup_value, selling_price, old_price, is_wholesale, wholesale_min, wholesale_price } = req.body;
+    const { pricing_mode, markup_value, selling_price, old_price, is_wholesale, wholesale_min, wholesale_price, variants } = req.body;
     const current = await getMasterProductById(req.params.id);
     if (!current) return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
 
@@ -513,7 +513,8 @@ app.put('/api/admin/products/:id/price', async (req, res) => {
       discount: old_price > finalSelling ? Math.round(((old_price - finalSelling) / old_price) * 100) : 0,
       is_wholesale: is_wholesale !== undefined ? (is_wholesale ? 1 : 0) : current.is_wholesale,
       wholesale_min: Number(wholesale_min || current.wholesale_min),
-      wholesale_price: Number(wholesale_price || current.wholesale_price)
+      wholesale_price: Number(wholesale_price || current.wholesale_price),
+      variants: variants !== undefined ? variants : current.variants
     });
 
     res.json({ success: true, data: updated });
@@ -614,7 +615,8 @@ app.get('/api/public/products', async (req, res) => {
         wholesaleMin: p.wholesale_min,
         wholesalePrice: p.wholesale_price,
         provider: p.primary_seller_name || 'Prs Digital',
-        description: p.description
+        description: p.description,
+        variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, stock: v.stock }))
       };
     });
 
@@ -743,7 +745,8 @@ app.get('/api/public/products/:slug', async (req, res) => {
         wholesaleMin: p.wholesale_min,
         wholesalePrice: p.wholesale_price,
         provider: p.primary_seller_name || 'Prs Digital',
-        description: p.description
+        description: p.description,
+        variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, stock: v.stock }))
       }
     });
   } catch (err) {

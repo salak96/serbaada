@@ -132,6 +132,25 @@ function cleanProductName(name) {
     .trim();
 }
 
+// Normalisasi varian produk (Varian + Tipe Akun + Durasi).
+// Setiap varian = satu kombinasi (nama varian, tipe akun, durasi) dengan
+// harga jual, harga modal, dan stok sendiri. Disimpan di dalam produk master.
+function normalizeVariants(input) {
+  if (!Array.isArray(input)) return [];
+  return input
+    .filter(v => v && (String(v.name || '').trim() || String(v.duration || '').trim()))
+    .map((v, idx) => ({
+      id: String(v.id || ('v_' + Date.now().toString(36) + idx + Math.random().toString(36).slice(2, 7))),
+      name: String(v.name || '').trim(),
+      account_type: v.account_type === 'share' ? 'share' : 'private',
+      duration: String(v.duration || 'Semua').trim(),
+      selling_price: Number(v.selling_price || 0),
+      cost_price: Number(v.cost_price || 0),
+      stock: Number(v.stock ?? 25),
+      is_active: v.is_active === undefined ? 1 : (v.is_active ? 1 : 0)
+    }));
+}
+
 function inferCategoryServer(text, originalCategory = '') {
   const n = `${text} ${originalCategory}`.toLowerCase();
   
@@ -605,6 +624,7 @@ export async function saveMasterProduct(data) {
         name: cleanProductName(data.name || store.master_products[idx].name),
         description: cleanProductName(data.description ?? store.master_products[idx].description),
         id,
+        variants: normalizeVariants(data.variants !== undefined ? data.variants : store.master_products[idx].variants),
         updated_at: now
       };
     }
@@ -633,6 +653,7 @@ export async function saveMasterProduct(data) {
       is_featured: data.is_featured ?? 0,
       stock_display_mode: data.stock_display_mode || 'real',
       custom_stock: Number(data.custom_stock || 25),
+      variants: normalizeVariants(data.variants),
       created_at: now,
       updated_at: now
     };
@@ -907,10 +928,21 @@ export async function saveOrder(orderData, options = {}) {
   let calculatedTotalSale = 0;
 
   const enrichedProducts = Array.isArray(orderData.products) ? orderData.products.map(item => {
-    const matchedMaster = masters.find(m => m.name && item.name && m.name.toLowerCase() === item.name.toLowerCase());
+    // Utamakan variant_id: cari varian di semua master, pakai harga modal varian.
+    let matchedMaster = null;
+    let matchedVariant = null;
+    if (item.variant_id) {
+      for (const m of masters) {
+        const v = (m.variants || []).find(v => String(v.id) === String(item.variant_id));
+        if (v) { matchedMaster = m; matchedVariant = v; break; }
+      }
+    }
+    if (!matchedMaster) {
+      matchedMaster = masters.find(m => m.name && item.name && m.name.toLowerCase() === item.name.toLowerCase());
+    }
     const supplierId = matchedMaster ? Number(matchedMaster.primary_seller_id || 1) : 1;
     const supplierName = sellerMap.get(supplierId) || item.provider || 'Produk Manual';
-    const supplierCost = Number(matchedMaster ? matchedMaster.cost_price : (item.cost_price || (item.price ? Math.round(item.price * 0.7) : 15000)));
+    const supplierCost = Number(matchedVariant ? matchedVariant.cost_price : (matchedMaster ? matchedMaster.cost_price : (item.cost_price || (item.price ? Math.round(item.price * 0.7) : 15000))));
     const customerPrice = Number(item.price || item.customer_price || 25000);
     const quantity = Number(item.quantity || 1);
     
@@ -923,6 +955,10 @@ export async function saveOrder(orderData, options = {}) {
 
     return {
       name: item.name,
+      variant_id: item.variant_id || (matchedVariant ? matchedVariant.id : null),
+      variant_name: item.variant_name || (matchedVariant ? matchedVariant.name : null),
+      account_type: item.account_type || (matchedVariant ? matchedVariant.account_type : null),
+      duration: item.duration || (matchedVariant ? matchedVariant.duration : null),
       supplier_name: supplierName,
       supplier_id: supplierId,
       supplier_product_id: matchedMaster?.external_product_id || item.supplier_product_id || 'manual',

@@ -16,9 +16,15 @@ export function ProductCard({
   onRemove,
   onOpenDetail
 }: ProductCardProps) {
-  const isUnconfigured = !product.price || product.price <= 0;
-  const isOutOfStock = product.availability === 'out_of_stock' || (typeof product.stock === 'number' && product.stock <= 0) || isUnconfigured;
-  const stockCount = typeof product.stock === 'number' ? product.stock : (isOutOfStock ? 0 : 25);
+  const activeVariants = (product.variants || []).filter(v => v.is_active !== 0);
+  const hasVariants = activeVariants.length > 0;
+  const minVariantPrice = hasVariants ? Math.min(...activeVariants.map(v => Number(v.selling_price || 0))) : 0;
+  const variantStockTotal = hasVariants ? activeVariants.reduce((s, v) => s + Number(v.stock || 0), 0) : 0;
+  const isUnconfigured = hasVariants ? minVariantPrice <= 0 : (!product.price || product.price <= 0);
+  const isOutOfStock = hasVariants
+    ? (variantStockTotal <= 0 || isUnconfigured)
+    : (product.availability === 'out_of_stock' || (typeof product.stock === 'number' && product.stock <= 0) || isUnconfigured);
+  const stockCount = hasVariants ? variantStockTotal : (typeof product.stock === 'number' ? product.stock : (isOutOfStock ? 0 : 25));
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
@@ -120,6 +126,8 @@ export function ProductCard({
           <div className="text-[#2583F7] dark:text-[#38BDF8] text-base sm:text-lg font-extrabold tabular-nums tracking-tight mb-3">
             {isUnconfigured ? (
               <span className="text-xs text-amber-500 font-bold block truncate">Produk belum diatur</span>
+            ) : hasVariants ? (
+              <span><span className="text-[11px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Mulai </span>{formatPrice(minVariantPrice)}</span>
             ) : (
               formatPrice(product.price)
             )}
@@ -166,12 +174,12 @@ export function ProductCard({
             ) : (
               <button
                 type="button"
-                onClick={() => onAddToCart(product)}
-                aria-label={`Tambah ${product.name} ke keranjang`}
+                onClick={() => (hasVariants ? handleCardClick() : onAddToCart(product))}
+                aria-label={hasVariants ? `Pilih varian ${product.name}` : `Tambah ${product.name} ke keranjang`}
                 className="py-2 px-2 rounded-xl font-bold text-xs bg-white dark:bg-[#101827] hover:bg-[#EFF6FF] dark:hover:bg-[#1A263D] text-[#2583F7] dark:text-[#38BDF8] border border-[#CBD5E1] dark:border-[#26364D] hover:border-[#2583F7] flex items-center justify-center gap-1 transition-all active:scale-95"
               >
                 <ShoppingCart className="w-3.5 h-3.5 text-[#2583F7] dark:text-[#38BDF8]" />
-                <span>+Keranjang</span>
+                <span>{hasVariants ? 'Pilih Varian' : '+Keranjang'}</span>
               </button>
             )}
           </div>
