@@ -45,13 +45,36 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
     }
   }, [isOpen]);
 
+  // Turnstile dimuat dinamis hanya saat modal login admin dibuka
+  // (sebelumnya script dimuat di semua halaman lewat index.html).
   useEffect(() => {
     if (!isOpen) return;
 
-    const timer = setTimeout(() => {
-      if (window.turnstile) {
+    let cancelled = false;
+    const loadTurnstile = () => {
+      if (window.turnstile) return Promise.resolve();
+      return new Promise<void>((resolve, reject) => {
+        const existing = document.querySelector('script[src*="challenges.cloudflare.com/turnstile"]');
+        if (existing) {
+          existing.addEventListener('load', () => resolve());
+          existing.addEventListener('error', () => reject(new Error('Turnstile gagal dimuat')));
+          return;
+        }
+        const script = document.createElement('script');
+        script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+        script.async = true;
+        script.defer = true;
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('Turnstile gagal dimuat'));
+        document.body.appendChild(script);
+      });
+    };
+
+    loadTurnstile()
+      .then(() => {
+        if (cancelled) return;
         try {
-          window.turnstile.render('#turnstile-widget', {
+          window.turnstile?.render('#turnstile-widget', {
             sitekey: '0x4AAAAAAFv_iV4_W-eYIsXr',
             callback: (token: string) => {
               setTurnstileToken(token);
@@ -63,10 +86,14 @@ export function AdminLoginModal({ isOpen, onClose, onSuccess }: AdminLoginModalP
         } catch {
           // Already rendered
         }
-      }
-    }, 200);
+      })
+      .catch(() => {
+        // Turnstile gagal dimuat — login tetap bisa dicoba tanpa token
+      });
 
-    return () => clearTimeout(timer);
+    return () => {
+      cancelled = true;
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;

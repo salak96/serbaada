@@ -66,14 +66,14 @@ export function ProductCard({
               Stok Habis
             </span>
           ) : (
-            <span className="bg-[#10B981] text-white text-[10px] sm:text-[11px] font-black px-2 py-0.5 rounded-md shadow-[0_0_8px_rgba(16,185,129,0.5)]">
+            <span className="bg-[#047857] text-white text-[10px] sm:text-[11px] font-black px-2 py-0.5 rounded-md shadow-[0_0_8px_rgba(16,185,129,0.5)]">
               Ready {stockCount > 0 ? stockCount : ''}
             </span>
           )}
 
           {/* Wholesale Badge */}
           {product.isWholesale && (
-            <span className="bg-[#2583F7] text-white text-[10px] sm:text-[11px] font-black px-2 py-0.5 rounded-md shadow-[0_0_8px_rgba(37,131,247,0.5)]">
+            <span className="bg-[#1D4ED8] text-white text-[10px] sm:text-[11px] font-black px-2 py-0.5 rounded-md shadow-[0_0_8px_rgba(37,131,247,0.5)]">
               Grosir
             </span>
           )}
@@ -98,7 +98,7 @@ export function ProductCard({
           {/* Product Name */}
           <h3
             onClick={handleCardClick}
-            className="font-bold text-[#0F172A] dark:text-[#F8FAFC] text-xs sm:text-sm group-hover:text-[#2583F7] dark:group-hover:text-[#38BDF8] transition-colors line-clamp-2 min-h-[34px] sm:min-h-[40px] leading-snug cursor-pointer"
+            className="font-bold text-[#0F172A] dark:text-[#F8FAFC] text-xs sm:text-sm group-hover:text-[#1D4ED8] dark:group-hover:text-[#38BDF8] transition-colors line-clamp-2 min-h-[34px] sm:min-h-[40px] leading-snug cursor-pointer"
             title={product.name}
           >
             {product.name}
@@ -123,7 +123,7 @@ export function ProductCard({
           {/* Old Price Strikethrough if exists */}
           <div className="min-h-[16px]">
             {product.oldPrice > product.price ? (
-              <span className="text-[11px] text-[#94A3B8] line-through block tabular-nums">
+              <span className="text-[11px] text-[#64748B] line-through block tabular-nums">
                 {formatPrice(product.oldPrice)}
               </span>
             ) : (
@@ -132,7 +132,7 @@ export function ProductCard({
           </div>
 
           {/* Primary Highlight Price */}
-          <div className="text-[#2583F7] dark:text-[#38BDF8] text-base sm:text-lg font-extrabold tabular-nums tracking-tight mb-3">
+          <div className="text-[#1D4ED8] dark:text-[#38BDF8] text-base sm:text-lg font-extrabold tabular-nums tracking-tight mb-3">
             {isUnconfigured ? (
               <span className="text-xs text-amber-500 font-bold block truncate">Produk belum diatur</span>
             ) : hasVariants ? (
@@ -151,8 +151,8 @@ export function ProductCard({
               disabled={isOutOfStock}
               className={`py-2 px-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-all ${
                 isOutOfStock
-                  ? 'bg-[#F1F5F9] dark:bg-[#101827] text-[#94A3B8] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
-                  : 'bg-[#2583F7] hover:bg-[#1D4ED8] text-white shadow-sm shadow-[#2583F7]/30 dark:shadow-[0_0_12px_rgba(37,131,247,0.3)] active:scale-95'
+                  ? 'bg-[#F1F5F9] dark:bg-[#101827] text-[#64748B] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
+                  : 'bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-sm shadow-[#2583F7]/30 dark:shadow-[0_0_12px_rgba(37,131,247,0.3)] active:scale-95'
               }`}
             >
               <span>{isUnconfigured ? 'Belum Diatur' : isOutOfStock ? 'Habis' : 'Beli'}</span>
@@ -164,7 +164,7 @@ export function ProductCard({
               <button
                 type="button"
                 disabled
-                className="py-2 px-2 rounded-xl font-semibold text-xs bg-[#F1F5F9] dark:bg-[#101827] text-[#94A3B8]/60 border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed flex items-center justify-center"
+                className="py-2 px-2 rounded-xl font-semibold text-xs bg-[#F1F5F9] dark:bg-[#101827] text-[#64748B]/60 border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed flex items-center justify-center"
               >
                 Kosong
               </button>
@@ -185,9 +185,9 @@ export function ProductCard({
                 type="button"
                 onClick={() => (hasVariants ? handleCardClick() : onAddToCart(product))}
                 aria-label={hasVariants ? `Pilih varian ${product.name}` : `Tambah ${product.name} ke keranjang`}
-                className="py-2 px-2 rounded-xl font-bold text-xs bg-white dark:bg-[#101827] hover:bg-[#EFF6FF] dark:hover:bg-[#1A263D] text-[#2583F7] dark:text-[#38BDF8] border border-[#CBD5E1] dark:border-[#26364D] hover:border-[#2583F7] flex items-center justify-center gap-1 transition-all active:scale-95"
+                className="py-2 px-2 rounded-xl font-bold text-xs bg-white dark:bg-[#101827] hover:bg-[#EFF6FF] dark:hover:bg-[#1A263D] text-[#1D4ED8] dark:text-[#38BDF8] border border-[#CBD5E1] dark:border-[#26364D] hover:border-[#2583F7] flex items-center justify-center gap-1 transition-all active:scale-95"
               >
-                <ShoppingCart className="w-3.5 h-3.5 text-[#2583F7] dark:text-[#38BDF8]" />
+                <ShoppingCart className="w-3.5 h-3.5 text-[#1D4ED8] dark:text-[#38BDF8]" />
                 <span>{hasVariants ? 'Pilih Varian' : '+Keranjang'}</span>
               </button>
             )}

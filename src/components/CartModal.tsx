@@ -73,24 +73,24 @@ export function CartModal({
           {/* Sticky Header */}
           <header className="sticky top-0 z-10 bg-[#0B1220] px-5 py-4 border-b border-[#26364D] flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-[#2583F7]/15 flex items-center justify-center text-[#38BDF8] border border-[#2583F7]/30 shadow-[0_0_10px_rgba(37,131,247,0.3)]">
+              <div className="w-9 h-9 rounded-xl bg-[#1D4ED8]/15 flex items-center justify-center text-[#38BDF8] border border-[#2583F7]/30 shadow-[0_0_10px_rgba(37,131,247,0.3)]">
                 <ShoppingBag className="w-5 h-5" />
               </div>
               <div>
                 <h2 className="text-base font-bold text-[#F8FAFC] flex items-center gap-2">
                   Keranjang Belanja
-                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#2583F7]/20 text-[#38BDF8] border border-[#2583F7]/30">
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#1D4ED8]/20 text-[#38BDF8] border border-[#2583F7]/30">
                     {totalItems} item
                   </span>
                 </h2>
-                <p className="text-xs text-[#94A3B8]">Androidstore.web.id Checkout</p>
+                <p className="text-xs text-[#64748B]">Androidstore.web.id Checkout</p>
               </div>
             </div>
 
             <button
               onClick={onClose}
               aria-label="Tutup keranjang"
-              className="w-9 h-9 rounded-xl text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors focus:outline-none"
+              className="w-9 h-9 rounded-xl text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors focus:outline-none"
             >
               <X className="w-5 h-5" />
             </button>
@@ -106,12 +106,12 @@ export function CartModal({
                 <h3 className="text-base font-bold text-[#F8FAFC] mb-1">
                   Keranjang Anda Masih Kosong
                 </h3>
-                <p className="text-xs md:text-sm text-[#94A3B8] max-w-xs mb-6">
+                <p className="text-xs md:text-sm text-[#64748B] max-w-xs mb-6">
                   Jelajahi berbagai paket langganan dan produk digital premium dengan harga hemat.
                 </p>
                 <button
                   onClick={onClose}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-semibold text-sm shadow-[0_0_15px_rgba(37,131,247,0.3)] transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white font-semibold text-sm shadow-[0_0_15px_rgba(37,131,247,0.3)] transition-colors"
                 >
                   Mulai Belanja
                   <ArrowRight className="w-4 h-4" />
@@ -147,23 +147,23 @@ export function CartModal({
                           <button
                             onClick={() => onRemove(item.id)}
                             aria-label={`Hapus ${item.name}`}
-                            className="text-[#94A3B8] hover:text-[#EF4444] hover:bg-red-950/40 p-1 rounded-lg transition-colors -mt-0.5 -mr-1"
+                            className="text-[#64748B] hover:text-[#EF4444] hover:bg-red-950/40 p-1 rounded-lg transition-colors -mt-0.5 -mr-1"
                             title="Hapus produk"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[11px] font-medium text-[#94A3B8]">
+                          <span className="text-[11px] font-medium text-[#64748B]">
                             {item.category}
                           </span>
-                          <span className="text-[#94A3B8]/40 text-[10px]">•</span>
+                          <span className="text-[#64748B]/40 text-[10px]">•</span>
                           {item.provider === 'Abellab Reseller' ? (
                             <span className="text-[10px] font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-800/80">
                               Supplier Abellab Reseller
                             </span>
                           ) : (
-                            <span className="text-[10px] font-bold text-[#38BDF8] bg-[#2583F7]/15 px-1.5 py-0.5 rounded border border-[#2583F7]/30">
+                            <span className="text-[10px] font-bold text-[#38BDF8] bg-[#1D4ED8]/15 px-1.5 py-0.5 rounded border border-[#2583F7]/30">
                               Supplier Prs Digital
                             </span>
                           )}
@@ -173,7 +173,7 @@ export function CartModal({
                       <div className="flex items-end justify-between gap-2 mt-2 pt-1 border-t border-[#26364D]/60">
                         <div>
                           {item.oldPrice > item.price && (
-                            <span className="block text-[11px] text-[#94A3B8] line-through leading-none">
+                            <span className="block text-[11px] text-[#64748B] line-through leading-none">
                               {formatPrice(item.oldPrice)}
                             </span>
                           )}
@@ -218,7 +218,7 @@ export function CartModal({
           {cart.length > 0 && (
             <footer className="sticky bottom-0 z-10 bg-[#0B1220] border-t border-[#26364D] p-5 space-y-3.5 shadow-[0_-6px_25px_rgba(0,0,0,0.6)]">
               {/* Guarantee trust label */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#10B981]/15 border border-[#10B981]/30 text-[#10B981] text-xs">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#047857]/15 border border-[#10B981]/30 text-[#10B981] text-xs">
                 <ShieldCheck className="w-4 h-4 flex-shrink-0" />
                 <span className="font-medium">
                   Garansi akun aktif & panduan instalasi langsung via WhatsApp.
@@ -228,7 +228,7 @@ export function CartModal({
               {/* Total Row */}
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-[#94A3B8] block">Total Tagihan</span>
+                  <span className="text-xs text-[#64748B] block">Total Tagihan</span>
                   <span className="text-xs font-semibold text-[#F8FAFC]">
                     {totalItems} item dipilih
                   </span>
@@ -244,7 +244,7 @@ export function CartModal({
               <button
                 type="button"
                 onClick={onOrderWhatsApp}
-                className="w-full bg-gradient-to-r from-[#2583F7] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#2583F7] text-white py-3.5 px-4 rounded-xl font-black text-sm md:text-base flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(37,131,247,0.4)] hover:shadow-[0_0_25px_rgba(37,131,247,0.6)] active:scale-[0.99] transition-all"
+                className="w-full bg-gradient-to-r from-[#1D4ED8] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#2583F7] text-white py-3.5 px-4 rounded-xl font-black text-sm md:text-base flex items-center justify-center gap-2.5 shadow-[0_0_20px_rgba(37,131,247,0.4)] hover:shadow-[0_0_25px_rgba(37,131,247,0.6)] active:scale-[0.99] transition-all"
               >
                 <MessageCircle className="w-5 h-5 fill-white/20 stroke-white" />
                 Pesan Sekarang via WhatsApp
@@ -253,7 +253,7 @@ export function CartModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full text-center text-xs text-[#94A3B8] hover:text-[#F8FAFC] font-medium py-1 transition-colors"
+                className="w-full text-center text-xs text-[#64748B] hover:text-[#F8FAFC] font-medium py-1 transition-colors"
               >
                 ← Lanjut Pilih Produk Lain
               </button>

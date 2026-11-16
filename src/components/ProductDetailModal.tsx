@@ -38,7 +38,7 @@ const PAYMENT_METHODS: PaymentMethod[] = [
     id: 'qris',
     name: 'QRIS Instant (Semua E-Wallet & Bank)',
     badge: 'Otomatis',
-    badgeColor: 'text-[#10B981] bg-[#10B981]/15 border-[#10B981]/30',
+    badgeColor: 'text-[#10B981] bg-[#047857]/15 border-[#10B981]/30',
     desc: 'BCA Mobile, Mandiri, BRI, BNI, Dana, GoPay, OVO, ShopeePay',
     icon: QrCode,
     fee: 0
@@ -65,7 +65,7 @@ const PAYMENT_METHODS: PaymentMethod[] = [
     id: 'whatsapp',
     name: 'Order Langsung via CS WhatsApp',
     badge: 'Support 24/7',
-    badgeColor: 'text-[#10B981] bg-[#10B981]/15 border-[#10B981]/30',
+    badgeColor: 'text-[#10B981] bg-[#047857]/15 border-[#10B981]/30',
     desc: 'Transaksi langsung dipandu customer service kami',
     icon: MessageCircle,
     fee: 0
@@ -263,10 +263,10 @@ export function ProductDetailModal({
 
               <div className="min-w-0">
                 <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#2583F7]/15 text-[#38BDF8] border border-[#2583F7]/30">
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-[#1D4ED8]/15 text-[#38BDF8] border border-[#2583F7]/30">
                     {product.category}
                   </span>
-                  <span className="text-[10px] text-[#94A3B8]">
+                  <span className="text-[10px] text-[#64748B]">
                     {product.provider === 'Abellab Reseller' ? 'Supplier Abellab Reseller' : 'Supplier Prs Digital'}
                   </span>
                 </div>
@@ -280,7 +280,7 @@ export function ProductDetailModal({
               type="button"
               onClick={onClose}
               aria-label="Tutup modal"
-              className="w-9 h-9 rounded-xl text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors flex-shrink-0"
+              className="w-9 h-9 rounded-xl text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors flex-shrink-0"
             >
               <X className="w-5 h-5" />
             </button>
@@ -298,7 +298,7 @@ export function ProductDetailModal({
                 </span>
 
                 <div className="text-right">
-                  <span className="text-xs text-[#94A3B8] block">Harga Satuan</span>
+                  <span className="text-xs text-[#64748B] block">Harga Satuan</span>
                   {isUnconfigured ? (
                     <span className="text-xs text-amber-500 font-bold">Belum diatur</span>
                   ) : (
@@ -313,14 +313,14 @@ export function ProductDetailModal({
               {product.isWholesale && product.wholesaleMin && product.wholesalePrice && (
                 <div className={`p-2.5 rounded-lg border text-xs flex items-center justify-between ${
                   isWholesaleApplied
-                    ? 'bg-[#10B981]/10 border-[#10B981]/40 text-[#10B981]'
-                    : 'bg-[#2583F7]/10 border-[#2583F7]/30 text-[#38BDF8]'
+                    ? 'bg-[#047857]/10 border-[#10B981]/40 text-[#10B981]'
+                    : 'bg-[#1D4ED8]/10 border-[#2583F7]/30 text-[#38BDF8]'
                 }`}>
                   <span className="font-semibold">
                     🔥 Promo Grosir Beli {product.wholesaleMin}+ : {formatPrice(product.wholesalePrice)} /unit
                   </span>
                   {isWholesaleApplied && (
-                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-[#10B981] text-white">
+                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-[#047857] text-white">
                       Aktif!
                     </span>
                   )}
@@ -333,7 +333,7 @@ export function ProductDetailModal({
                   <label className="text-xs font-bold text-[#F8FAFC] block">
                     Jumlah Pembelian
                   </label>
-                  <span className="text-[11px] text-[#94A3B8]">
+                  <span className="text-[11px] text-[#64748B]">
                     {isOutOfStock ? 'Stok Habis' : `Tersedia: ${maxStock} unit`}
                   </span>
                 </div>
@@ -387,7 +387,7 @@ export function ProductDetailModal({
                       className="w-full px-3 py-2 bg-[#080D18] border border-[#26364D] rounded-xl text-xs text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7] focus:ring-1 focus:ring-[#2583F7]"
                       required
                     />
-                    <span className="text-[10px] text-[#94A3B8] mt-0.5 block">
+                    <span className="text-[10px] text-[#64748B] mt-0.5 block">
                       Akses atau link aktivasi akan dikirimkan ke email ini.
                     </span>
                   </div>
@@ -395,7 +395,7 @@ export function ProductDetailModal({
 
                 <div>
                   <label className="text-xs font-bold text-[#F8FAFC] block mb-1">
-                    ID Telegram / Catatan Pesanan <span className="text-[10px] text-[#94A3B8] font-normal">(Opsional)</span>
+                    ID Telegram / Catatan Pesanan <span className="text-[10px] text-[#64748B] font-normal">(Opsional)</span>
                   </label>
                   <input
                     type="text"
@@ -425,7 +425,7 @@ export function ProductDetailModal({
                 />
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-[#2583F7] hover:bg-[#1D4ED8] text-white rounded-xl font-bold text-xs transition-all shadow-xs"
+                  className="px-4 py-2 bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white rounded-xl font-bold text-xs transition-all shadow-xs"
                 >
                   Gunakan
                 </button>
@@ -434,7 +434,7 @@ export function ProductDetailModal({
               {couponMessage && (
                 <div className={`p-2 rounded-lg text-xs flex items-center gap-1.5 ${
                   couponMessage.type === 'success'
-                    ? 'bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/30'
+                    ? 'bg-[#047857]/15 text-[#10B981] border border-[#10B981]/30'
                     : 'bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/30'
                 }`}>
                   {couponMessage.type === 'success' ? (
@@ -464,14 +464,14 @@ export function ProductDetailModal({
                       onClick={() => setSelectedPayment(method.id)}
                       className={`p-3 rounded-xl border cursor-pointer transition-all ${
                         isSelected
-                          ? 'bg-[#2583F7]/15 border-[#2583F7] shadow-[0_0_12px_rgba(37,131,247,0.3)]'
+                          ? 'bg-[#1D4ED8]/15 border-[#2583F7] shadow-[0_0_12px_rgba(37,131,247,0.3)]'
                           : 'bg-[#080D18] border-[#26364D] hover:border-[#2583F7]/50'
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1.5">
                         <div className="flex items-center gap-2">
                           <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${
-                            isSelected ? 'bg-[#2583F7] text-white' : 'bg-[#111A2B] text-[#38BDF8]'
+                            isSelected ? 'bg-[#1D4ED8] text-white' : 'bg-[#111A2B] text-[#38BDF8]'
                           }`}>
                             <Icon className="w-3.5 h-3.5" />
                           </div>
@@ -485,7 +485,7 @@ export function ProductDetailModal({
                         </span>
                       </div>
 
-                      <p className="text-[10px] text-[#94A3B8] line-clamp-1 leading-relaxed">
+                      <p className="text-[10px] text-[#64748B] line-clamp-1 leading-relaxed">
                         {method.desc}
                       </p>
                     </div>
@@ -501,19 +501,19 @@ export function ProductDetailModal({
               </span>
 
               <div className="space-y-1.5 text-xs">
-                <div className="flex justify-between text-[#94A3B8]">
+                <div className="flex justify-between text-[#64748B]">
                   <span>Produk</span>
                   <span className="text-[#F8FAFC] font-semibold text-right max-w-[200px] truncate">
                     {product.name}
                   </span>
                 </div>
 
-                <div className="flex justify-between text-[#94A3B8]">
+                <div className="flex justify-between text-[#64748B]">
                   <span>Jumlah</span>
                   <span className="text-[#F8FAFC] font-semibold">{quantity} unit</span>
                 </div>
 
-                <div className="flex justify-between text-[#94A3B8]">
+                <div className="flex justify-between text-[#64748B]">
                   <span>Subtotal</span>
                   <span className="text-[#F8FAFC] font-semibold tabular-nums">
                     {formatPrice(subtotal)}
@@ -529,7 +529,7 @@ export function ProductDetailModal({
                   </div>
                 )}
 
-                <div className="flex justify-between text-[#94A3B8]">
+                <div className="flex justify-between text-[#64748B]">
                   <span>Biaya Transaksi</span>
                   <span className="text-[#10B981] font-bold">Gratis</span>
                 </div>
@@ -553,7 +553,7 @@ export function ProductDetailModal({
               onClick={handleAddToCartClick}
               className={`w-full sm:w-auto px-4 py-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-2 transition-all ${
                 isAddedToCart
-                  ? 'bg-[#10B981]/20 border-[#10B981] text-[#10B981]'
+                  ? 'bg-[#047857]/20 border-[#10B981] text-[#10B981]'
                   : 'bg-[#111A2B] hover:bg-[#1A263D] border-[#26364D] hover:border-[#2583F7] text-[#38BDF8]'
               }`}
             >
@@ -576,8 +576,8 @@ export function ProductDetailModal({
               onClick={handleProcessOrder}
               className={`w-full sm:flex-1 py-3 px-5 rounded-xl font-black text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
                 isOutOfStock
-                  ? 'bg-[#111A2B] text-[#94A3B8] border border-[#26364D] cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#2583F7] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#2583F7] text-white shadow-[0_0_20px_rgba(37,131,247,0.4)] hover:shadow-[0_0_25px_rgba(37,131,247,0.6)] active:scale-[0.99]'
+                  ? 'bg-[#111A2B] text-[#64748B] border border-[#26364D] cursor-not-allowed'
+                  : 'bg-gradient-to-r from-[#1D4ED8] to-[#1D4ED8] hover:from-[#1D4ED8] hover:to-[#2583F7] text-white shadow-[0_0_20px_rgba(37,131,247,0.4)] hover:shadow-[0_0_25px_rgba(37,131,247,0.6)] active:scale-[0.99]'
               }`}
             >
               <ShieldCheck className="w-4 h-4" />

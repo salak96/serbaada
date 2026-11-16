@@ -48,7 +48,7 @@ export function FormattedDescription({ text, isDarkMode = false }: FormattedDesc
                 className={`inline-flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-xs border max-w-full truncate ${
                   isDarkMode
                     ? 'bg-[#1677FF]/15 text-[#38BDF8] hover:bg-[#1677FF] hover:text-white border-[#1677FF]/40'
-                    : 'bg-[#EFF6FF] text-[#2583F7] hover:bg-[#2583F7] hover:text-white border-[#BFDBFE]'
+                    : 'bg-[#EFF6FF] text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white border-[#BFDBFE]'
                 }`}
                 title={part}
               >

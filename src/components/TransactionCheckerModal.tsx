@@ -67,9 +67,9 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
     header: isDarkMode ? 'bg-[#0B1220] border-[#26364D]' : 'bg-white border-[#E2E8F0]',
     title: isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]',
     closeBtn: isDarkMode
-      ? 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]'
+      ? 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]'
       : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] hover:border-[#E2E8F0]',
-    muted: isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]',
+    muted: isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]',
     input: isDarkMode
       ? 'bg-[#080D18] border-[#26364D] text-[#F8FAFC] placeholder-[#94A3B8]/60'
       : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#0F172A] placeholder-[#94A3B8]/60',
@@ -80,7 +80,7 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
     resultBox: isDarkMode ? 'bg-[#111A2B] border-[#26364D]' : 'bg-[#F0F7FF] border-[#DCE8F5]',
     resultValue: isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]',
     accountBox: isDarkMode ? 'bg-[#080D18] border-[#26364D]' : 'bg-white border-[#E2E8F0]',
-    footer: isDarkMode ? 'bg-[#0B1220] border-[#26364D] text-[#94A3B8]' : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#64748B]',
+    footer: isDarkMode ? 'bg-[#0B1220] border-[#26364D] text-[#64748B]' : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#64748B]',
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -181,7 +181,7 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
           {/* Header */}
           <div className={`px-5 py-4 ${c.header} border-b flex items-center justify-between`}>
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-[#2583F7]/15 text-[#38BDF8] flex items-center justify-center border border-[#2583F7]/30">
+              <div className="w-8 h-8 rounded-xl bg-[#1D4ED8]/15 text-[#38BDF8] flex items-center justify-center border border-[#2583F7]/30">
                 <ReceiptText className="w-4 h-4" />
               </div>
               <h2 className={`text-base font-bold ${c.title}`}>
@@ -217,7 +217,7 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-2.5 px-4 bg-[#2583F7] hover:bg-[#1D4ED8] disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-[0_0_15px_rgba(37,131,247,0.3)] flex items-center justify-center gap-2 transition-all"
+                className="w-full py-2.5 px-4 bg-[#1D4ED8] hover:bg-[#1D4ED8] disabled:opacity-50 text-white rounded-xl font-bold text-xs shadow-[0_0_15px_rgba(37,131,247,0.3)] flex items-center justify-center gap-2 transition-all"
               >
                 {isLoading ? (
                   <>
@@ -247,7 +247,7 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
                 <div className={`flex items-center justify-between border-b ${isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]'} pb-2`}>
                   <span className={`text-xs ${c.muted}`}>ID Pesanan: #{result.orderId}</span>
                   {result.status === 'delivered' ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#10B981] bg-[#10B981]/15 px-2 py-0.5 rounded-full border border-[#10B981]/30">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#10B981] bg-[#047857]/15 px-2 py-0.5 rounded-full border border-[#10B981]/30">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Berhasil Terkirim
                     </span>

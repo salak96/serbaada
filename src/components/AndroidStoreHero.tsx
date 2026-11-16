@@ -18,7 +18,7 @@ export function AndroidStoreHero({
         : 'bg-[#FFFFFF] border-[#DCE8F5] text-[#071B3D] shadow-[0_10px_30px_rgba(8,124,255,0.06)]'
     }`}>
       {/* Decorative Glow Orbs */}
-      <div className="absolute top-0 right-0 -mt-16 -mr-16 w-96 h-96 bg-[#087CFF]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-0 -mt-16 -mr-16 w-96 h-96 bg-[#1D4ED8]/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -mb-20 -ml-20 w-80 h-80 bg-[#38BDF8]/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -30,9 +30,9 @@ export function AndroidStoreHero({
           <div className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-bold shadow-xs ${
             isDarkMode
               ? 'bg-[#101D33] border-[#253752] text-[#38BDF8]'
-              : 'bg-[#F0F7FF] border-[#DCE8F5] text-[#087CFF]'
+              : 'bg-[#F0F7FF] border-[#DCE8F5] text-[#1D4ED8]'
           }`}>
-            <span className="w-2 h-2 rounded-full bg-[#087CFF] animate-pulse" />
+            <span className="w-2 h-2 rounded-full bg-[#1D4ED8] animate-pulse" />
             <span>PUSAT PRODUK DIGITAL &amp; AKUN PREMIUM</span>
           </div>
 
@@ -53,7 +53,7 @@ export function AndroidStoreHero({
             <button
               type="button"
               onClick={onExploreClick}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#087CFF] hover:bg-[#0664D8] text-white font-black text-sm shadow-[0_0_20px_rgba(8,124,255,0.4)] active:scale-95 transition-all"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-[#1D4ED8] hover:bg-[#0664D8] text-white font-black text-sm shadow-[0_0_20px_rgba(8,124,255,0.4)] active:scale-95 transition-all"
             >
               <span>Jelajahi Produk</span>
               <ArrowRight className="w-4 h-4" />
@@ -65,7 +65,7 @@ export function AndroidStoreHero({
               className={`inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-bold text-sm border transition-all ${
                 isDarkMode
                   ? 'bg-[#101D33] hover:bg-[#182B4A] text-[#38BDF8] border-[#253752]'
-                  : 'bg-[#F0F7FF] hover:bg-[#E2F0FF] text-[#087CFF] border-[#DCE8F5]'
+                  : 'bg-[#F0F7FF] hover:bg-[#E2F0FF] text-[#1D4ED8] border-[#DCE8F5]'
               }`}
             >
               <Search className="w-4 h-4" />
@@ -79,7 +79,7 @@ export function AndroidStoreHero({
             <div className={`p-3 rounded-xl border flex items-center gap-2.5 ${
               isDarkMode ? 'bg-[#101D33]/60 border-[#253752]' : 'bg-[#F0F7FF]/60 border-[#DCE8F5]'
             }`}>
-              <div className="w-8 h-8 rounded-lg bg-[#087CFF]/20 text-[#087CFF] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-[#1D4ED8]/20 text-[#1D4ED8] flex items-center justify-center flex-shrink-0">
                 <FileText className="w-4 h-4" />
               </div>
               <div>
@@ -103,7 +103,7 @@ export function AndroidStoreHero({
             <div className={`p-3 rounded-xl border flex items-center gap-2.5 ${
               isDarkMode ? 'bg-[#101D33]/60 border-[#253752]' : 'bg-[#F0F7FF]/60 border-[#DCE8F5]'
             }`}>
-              <div className="w-8 h-8 rounded-lg bg-[#10B981]/20 text-[#10B981] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-[#047857]/20 text-[#10B981] flex items-center justify-center flex-shrink-0">
                 <Zap className="w-4 h-4" />
               </div>
               <div>
@@ -160,20 +160,20 @@ export function AndroidStoreHero({
             </div>
 
             <div className="relative z-10 my-auto py-6 text-center space-y-3">
-              <div className="w-16 h-16 mx-auto rounded-2xl bg-[#087CFF] text-white flex items-center justify-center font-black text-xl shadow-[0_0_25px_rgba(8,124,255,0.6)]">
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-[#1D4ED8] text-white flex items-center justify-center font-black text-xl shadow-[0_0_25px_rgba(8,124,255,0.6)]">
                 AS
               </div>
-              <h3 className="font-extrabold text-base tracking-tight">
+              <h2 className="font-extrabold text-base tracking-tight">
                 AndroidStore Digital Hub
-              </h3>
+              </h2>
               <p className="text-xs opacity-75 max-w-xs mx-auto">
                 Platform langganan akun premium &amp; software digital terpercaya dengan sistem API otomatis.
               </p>
             </div>
 
             <div className="relative z-10 pt-3 border-t border-current/10 flex items-center justify-between text-[11px] font-bold">
-              <span className="text-[#087CFF] flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-[#10B981] animate-ping" />
+              <span className="text-[#1D4ED8] flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-[#047857] animate-ping" />
                 Live API Engine Active
               </span>
               <span className="opacity-75">Instant Delivery</span>

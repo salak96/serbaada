@@ -207,7 +207,7 @@ export function ProductDetailPage({
           <button
             type="button"
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 font-semibold text-[#2583F7] hover:text-[#1D4ED8] dark:hover:text-[#38BDF8] transition-colors"
+            className="inline-flex items-center gap-1.5 font-semibold text-[#1D4ED8] hover:text-[#1D4ED8] dark:hover:text-[#38BDF8] transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali ke katalog</span>
@@ -218,7 +218,7 @@ export function ProductDetailPage({
               if (onCategorySelect) onCategorySelect(product.category);
               onBack();
             }}
-            className="hidden sm:inline cursor-pointer text-[#2583F7] dark:text-[#38BDF8] hover:underline font-semibold"
+            className="hidden sm:inline cursor-pointer text-[#1D4ED8] dark:text-[#38BDF8] hover:underline font-semibold"
             title={`Lihat semua produk kategori ${product.category}`}
           >
             {product.category}
@@ -232,7 +232,7 @@ export function ProductDetailPage({
         <button
           type="button"
           onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] hover:text-[#2583F7] shadow-xs transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] hover:text-[#1D4ED8] shadow-xs transition-colors"
         >
           <Share2 className="w-3.5 h-3.5" />
           <span>{copiedLink ? 'Link Tersalin!' : 'Bagikan'}</span>
@@ -257,13 +257,13 @@ export function ProductDetailPage({
                 </span>
               ) : (
                 <span className="bg-[#ECFDF5] dark:bg-emerald-950/60 text-[#059669] dark:text-emerald-400 border border-[#A7F3D0] dark:border-emerald-800/60 text-xs font-bold px-2.5 py-0.5 rounded-full shadow-xs flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#047857]" />
                   Ready {maxStock} unit
                 </span>
               )}
 
               {product.isWholesale && (
-                <span className="bg-[#EFF6FF] dark:bg-[#2583F7]/15 text-[#2583F7] dark:text-[#38BDF8] border border-[#DBEAFE] dark:border-[#2583F7]/30 text-xs font-bold px-2.5 py-0.5 rounded-full shadow-xs">
+                <span className="bg-[#EFF6FF] dark:bg-[#2583F7]/15 text-[#1D4ED8] dark:text-[#38BDF8] border border-[#DBEAFE] dark:border-[#2583F7]/30 text-xs font-bold px-2.5 py-0.5 rounded-full shadow-xs">
                   Grosir
                 </span>
               )}
@@ -291,7 +291,7 @@ export function ProductDetailPage({
                 <ShieldCheck className="w-4 h-4 text-[#10B981]" />
                 <span>100% Produk Legal &amp; Bergaransi</span>
               </span>
-              <span className="font-semibold text-[#2583F7] dark:text-[#38BDF8] bg-[#EFF6FF] dark:bg-[#2583F7]/15 px-2 py-0.5 rounded text-[11px]">
+              <span className="font-semibold text-[#1D4ED8] dark:text-[#38BDF8] bg-[#EFF6FF] dark:bg-[#2583F7]/15 px-2 py-0.5 rounded text-[11px]">
                 {product.provider === 'Abellab Reseller' ? 'Supplier Abellab Reseller' : 'Supplier Prs Digital'}
               </span>
             </div>
@@ -327,14 +327,14 @@ export function ProductDetailPage({
                   {rv.photo ? (
                     <img src={rv.photo} alt={rv.name} className="w-11 h-11 rounded-full object-cover border border-[#E2E8F0] dark:border-[#26364D] shrink-0" />
                   ) : (
-                    <span className="w-11 h-11 rounded-full bg-[#EFF6FF] dark:bg-[#2583F7]/15 text-[#2583F7] dark:text-[#38BDF8] font-bold flex items-center justify-center text-sm shrink-0">
+                    <span className="w-11 h-11 rounded-full bg-[#EFF6FF] dark:bg-[#2583F7]/15 text-[#1D4ED8] dark:text-[#38BDF8] font-bold flex items-center justify-center text-sm shrink-0">
                       {rv.name.charAt(0).toUpperCase()}
                     </span>
                   )}
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-bold text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC] truncate">{rv.name}</span>
-                      {rv.date && <span className="text-[11px] text-[#94A3B8] shrink-0">{rv.date}</span>}
+                      {rv.date && <span className="text-[11px] text-[#64748B] shrink-0">{rv.date}</span>}
                     </div>
                     <div className="flex items-center gap-0.5 my-0.5">
                       {[1, 2, 3, 4, 5].map(n => (
@@ -373,7 +373,7 @@ export function ProductDetailPage({
                   SKU: {productSku}
                 </span>
 
-                <span className="bg-[#EFF6FF] dark:bg-[#2583F7]/15 text-[#2583F7] dark:text-[#38BDF8] font-semibold px-2.5 py-0.5 rounded-full border border-[#DBEAFE] dark:border-[#2583F7]/30">
+                <span className="bg-[#EFF6FF] dark:bg-[#2583F7]/15 text-[#1D4ED8] dark:text-[#38BDF8] font-semibold px-2.5 py-0.5 rounded-full border border-[#DBEAFE] dark:border-[#2583F7]/30">
                   Terlaris
                 </span>
 
@@ -397,14 +397,14 @@ export function ProductDetailPage({
                     Produk belum diatur / Stok kosong
                   </span>
                 ) : (
-                  <span className="text-2xl sm:text-3xl font-extrabold text-[#2583F7] dark:text-[#38BDF8] tabular-nums tracking-tight">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-[#1D4ED8] dark:text-[#38BDF8] tabular-nums tracking-tight">
                     {formatPrice(unitPrice)}
                   </span>
                 )}
 
                 {product.oldPrice > product.price && (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-[#94A3B8] line-through tabular-nums">
+                    <span className="text-sm text-[#64748B] line-through tabular-nums">
                       {formatPrice(product.oldPrice)}
                     </span>
                     <span className="text-xs font-bold bg-[#FEE2E2] dark:bg-red-950/60 text-[#DC2626] dark:text-red-400 px-1.5 py-0.5 rounded">
@@ -445,8 +445,8 @@ export function ProductDetailPage({
                         onClick={() => handleAccountType(at)}
                         className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
                           selAccountType === at
-                            ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
-                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#2583F7]'
+                            ? 'bg-[#1D4ED8] text-white border-[#2583F7] shadow-sm'
+                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#1D4ED8]'
                         }`}
                       >
                         {at === 'private' ? 'Private' : 'Shared'}
@@ -466,8 +466,8 @@ export function ProductDetailPage({
                         onClick={() => handleVariantName(n)}
                         className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
                           selVariantName === n
-                            ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
-                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#2583F7]'
+                            ? 'bg-[#1D4ED8] text-white border-[#2583F7] shadow-sm'
+                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#1D4ED8]'
                         }`}
                       >
                         {n}
@@ -493,8 +493,8 @@ export function ProductDetailPage({
                           onClick={() => handleDuration(d)}
                           className={`px-3.5 py-2 rounded-xl text-xs transition-all border text-left ${
                             selDuration === d
-                              ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
-                              : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#2583F7]'
+                              ? 'bg-[#1D4ED8] text-white border-[#2583F7] shadow-sm'
+                              : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#1D4ED8]'
                           }`}
                         >
                           <span className="block font-bold">{d}</span>
@@ -532,8 +532,8 @@ export function ProductDetailPage({
                         onClick={() => onSelectProduct && onSelectProduct(v)}
                         className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
                           isCurrent
-                            ? 'bg-[#2583F7] text-white border-[#2583F7] shadow-sm'
-                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#2583F7]'
+                            ? 'bg-[#1D4ED8] text-white border-[#2583F7] shadow-sm'
+                            : 'bg-white dark:bg-[#080D18] text-[#0F172A] dark:text-[#F8FAFC] border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] hover:text-[#1D4ED8]'
                         }`}
                       >
                         {getVariationLabel(v)}
@@ -544,7 +544,7 @@ export function ProductDetailPage({
                   <>
                     <button
                       type="button"
-                      className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#2583F7] text-white border border-[#2583F7] shadow-sm"
+                      className="px-3.5 py-2 rounded-xl text-xs font-bold bg-[#1D4ED8] text-white border border-[#2583F7] shadow-sm"
                     >
                       {quotaName}
                     </button>
@@ -579,7 +579,7 @@ export function ProductDetailPage({
                   </div>
                 </div>
                 {isWholesaleApplied && (
-                  <span className="inline-block bg-[#10B981] text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
+                  <span className="inline-block bg-[#047857] text-white text-[10px] font-bold px-2 py-0.5 rounded-md">
                     Hemat Grosir Diterapkan
                   </span>
                 )}
@@ -612,13 +612,13 @@ export function ProductDetailPage({
                   onClick={() => setActiveTab('desc')}
                   className={`pb-2.5 font-bold transition-all relative ${
                     activeTab === 'desc'
-                      ? 'text-[#2583F7] dark:text-[#38BDF8]'
+                      ? 'text-[#1D4ED8] dark:text-[#38BDF8]'
                       : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
                   <span>Deskripsi</span>
                   {activeTab === 'desc' && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2583F7] rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1D4ED8] rounded-full" />
                   )}
                 </button>
 
@@ -627,13 +627,13 @@ export function ProductDetailPage({
                   onClick={() => setActiveTab('terms')}
                   className={`pb-2.5 font-bold transition-all relative ${
                     activeTab === 'terms'
-                      ? 'text-[#2583F7] dark:text-[#38BDF8]'
+                      ? 'text-[#1D4ED8] dark:text-[#38BDF8]'
                       : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
                   <span>Syarat &amp; Ketentuan</span>
                   {activeTab === 'terms' && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2583F7] rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1D4ED8] rounded-full" />
                   )}
                 </button>
               </div>
@@ -645,7 +645,7 @@ export function ProductDetailPage({
                       {product.description || `Layanan ${product.name} bergaransi resmi dengan proses aktivasi instan & aman.`}
                     </p>
                     <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-2 mt-2">
-                      <p className="font-bold text-xs text-[#2583F7] dark:text-[#38BDF8]">
+                      <p className="font-bold text-xs text-[#1D4ED8] dark:text-[#38BDF8]">
                         {getProductType(product) === 'voucher' ? '🎁 Panduan Klaim & Penukaran Voucher / Redeem Code:' : '🔐 Panduan Penggunaan & Login Akun:'}
                       </p>
                       {getProductType(product) === 'voucher' ? (
@@ -710,7 +710,7 @@ export function ProductDetailPage({
             {/* Optional Telegram ID */}
             <div className="space-y-1">
               <label className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] block">
-                ID Telegram / Catatan <span className="text-[11px] font-normal text-[#94A3B8]">(Opsional)</span>
+                ID Telegram / Catatan <span className="text-[11px] font-normal text-[#64748B]">(Opsional)</span>
               </label>
               <input
                 type="text"
@@ -770,11 +770,11 @@ export function ProductDetailPage({
             <div className="p-3.5 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] flex items-center justify-between">
               <div>
                 <span className="text-xs text-[#64748B] dark:text-[#94A3B8] block">Total Pembayaran:</span>
-                <span className="text-[11px] text-[#94A3B8]">
+                <span className="text-[11px] text-[#64748B]">
                   {quantity} unit x {formatPrice(unitPrice)}
                 </span>
               </div>
-              <span className="text-xl sm:text-2xl font-black text-[#2583F7] dark:text-[#38BDF8] tabular-nums">
+              <span className="text-xl sm:text-2xl font-black text-[#1D4ED8] dark:text-[#38BDF8] tabular-nums">
                 {formatPrice(subtotal)}
               </span>
             </div>
@@ -788,11 +788,11 @@ export function ProductDetailPage({
                   onClick={handleAddToCartClick}
                   className={`py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
                     isOutOfStock
-                      ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#94A3B8] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
-                      : 'bg-white dark:bg-[#111A2B] border-2 border-[#2583F7] text-[#2583F7] hover:bg-[#EFF6FF] dark:hover:bg-[#1A263D] active:scale-[0.99] shadow-xs'
+                      ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#64748B] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
+                      : 'bg-white dark:bg-[#111A2B] border-2 border-[#2583F7] text-[#1D4ED8] hover:bg-[#EFF6FF] dark:hover:bg-[#1A263D] active:scale-[0.99] shadow-xs'
                   }`}
                 >
-                  <ShoppingBag className="w-4 h-4 text-[#2583F7]" />
+                  <ShoppingBag className="w-4 h-4 text-[#1D4ED8]" />
                   <span>Tambah ke Keranjang</span>
                 </button>
 
@@ -802,8 +802,8 @@ export function ProductDetailPage({
                   onClick={handleInstantBuyClick}
                   className={`py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
                     isOutOfStock
-                      ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#94A3B8] cursor-not-allowed'
-                      : 'bg-[#2583F7] hover:bg-[#1D4ED8] text-white shadow-md shadow-[#2583F7]/25 active:scale-[0.99]'
+                      ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#64748B] cursor-not-allowed'
+                      : 'bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-md shadow-[#2583F7]/25 active:scale-[0.99]'
                   }`}
                 >
                   <MessageCircle className="w-4 h-4" />
@@ -819,13 +819,13 @@ export function ProductDetailPage({
                     href="https://wa.me/6285867336036"
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#2583F7] font-semibold hover:underline inline-flex items-center gap-0.5"
+                    className="text-[#1D4ED8] font-semibold hover:underline inline-flex items-center gap-0.5"
                   >
                     <span>Tanya tim kami</span>
                     <span>↗</span>
                   </a>
                 </p>
-                <p className="text-[11px] text-[#94A3B8]">
+                <p className="text-[11px] text-[#64748B]">
                   Harga final dan instruksi pembayaran ditampilkan saat checkout.
                 </p>
               </div>
@@ -850,7 +850,7 @@ export function ProductDetailPage({
           <span className="text-[10px] text-[#64748B] dark:text-[#94A3B8] block leading-none">
             Total ({quantity} unit):
           </span>
-          <span className="text-base font-extrabold text-[#2583F7] dark:text-[#38BDF8] tabular-nums">
+          <span className="text-base font-extrabold text-[#1D4ED8] dark:text-[#38BDF8] tabular-nums">
             {formatPrice(subtotal)}
           </span>
         </div>
@@ -862,12 +862,12 @@ export function ProductDetailPage({
             onClick={handleAddToCartClick}
             className={`p-2.5 rounded-xl border flex items-center justify-center transition-all ${
               isOutOfStock
-                ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#94A3B8] border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
-                : 'bg-white dark:bg-[#111A2B] border-2 border-[#2583F7] text-[#2583F7] active:scale-95'
+                ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#64748B] border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
+                : 'bg-white dark:bg-[#111A2B] border-2 border-[#2583F7] text-[#1D4ED8] active:scale-95'
             }`}
             title="Tambah ke Keranjang"
           >
-            <ShoppingBag className="w-4 h-4 text-[#2583F7]" />
+            <ShoppingBag className="w-4 h-4 text-[#1D4ED8]" />
           </button>
 
           <button
@@ -876,8 +876,8 @@ export function ProductDetailPage({
             onClick={handleInstantBuyClick}
             className={`py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
               isOutOfStock
-                ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#94A3B8] cursor-not-allowed'
-                : 'bg-[#2583F7] hover:bg-[#1D4ED8] text-white shadow-sm shadow-[#2583F7]/30 active:scale-95'
+                ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#64748B] cursor-not-allowed'
+                : 'bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-sm shadow-[#2583F7]/30 active:scale-95'
             }`}
           >
             <MessageCircle className="w-3.5 h-3.5" />
@@ -929,7 +929,7 @@ export function ProductDetailPage({
               {/* Body */}
               <div className="p-5 space-y-4">
                 <div className="p-3.5 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-1.5">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#2583F7]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#1D4ED8]">
                     {product.category}
                   </span>
                   <h4 className="font-bold text-sm text-[#0F172A] dark:text-[#F8FAFC] leading-snug">
@@ -956,7 +956,7 @@ export function ProductDetailPage({
                     href={`https://wa.me/6285867336036?text=${encodeURIComponent(`Halo Admin Androidstore.web.id! Saya ingin menanyakan ketersediaan / restock untuk produk: ${product.name} (Server: ${product.provider || 'Prs Digital'}). Kapan stok ready kembali?`)}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-[#2583F7] hover:bg-[#1D4ED8] text-white shadow-md shadow-[#2583F7]/25 flex items-center justify-center gap-2 transition-all active:scale-95"
+                    className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-md shadow-[#2583F7]/25 flex items-center justify-center gap-2 transition-all active:scale-95"
                   >
                     <MessageCircle className="w-4 h-4" />
                     <span>Tanya Admin untuk Restock (WhatsApp)</span>
@@ -968,7 +968,7 @@ export function ProductDetailPage({
                       setIsOutOfStockModalOpen(false);
                       onBack();
                     }}
-                    className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-white dark:bg-[#111A2B] hover:bg-[#F1F5F9] dark:hover:bg-[#1A263D] text-[#2583F7] border border-[#CBD5E1] dark:border-[#26364D] hover:border-[#2583F7] transition-all"
+                    className="w-full py-2.5 px-4 rounded-xl font-bold text-xs bg-white dark:bg-[#111A2B] hover:bg-[#F1F5F9] dark:hover:bg-[#1A263D] text-[#1D4ED8] border border-[#CBD5E1] dark:border-[#26364D] hover:border-[#2583F7] transition-all"
                   >
                     ← Kembali &amp; Pilih Produk Lain
                   </button>
@@ -976,7 +976,7 @@ export function ProductDetailPage({
               </div>
 
               {/* Footer */}
-              <div className="px-5 py-3 bg-[#F8FAFC] dark:bg-[#0B1220] border-t border-[#E2E8F0] dark:border-[#26364D] text-center text-[10px] text-[#94A3B8]">
+              <div className="px-5 py-3 bg-[#F8FAFC] dark:bg-[#0B1220] border-t border-[#E2E8F0] dark:border-[#26364D] text-center text-[10px] text-[#64748B]">
                 Stok produk diperbarui secara otomatis setiap kali penyedia server mengisi kuota.
               </div>
             </div>
@@ -989,7 +989,7 @@ export function ProductDetailPage({
         <div className="mt-12 space-y-4">
           <div className="flex items-center justify-between">
             <h3 className="text-base sm:text-lg font-black text-[#0F172A] dark:text-[#F8FAFC] tracking-tight flex items-center gap-2">
-              <span className="w-2 h-5 rounded-full bg-[#2583F7]" />
+              <span className="w-2 h-5 rounded-full bg-[#1D4ED8]" />
               <span>Rekomendasi Produk Lainnya</span>
             </h3>
             <span className="text-xs text-[#64748B] dark:text-[#94A3B8] font-semibold">Pilihan Serupa</span>
@@ -1020,7 +1020,7 @@ export function ProductDetailPage({
                     </div>
 
                     <div className="p-3 space-y-1.5">
-                      <h4 className="font-bold text-xs text-[#0F172A] dark:text-[#F8FAFC] line-clamp-2 group-hover:text-[#2583F7] dark:group-hover:text-[#38BDF8] transition-colors leading-snug min-h-[32px]">
+                      <h4 className="font-bold text-xs text-[#0F172A] dark:text-[#F8FAFC] line-clamp-2 group-hover:text-[#1D4ED8] dark:group-hover:text-[#38BDF8] transition-colors leading-snug min-h-[32px]">
                         {p.name}
                       </h4>
                       <div className="flex items-center gap-1 text-[11px] text-[#64748B] dark:text-[#94A3B8]">
@@ -1033,10 +1033,10 @@ export function ProductDetailPage({
                   </div>
 
                   <div className="p-3 pt-0 flex items-center justify-between">
-                    <span className="text-xs sm:text-sm font-black text-[#2583F7] dark:text-[#38BDF8] tabular-nums">
+                    <span className="text-xs sm:text-sm font-black text-[#1D4ED8] dark:text-[#38BDF8] tabular-nums">
                       {formatPrice(p.price)}
                     </span>
-                    <span className="text-[10px] font-bold text-[#10B981] bg-[#10B981]/15 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold text-[#10B981] bg-[#047857]/15 px-1.5 py-0.5 rounded">
                       Instan
                     </span>
                   </div>

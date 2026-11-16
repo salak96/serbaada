@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, lazy, Suspense } from 'react';
 import {
   SearchX,
   MessageCircle,
@@ -18,8 +18,9 @@ import { CheckoutModal } from './components/CheckoutModal';
 import { TransactionCheckerModal } from './components/TransactionCheckerModal';
 import { TopSultanModal } from './components/TopSultanModal';
 import { AndroidStoreHero } from './components/AndroidStoreHero';
-import { AdminDashboard } from './components/admin/AdminDashboard';
-import { AdminLoginModal } from './components/admin/AdminLoginModal';
+// Admin console di-lazy-load: hanya diunduh saat admin login, bukan di bundle awal.
+const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
+const AdminLoginModal = lazy(() => import('./components/admin/AdminLoginModal').then(m => ({ default: m.AdminLoginModal })));
 import { useCart } from './hooks/useCart';
 import { useTheme } from './hooks/useTheme';
 import { fetchProductsFromApi } from './services/productService';
@@ -60,9 +61,9 @@ const PRICE_RANGES = [
 // memakai warna default (emerald) agar tetap tampil rapi.
 const SERVER_STYLE: Record<string, { active: string; idle: string; dot: string }> = {
   'Prs Digital': {
-    active: 'bg-[#2583F7] text-white shadow-xs',
-    idle: 'bg-[#EFF6FF] text-[#2583F7] border border-[#BFDBFE] dark:bg-[#111A2B] dark:text-[#38BDF8] dark:border-[#2583F7]/40',
-    dot: 'bg-[#2583F7]',
+    active: 'bg-[#1D4ED8] text-white shadow-xs',
+    idle: 'bg-[#EFF6FF] text-[#1D4ED8] border border-[#BFDBFE] dark:bg-[#111A2B] dark:text-[#38BDF8] dark:border-[#2583F7]/40',
+    dot: 'bg-[#1D4ED8]',
   },
   'Abellab': {
     active: 'bg-amber-600 text-white shadow-xs',
@@ -370,8 +371,8 @@ function App() {
     <div
       className={`min-h-screen flex flex-col font-sans transition-colors duration-200 ${
         isDarkMode
-          ? 'bg-[#080D18] text-[#F8FAFC] selection:bg-[#2583F7]/30 selection:text-[#38BDF8]'
-          : 'bg-[#F1F5F9] text-[#0F172A] selection:bg-[#2583F7]/20 selection:text-[#2583F7]'
+          ? 'bg-[#080D18] text-[#F8FAFC] selection:bg-[#1D4ED8]/30 selection:text-[#38BDF8]'
+          : 'bg-[#F1F5F9] text-[#0F172A] selection:bg-[#1D4ED8]/20 selection:text-[#1D4ED8]'
       }`}
     >
       {/* Top Navbar */}
@@ -442,12 +443,12 @@ function App() {
                       placeholder="Cari produk di katalog..."
                       className="w-full pl-9 pr-8 py-2.5 bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC] placeholder-[#94A3B8] dark:placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7] focus:ring-1 focus:ring-[#2583F7]"
                     />
-                    <Search className="w-4 h-4 text-[#94A3B8] absolute left-3 top-3 pointer-events-none" />
+                    <Search className="w-4 h-4 text-[#64748B] absolute left-3 top-3 pointer-events-none" />
                     {search && (
                       <button
                         type="button"
                         onClick={() => setSearch('')}
-                        className="absolute right-2.5 top-2.5 text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]"
+                        className="absolute right-2.5 top-2.5 text-[#64748B] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -486,7 +487,7 @@ function App() {
                       onClick={() => setSelectedCategory(categoryName)}
                       className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
                         isActive
-                          ? 'bg-[#2583F7] text-white border border-[#2583F7] shadow-sm'
+                          ? 'bg-[#1D4ED8] text-white border border-[#2583F7] shadow-sm'
                           : 'bg-white dark:bg-[#111A2B] text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7]/50'
                       }`}
                     >
@@ -509,7 +510,7 @@ function App() {
                       onClick={() => setSelectedProvider(null)}
                       className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
                         selectedProvider === null
-                          ? 'bg-[#2583F7] text-white shadow-xs'
+                          ? 'bg-[#1D4ED8] text-white shadow-xs'
                           : 'bg-[#F1F5F9] text-[#475569] border border-[#E2E8F0] dark:bg-[#111A2B] dark:text-[#94A3B8] dark:border-[#26364D] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
                       }`}
                     >
@@ -540,7 +541,7 @@ function App() {
                     <button
                       type="button"
                       onClick={handleResetFilters}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#2583F7] hover:text-[#1D4ED8] bg-white dark:bg-[#111A2B] px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#26364D] transition-colors"
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1D4ED8] hover:text-[#1D4ED8] bg-white dark:bg-[#111A2B] px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-[#26364D] transition-colors"
                     >
                       <X className="w-3.5 h-3.5" />
                       <span>Reset Filter</span>
@@ -554,7 +555,7 @@ function App() {
             {isLoading && (
               <div className="py-12 text-center">
                 <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] text-[#0F172A] dark:text-[#F8FAFC] shadow-soft mb-8">
-                  <Loader2 className="w-5 h-5 text-[#2583F7] animate-spin" />
+                  <Loader2 className="w-5 h-5 text-[#1D4ED8] animate-spin" />
                   <span className="text-sm font-semibold">Menghubungkan ke API server & memuat katalog produk...</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3.5 sm:gap-4 lg:gap-5">
@@ -585,7 +586,7 @@ function App() {
                 <button
                   type="button"
                   onClick={loadProducts}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2583F7] hover:bg-[#1D4ED8] text-white font-semibold text-sm shadow-sm transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white font-semibold text-sm shadow-sm transition-colors"
                 >
                   <RefreshCw className="w-4 h-4" />
                   <span>Coba Muat Ulang</span>
@@ -596,7 +597,7 @@ function App() {
             {/* Empty State When No Products Match Filter / Search */}
             {!isLoading && !errorMessage && categorizedProducts.size === 0 && (
               <div className="bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-3xl p-10 sm:p-14 text-center max-w-lg mx-auto my-8 shadow-soft">
-                <div className="w-16 h-16 rounded-2xl bg-[#F8FAFC] dark:bg-[#080D18] text-[#94A3B8] flex items-center justify-center mx-auto mb-4 border border-[#E2E8F0] dark:border-[#26364D]">
+                <div className="w-16 h-16 rounded-2xl bg-[#F8FAFC] dark:bg-[#080D18] text-[#64748B] flex items-center justify-center mx-auto mb-4 border border-[#E2E8F0] dark:border-[#26364D]">
                   <SearchX className="w-8 h-8 stroke-[1.5]" />
                 </div>
                 <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC] mb-2">
@@ -608,7 +609,7 @@ function App() {
                 <button
                   type="button"
                   onClick={handleResetFilters}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2583F7] text-white font-semibold text-sm hover:bg-[#1D4ED8] shadow-sm transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#1D4ED8] text-white font-semibold text-sm hover:bg-[#1D4ED8] shadow-sm transition-colors"
                 >
                   <span>Tampilkan Semua Produk</span>
                 </button>
@@ -650,11 +651,11 @@ function App() {
                   isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'
                 }`}
               >
-                ANDROIDSTORE<span className="text-[#2583F7]">.WEB.ID</span>
+                ANDROIDSTORE<span className="text-[#1D4ED8]">.WEB.ID</span>
               </span>
               <p
                 className={`text-sm max-w-md leading-relaxed ${
-                  isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'
+                  isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]'
                 }`}
               >
                 Marketplace produk digital, akun premium, lisensi software, dan voucher game terpercaya di Indonesia. Transaksi otomatis dengan harga modal termurah dan garansi aktif.
@@ -676,7 +677,7 @@ function App() {
               </h4>
               <ul
                 className={`space-y-2 text-xs sm:text-sm ${
-                  isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'
+                  isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]'
                 }`}
               >
                 {CANONICAL_CATEGORIES.slice(1).map(cat => (
@@ -687,7 +688,7 @@ function App() {
                         handleBackToCatalog();
                         setSelectedCategory(cat);
                       }}
-                      className="hover:text-[#2583F7] transition-colors text-left"
+                      className="hover:text-[#1D4ED8] transition-colors text-left"
                     >
                       {cat}
                     </button>
@@ -707,7 +708,7 @@ function App() {
               </h4>
               <p
                 className={`text-xs sm:text-sm mb-3 leading-relaxed ${
-                  isDarkMode ? 'text-[#94A3B8]' : 'text-[#64748B]'
+                  isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]'
                 }`}
               >
                 Butuh bantuan, kendala akun, atau pertanyaan produk?
@@ -718,8 +719,8 @@ function App() {
                 rel="noreferrer"
                 className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all border ${
                   isDarkMode
-                    ? 'bg-[#111A2B] text-[#38BDF8] hover:bg-[#2583F7] hover:text-white border-[#26364D] hover:border-[#2583F7]'
-                    : 'bg-[#F1F5F9] text-[#2583F7] hover:bg-[#2583F7] hover:text-white border-[#E2E8F0] hover:border-[#2583F7]'
+                    ? 'bg-[#111A2B] text-[#38BDF8] hover:bg-[#1D4ED8] hover:text-white border-[#26364D] hover:border-[#2583F7]'
+                    : 'bg-[#F1F5F9] text-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white border-[#E2E8F0] hover:border-[#2583F7]'
                 }`}
               >
                 <MessageCircle className="w-4 h-4" />
@@ -727,7 +728,7 @@ function App() {
               </a>
               <span
                 className={`block text-[11px] mt-2 ${
-                  isDarkMode ? 'text-[#94A3B8]/70' : 'text-[#94A3B8]'
+                  isDarkMode ? 'text-[#64748B]/70' : 'text-[#64748B]'
                 }`}
               >
                 *Proses pesanan otomatis langsung aktif setelah verifikasi.
@@ -738,7 +739,7 @@ function App() {
           <div
             className={`pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-xs ${
               isDarkMode
-                ? 'border-[#26364D] text-[#94A3B8]'
+                ? 'border-[#26364D] text-[#64748B]'
                 : 'border-[#E2E8F0] text-[#64748B]'
             }`}
           >
@@ -802,31 +803,35 @@ function App() {
       />
 
       {/* Admin Login Modal */}
-      <AdminLoginModal
-        isOpen={isAdminLoginOpen}
-        onClose={() => setIsAdminLoginOpen(false)}
-        onSuccess={() => {
-          setIsAdmin(true);
-          try {
-            sessionStorage.setItem('serbadigital_is_admin', '1');
-          } catch {
-            // sessionStorage tidak tersedia — tetap lanjut sebagai admin di sesi ini
-          }
-          setIsAdminOpen(true);
-          window.history.pushState({}, '', '?admin');
-        }}
-      />
+      <Suspense fallback={null}>
+        <AdminLoginModal
+          isOpen={isAdminLoginOpen}
+          onClose={() => setIsAdminLoginOpen(false)}
+          onSuccess={() => {
+            setIsAdmin(true);
+            try {
+              sessionStorage.setItem('serbadigital_is_admin', '1');
+            } catch {
+              // sessionStorage tidak tersedia — tetap lanjut sebagai admin di sesi ini
+            }
+            setIsAdminOpen(true);
+            window.history.pushState({}, '', '?admin');
+          }}
+        />
+      </Suspense>
 
       {/* Admin Dashboard Console (Full Multi-Seller System) */}
       {isAdminOpen && (
-        <AdminDashboard
-          onClose={() => {
-            setIsAdminOpen(false);
-            window.history.pushState({}, '', window.location.pathname);
-            loadProducts();
-          }}
-          onRefreshPublicProducts={loadProducts}
-        />
+        <Suspense fallback={null}>
+          <AdminDashboard
+            onClose={() => {
+              setIsAdminOpen(false);
+              window.history.pushState({}, '', window.location.pathname);
+              loadProducts();
+            }}
+            onRefreshPublicProducts={loadProducts}
+          />
+        </Suspense>
       )}
     </div>
   );

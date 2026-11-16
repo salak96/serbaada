@@ -24,7 +24,7 @@ export function CategorySection({
       {/* Section Header with badge and accent line */}
       <div className="flex items-center justify-between gap-3 mb-4 sm:mb-5">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-[#EFF6FF] dark:bg-[#111A2B] border border-[#BFDBFE] dark:border-[#26364D] flex items-center justify-center text-[#2583F7] dark:text-[#38BDF8] shadow-xs">
+          <div className="w-8 h-8 rounded-xl bg-[#EFF6FF] dark:bg-[#111A2B] border border-[#BFDBFE] dark:border-[#26364D] flex items-center justify-center text-[#1D4ED8] dark:text-[#38BDF8] shadow-xs">
             <Sparkles className="w-4 h-4" />
           </div>
           <div className="flex items-center gap-2.5">
@@ -37,7 +37,7 @@ export function CategorySection({
           </div>
         </div>
 
-        <div className="hidden sm:block flex-1 h-[2px] bg-gradient-to-r from-[#2583F7]/40 via-[#E2E8F0] dark:via-[#26364D] to-transparent rounded-full ml-4" />
+        <div className="hidden sm:block flex-1 h-[2px] bg-gradient-to-r from-[#1D4ED8]/40 via-[#E2E8F0] dark:via-[#26364D] to-transparent rounded-full ml-4" />
       </div>
 
       {/* Product Grid: 5 columns on desktop, 4 on laptop, 2-3 on tablet/mobile */}

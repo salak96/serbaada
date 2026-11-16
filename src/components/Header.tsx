@@ -82,7 +82,7 @@ function SearchBox({
     <div ref={boxRef} className="relative w-full">
       <div
         className={`absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none ${
-          isLight ? 'text-[#64748B]' : 'text-[#94A3B8]'
+          isLight ? 'text-[#64748B]' : 'text-[#64748B]'
         }`}
       >
         <Search className="w-4 h-4" />
@@ -107,7 +107,7 @@ function SearchBox({
           onClick={() => { onChange(''); setOpen(false); }}
           aria-label="Bersihkan pencarian"
           className={`absolute inset-y-0 right-0 pr-3 flex items-center ${
-            isLight ? 'text-[#64748B] hover:text-[#0F172A]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+            isLight ? 'text-[#64748B] hover:text-[#0F172A]' : 'text-[#64748B] hover:text-[#F8FAFC]'
           }`}
         >
           <X className="w-4 h-4" />
@@ -139,11 +139,11 @@ function SearchBox({
                 <span className={`block truncate text-xs font-bold ${isLight ? 'text-[#0F172A]' : 'text-[#F8FAFC]'}`}>
                   {p.name}
                 </span>
-                <span className={`block text-[11px] ${isLight ? 'text-[#64748B]' : 'text-[#94A3B8]'}`}>
+                <span className={`block text-[11px] ${isLight ? 'text-[#64748B]' : 'text-[#64748B]'}`}>
                   {p.category}
                 </span>
               </span>
-              <span className="text-xs font-black text-[#2583F7] flex-shrink-0">
+              <span className="text-xs font-black text-[#1D4ED8] flex-shrink-0">
                 Rp{p.price.toLocaleString('id-ID')}
               </span>
             </button>
@@ -153,7 +153,7 @@ function SearchBox({
             onMouseDown={(e) => { e.preventDefault(); onViewAllResults(); setOpen(false); }}
             className={`w-full px-3 py-2.5 text-center text-xs font-bold border-t ${
               isLight
-                ? 'text-[#2583F7] border-[#E2E8F0] hover:bg-[#F1F5F9]'
+                ? 'text-[#1D4ED8] border-[#E2E8F0] hover:bg-[#F1F5F9]'
                 : 'text-[#38BDF8] border-[#26364D] hover:bg-[#1A263D]'
             }`}
           >
@@ -208,7 +208,7 @@ export function Header({
               className={`lg:hidden p-2 -ml-1 rounded-xl border transition-colors ${
                 isLight
                   ? 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] border-transparent hover:border-[#E2E8F0]'
-                  : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
+                  : 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
               }`}
             >
               <Menu className="w-5 h-5" />
@@ -224,7 +224,7 @@ export function Header({
               className="flex items-center gap-2.5 group select-none cursor-pointer"
               title="Ke Halaman Awal — Androidstore.web.id"
             >
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-[#2583F7] to-[#38BDF8] p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(37,131,247,0.35)] group-hover:scale-105 transition-transform flex-shrink-0">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-[#1D4ED8] to-[#38BDF8] p-1.5 flex items-center justify-center shadow-[0_0_15px_rgba(37,131,247,0.35)] group-hover:scale-105 transition-transform flex-shrink-0">
                 <img
                   src={ImgLogo}
                   alt="Logo Androidstore"
@@ -237,15 +237,15 @@ export function Header({
 
               <div className="flex flex-col">
                 <span
-                  className={`text-base sm:text-lg lg:text-xl font-black tracking-tight flex items-center gap-0.5 group-hover:text-[#2583F7] transition-colors ${
+                  className={`text-base sm:text-lg lg:text-xl font-black tracking-tight flex items-center gap-0.5 group-hover:text-[#1D4ED8] transition-colors ${
                     isLight ? 'text-[#0F172A]' : 'text-[#F8FAFC]'
                   }`}
                 >
-                  ANDROIDSTORE<span className="text-[#2583F7]">.WEB.ID</span>
+                  ANDROIDSTORE<span className="text-[#1D4ED8]">.WEB.ID</span>
                 </span>
                 <span
                   className={`text-[10px] tracking-wider font-semibold uppercase hidden sm:block ${
-                    isLight ? 'text-[#64748B]' : 'text-[#94A3B8]'
+                    isLight ? 'text-[#64748B]' : 'text-[#64748B]'
                   }`}
                 >
                   Digital Market &amp; Game Topup
@@ -276,7 +276,7 @@ export function Header({
                 onClick={() => onLogoClick && onLogoClick()}
                 className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors ${
                   isLight
-                    ? 'text-[#0F172A] hover:text-[#2583F7] hover:bg-[#F1F5F9] border-transparent'
+                    ? 'text-[#0F172A] hover:text-[#1D4ED8] hover:bg-[#F1F5F9] border-transparent'
                     : 'text-[#F8FAFC] hover:text-[#38BDF8] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
                 }`}
               >
@@ -289,10 +289,10 @@ export function Header({
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-colors ${
                   isLight
                     ? 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] border-transparent'
-                    : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
+                    : 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
                 }`}
               >
-                <ReceiptText className="w-3.5 h-3.5 text-[#2583F7]" />
+                <ReceiptText className="w-3.5 h-3.5 text-[#1D4ED8]" />
                 <span>Cek Transaksi</span>
               </button>
 
@@ -302,7 +302,7 @@ export function Header({
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-colors ${
                   isLight
                     ? 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] border-transparent'
-                    : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
+                    : 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
                 }`}
               >
                 <span className="text-sm">👑</span>
@@ -316,11 +316,11 @@ export function Header({
                   className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold border transition-colors ${
                     isLight
                       ? 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] border-transparent'
-                      : 'text-[#94A3B8] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
+                      : 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] border-transparent hover:border-[#26364D]'
                   }`}
                   title="Login Administrator"
                 >
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#2583F7]" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#1D4ED8]" />
                   <span>Admin</span>
                 </button>
               )}
@@ -330,7 +330,7 @@ export function Header({
             <div
               className={`hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl border text-[11px] font-bold select-none ${
                 isLight
-                  ? 'bg-[#F1F5F9] border-[#E2E8F0] text-[#2583F7]'
+                  ? 'bg-[#F1F5F9] border-[#E2E8F0] text-[#1D4ED8]'
                   : 'bg-[#111A2B] border-[#26364D] text-[#38BDF8]'
               }`}
             >
@@ -354,7 +354,7 @@ export function Header({
                 {isDarkMode ? (
                   <Sun className="w-4 h-4 text-amber-400" />
                 ) : (
-                  <Moon className="w-4 h-4 text-[#2583F7]" />
+                  <Moon className="w-4 h-4 text-[#1D4ED8]" />
                 )}
               </button>
             )}
@@ -366,16 +366,16 @@ export function Header({
               aria-label={`Keranjang belanja, ${cartCount} produk`}
               className={`relative flex items-center gap-2 px-3 py-2 rounded-xl border transition-all duration-200 active:scale-95 ${
                 isLight
-                  ? 'bg-white border-[#E2E8F0] hover:border-[#2583F7] text-[#0F172A] hover:text-[#2583F7] shadow-xs'
+                  ? 'bg-white border-[#E2E8F0] hover:border-[#2583F7] text-[#0F172A] hover:text-[#1D4ED8] shadow-xs'
                   : 'bg-[#111A2B] border-[#26364D] hover:border-[#2583F7] text-[#F8FAFC] hover:text-[#38BDF8] shadow-soft'
               }`}
             >
-              <ShoppingCart className="w-4 h-4 text-[#2583F7]" />
+              <ShoppingCart className="w-4 h-4 text-[#1D4ED8]" />
               <span className="hidden sm:inline font-bold text-xs">
                 Keranjang
               </span>
               {cartCount > 0 && (
-                <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-black bg-[#2583F7] text-white rounded-full shadow-[0_0_8px_rgba(37,131,247,0.4)]">
+                <span className="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 text-[10px] font-black bg-[#1D4ED8] text-white rounded-full shadow-[0_0_8px_rgba(37,131,247,0.4)]">
                   {cartCount}
                 </span>
               )}
