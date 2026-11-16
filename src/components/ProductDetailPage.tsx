@@ -13,6 +13,7 @@ import {
   Star
 } from 'lucide-react';
 import { Product, ProductVariant } from '../types/product';
+import { dummyRating, dummySold } from '../utils/dummyStats';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -31,27 +32,6 @@ function getProductType(product: Product): 'voucher' | 'account' {
     return 'voucher';
   }
   return 'account';
-}
-
-// ---- Bintang & terjual dummy untuk kartu rekomendasi ----
-// Deterministik dari id produk: stabil tiap render, bervariasi antar produk.
-function hashSeed(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  return h;
-}
-function dummyRating(p: Product): string {
-  const revs = p.reviews || [];
-  if (revs.length > 0) {
-    const avg = revs.reduce((s, r) => s + (Number(r.rating) || 5), 0) / revs.length;
-    return avg.toFixed(1);
-  }
-  return (4.6 + (hashSeed(String(p.id)) % 5) / 10).toFixed(1);
-}
-function dummySold(p: Product): string {
-  const n = 100 + (hashSeed(String(p.id) + ':sold') % 2900);
-  if (n >= 1000) return (n / 1000).toFixed(1).replace('.', ',') + 'rb';
-  return String(n);
 }
 
 export function ProductDetailPage({

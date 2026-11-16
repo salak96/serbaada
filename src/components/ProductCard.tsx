@@ -1,5 +1,6 @@
-import { ShoppingCart, Check, Trash2, ArrowRight } from 'lucide-react';
+import { ShoppingCart, Check, Trash2, ArrowRight, Star } from 'lucide-react';
 import { Product } from '../types/product';
+import { dummyRating, dummySold } from '../utils/dummyStats';
 
 interface ProductCardProps {
   product: Product;
@@ -107,6 +108,14 @@ export function ProductCard({
           <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] line-clamp-1 mt-1 leading-normal">
             {product.description ? product.description.replace(/[\r\n]+/g, ' ') : 'Garansi penuh & proses otomatis langsung aktif.'}
           </p>
+
+          {/* Rating & Terjual dummy */}
+          <div className="flex items-center gap-1 text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-1.5">
+            <Star size={12} className="text-[#F59E0B] fill-[#F59E0B] shrink-0" />
+            <span className="font-bold text-[#0F172A] dark:text-[#F8FAFC]">{dummyRating(product)}</span>
+            <span className="text-[#CBD5E1] dark:text-[#334155]">|</span>
+            <span>Terjual {dummySold(product)}</span>
+          </div>
         </div>
 
         {/* Pricing & CTA Actions */}
