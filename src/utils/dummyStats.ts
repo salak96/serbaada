@@ -19,10 +19,7 @@ export function dummyRating(p: Product): string {
 }
 
 export function dummySold(p: Product): string {
-  return String(10 + (hashSeed(String(p.id) + ':sold') % 91));
-}
-
-// Terjual untuk header halaman detail: ratusan (100–999), bukan ribuan.
-export function dummySoldDetail(p: Product): string {
-  return String(100 + (hashSeed(String(p.id) + ':sold-detail') % 900));
+  // Satu nilai untuk semua tempat (kartu beranda, kartu rekomendasi, header detail):
+  // 10–136, maksimal 136.
+  return String(10 + (hashSeed(String(p.id) + ':sold') % 127));
 }
