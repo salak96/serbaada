@@ -33,6 +33,27 @@ function getProductType(product: Product): 'voucher' | 'account' {
   return 'account';
 }
 
+// ---- Bintang & terjual dummy untuk kartu rekomendasi ----
+// Deterministik dari id produk: stabil tiap render, bervariasi antar produk.
+function hashSeed(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
+  return h;
+}
+function dummyRating(p: Product): string {
+  const revs = p.reviews || [];
+  if (revs.length > 0) {
+    const avg = revs.reduce((s, r) => s + (Number(r.rating) || 5), 0) / revs.length;
+    return avg.toFixed(1);
+  }
+  return (4.6 + (hashSeed(String(p.id)) % 5) / 10).toFixed(1);
+}
+function dummySold(p: Product): string {
+  const n = 100 + (hashSeed(String(p.id) + ':sold') % 2900);
+  if (n >= 1000) return (n / 1000).toFixed(1).replace('.', ',') + 'rb';
+  return String(n);
+}
+
 export function ProductDetailPage({
   product,
   allProducts = [],
@@ -1022,6 +1043,12 @@ export function ProductDetailPage({
                       <h4 className="font-bold text-xs text-[#0F172A] dark:text-[#F8FAFC] line-clamp-2 group-hover:text-[#2583F7] dark:group-hover:text-[#38BDF8] transition-colors leading-snug min-h-[32px]">
                         {p.name}
                       </h4>
+                      <div className="flex items-center gap-1 text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                        <Star size={12} className="text-[#F59E0B] fill-[#F59E0B] shrink-0" />
+                        <span className="font-bold text-[#0F172A] dark:text-[#F8FAFC]">{dummyRating(p)}</span>
+                        <span className="text-[#CBD5E1] dark:text-[#334155]">|</span>
+                        <span>Terjual {dummySold(p)}</span>
+                      </div>
                     </div>
                   </div>
 
