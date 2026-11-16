@@ -519,7 +519,7 @@ app.put('/api/admin/products/:id/reviews', async (req, res) => {
 // Manage Product Price (Manual / Markup Nominal / Markup Percent)
 app.put('/api/admin/products/:id/price', async (req, res) => {
   try {
-    const { pricing_mode, markup_value, selling_price, old_price, is_wholesale, wholesale_min, wholesale_price, variants } = req.body;
+    const { name, pricing_mode, markup_value, selling_price, old_price, is_wholesale, wholesale_min, wholesale_price, variants } = req.body;
     const current = await getMasterProductById(req.params.id);
     if (!current) return res.status(404).json({ success: false, message: 'Produk tidak ditemukan' });
 
@@ -534,6 +534,7 @@ app.put('/api/admin/products/:id/price', async (req, res) => {
 
     const updated = await saveMasterProduct({
       ...current,
+      name: name && String(name).trim() ? String(name).trim() : current.name,
       pricing_mode: pricing_mode || current.pricing_mode,
       markup_value: Number(markup_value || current.markup_value),
       selling_price: finalSelling,

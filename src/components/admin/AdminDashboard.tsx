@@ -1572,6 +1572,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          name: editingProductPrice.name,
           pricing_mode: markupType === 'manual' ? 'manual' : (markupType === 'percent' ? 'markup_percent' : 'markup_nominal'),
           markup_value: markupVal,
           selling_price: finalSelling,
@@ -1584,7 +1585,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       });
       const json = await res.json();
       if (json.success) {
-        showNotification('success', 'Harga produk berhasil diperbarui!');
+        showNotification('success', 'Produk berhasil diperbarui!');
         setIsPricingModalOpen(false);
         if (onRefreshPublicProducts) onRefreshPublicProducts();
         loadAllData();
@@ -4383,6 +4384,16 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
             </div>
 
             <form onSubmit={handleSavePrice} className="space-y-3.5">
+              <div>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Nama Produk (Judul)</label>
+                <input
+                  type="text"
+                  value={editingProductPrice.name}
+                  onChange={(e) => setEditingProductPrice({ ...editingProductPrice, name: e.target.value })}
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)] font-bold"
+                />
+              </div>
+
               <div className="p-3 bg-[var(--bg-nested)] rounded-xl border border-[var(--border)] flex justify-between font-mono">
                 <span className="text-[var(--text-muted)]">Harga Modal Supplier:</span>
                 <span className="text-[var(--accent-soft)] font-bold">{formatPrice(editingProductPrice.cost_price)}</span>
