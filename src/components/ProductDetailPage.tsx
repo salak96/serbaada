@@ -13,7 +13,7 @@ import {
   Star
 } from 'lucide-react';
 import { Product, ProductVariant } from '../types/product';
-import { dummyRating, dummySold } from '../utils/dummyStats';
+import { dummyRating, dummySold, dummySoldDetail } from '../utils/dummyStats';
 
 interface ProductDetailPageProps {
   product: Product;
@@ -422,7 +422,7 @@ export function ProductDetailPage({
             <div className="grid grid-cols-2 divide-x divide-[#E2E8F0] dark:divide-[#26364D] bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl p-3 text-center">
               <div className="px-2">
                 <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block uppercase tracking-wide">Terjual</span>
-                <span className="font-bold text-sm text-[#0F172A] dark:text-[#F8FAFC] mt-0.5 block">1.4rb+</span>
+                <span className="font-bold text-sm text-[#0F172A] dark:text-[#F8FAFC] mt-0.5 block">{dummySoldDetail(product)}</span>
               </div>
               <div className="px-2">
                 <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block uppercase tracking-wide">Stok</span>
