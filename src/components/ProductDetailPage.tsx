@@ -649,26 +649,19 @@ export function ProductDetailPage({
                           {para.trim()}
                         </p>
                       ))}
-                    <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-2 mt-2">
-                      <p className="font-bold text-xs text-[#1D4ED8] dark:text-[#38BDF8]">
-                        {getProductType(product) === 'voucher' ? '🎁 Panduan Klaim & Penukaran Voucher / Redeem Code:' : '🔐 Panduan Penggunaan & Login Akun:'}
-                      </p>
-                      {getProductType(product) === 'voucher' ? (
+                    {getProductType(product) === 'voucher' && (
+                      <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-2 mt-2">
+                        <p className="font-bold text-xs text-[#1D4ED8] dark:text-[#38BDF8]">
+                          🎁 Panduan Klaim & Penukaran Voucher / Redeem Code:
+                        </p>
                         <ol className="list-decimal pl-4 space-y-1 text-[11px] text-[#475569] dark:text-[#94A3B8]">
                           <li>Selesaikan pembayaran pesanan Anda di Androidstore.</li>
                           <li>Salin kode voucher atau tautan redeem dari menu <strong className="text-[#0F172A] dark:text-[#F8FAFC]">Pesanan Saya</strong> atau chat WhatsApp.</li>
                           <li>Kunjungi situs resmi/portal penukaran yang tertera pada rincian fitur di atas.</li>
                           <li>Masukkan kode/tautan untuk mengaktifkan layanan secara instan.</li>
                         </ol>
-                      ) : (
-                        <ol className="list-decimal pl-4 space-y-1 text-[11px] text-[#475569] dark:text-[#94A3B8]">
-                          <li>Selesaikan pembayaran pesanan Anda.</li>
-                          <li>Dapatkan detail login (email & kata sandi) dari menu <strong className="text-[#0F172A] dark:text-[#F8FAFC]">Pesanan Saya</strong> atau WhatsApp admin.</li>
-                          <li>Login ke aplikasi/web resmi menggunakan kredensial yang diberikan.</li>
-                          <li>Patuhi ketentuan layanan (jangan mengubah email/password utama) agar garansi tetap aktif.</li>
-                        </ol>
-                      )}
-                    </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="space-y-2 text-xs">
@@ -711,20 +704,6 @@ export function ProductDetailPage({
                 </span>
               </div>
             )}
-
-            {/* Optional Telegram ID */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#475569] dark:text-[#94A3B8] block">
-                ID Telegram / Catatan <span className="text-[11px] font-normal text-[#475569]">(Opsional)</span>
-              </label>
-              <input
-                type="text"
-                value={recipientId}
-                onChange={(e) => setRecipientId(e.target.value)}
-                placeholder="@username_telegram atau catatan pesanan..."
-                className="w-full px-3.5 py-2 bg-white dark:bg-[#111A2B] border border-[#CBD5E1] dark:border-[#26364D] rounded-xl text-xs text-[#0F172A] dark:text-[#F8FAFC] placeholder-[#94A3B8] focus:outline-none focus:border-[#2583F7] focus:ring-2 focus:ring-[#2583F7]/20"
-              />
-            </div>
 
             {/* 12. Kontrol Jumlah Produk */}
             <div className="flex items-center justify-between pt-3 border-t border-[#F1F5F9] dark:border-[#26364D]">
