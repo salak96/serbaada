@@ -664,7 +664,23 @@ app.get('/api/leaderboard/top-sultan', async (_req, res) => {
     const orders = (Array.isArray(allOrders) ? allOrders : []).filter(
       o => o.payment_status === 'paid' || o.order_status === 'delivered'
     );
-    
+
+    // Normalkan nama produk order ke nama master (order lama kadang menyimpan
+    // "ChatGPT Chatgpt plus privat bill GOPAY (Private) (x1)" — tampilkan "ChatGPT")
+    let masterNames = [];
+    try {
+      const masters = await getMasterProducts();
+      masterNames = (Array.isArray(masters) ? masters : [])
+        .map(p => (p.name || '').trim()).filter(Boolean)
+        .sort((a, b) => b.length - a.length); // terpanjang dulu agar "ChatGPT Plus" menang atas "ChatGPT"
+    } catch { masterNames = []; }
+    const normalizeName = (raw) => {
+      const name = (raw || '').trim();
+      if (!name) return '';
+      const lower = name.toLowerCase();
+      const hit = masterNames.find(m => lower.startsWith(m.toLowerCase()));
+      return hit || name;
+    };
 
     const customerMap = new Map();
 
@@ -683,7 +699,8 @@ app.get('/api/leaderboard/top-sultan', async (_req, res) => {
         current.totalSpent += Number(o.total_amount || 0);
         current.totalOrders += 1;
         // Kumpulkan nama produk unik yang dibeli (tampil di leaderboard)
-        const prodName = (o.product_name || '').trim() || (Array.isArray(o.products) && o.products[0] && o.products[0].name) || '';
+        const rawName = (o.product_name || '').trim() || (Array.isArray(o.products) && o.products[0] && o.products[0].name) || '';
+        const prodName = normalizeName(rawName);
         if (prodName && !current.products.includes(prodName)) current.products.push(prodName);
         customerMap.set(customerKey, current);
       }
