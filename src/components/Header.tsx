@@ -1,5 +1,7 @@
+import { useState, useRef, useEffect, type KeyboardEvent } from 'react';
 import { ShoppingCart, Menu, Search, X, ReceiptText, ShieldCheck, ChevronDown, Sun, Moon } from 'lucide-react';
 import ImgLogo from '../assets/logo.png';
+import { Product } from '../types/product';
 
 interface HeaderProps {
   cartCount: number;
@@ -7,6 +9,9 @@ interface HeaderProps {
   onMenuClick: () => void;
   searchValue: string;
   onSearchChange: (value: string) => void;
+  suggestions?: Product[];
+  onSelectSuggestion?: (product: Product) => void;
+  onViewAllResults?: () => void;
   onOpenCheckTransaction?: () => void;
   onOpenTopSultan?: () => void;
   onOpenAdminLogin?: () => void;
@@ -16,12 +21,159 @@ interface HeaderProps {
   variant?: 'dark' | 'light';
 }
 
+// Kotak pencarian + dropdown saran live (dipakai desktop & mobile).
+// Ketik huruf pertama langsung menampilkan produk yang cocok (maks 8);
+// klik saran membuka halaman detail produk itu.
+function SearchBox({
+  value,
+  onChange,
+  suggestions,
+  onSelectSuggestion,
+  onViewAllResults,
+  isLight,
+  placeholder
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  suggestions: Product[];
+  onSelectSuggestion: (product: Product) => void;
+  onViewAllResults: () => void;
+  isLight: boolean;
+  placeholder: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState(0);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  // Tutup dropdown saat klik di luar kotak pencarian.
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (boxRef.current && !boxRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
+
+  const showDropdown = open && value.trim() !== '' && suggestions.length > 0;
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'ArrowDown' && suggestions.length > 0) {
+      e.preventDefault();
+      setHighlight(h => Math.min(h + 1, suggestions.length - 1));
+      setOpen(true);
+    } else if (e.key === 'ArrowUp' && suggestions.length > 0) {
+      e.preventDefault();
+      setHighlight(h => Math.max(h - 1, 0));
+    } else if (e.key === 'Enter') {
+      if (suggestions.length > 0) {
+        e.preventDefault();
+        onSelectSuggestion(suggestions[highlight] ?? suggestions[0]);
+        setOpen(false);
+      } else if (value.trim() !== '') {
+        onViewAllResults();
+        setOpen(false);
+      }
+    } else if (e.key === 'Escape') {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div ref={boxRef} className="relative w-full">
+      <div
+        className={`absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none ${
+          isLight ? 'text-[#64748B]' : 'text-[#94A3B8]'
+        }`}
+      >
+        <Search className="w-4 h-4" />
+      </div>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => { onChange(e.target.value); setHighlight(0); setOpen(true); }}
+        onFocus={() => setOpen(true)}
+        onKeyDown={handleKeyDown}
+        placeholder={placeholder}
+        autoComplete="off"
+        className={`w-full pl-10 pr-9 py-2 rounded-xl text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#2583F7]/25 focus:border-[#2583F7] ${
+          isLight
+            ? 'bg-[#F1F5F9] border border-[#E2E8F0] text-[#0F172A] placeholder-[#94A3B8] focus:bg-white'
+            : 'bg-[#111A2B] border border-[#26364D] text-[#F8FAFC] placeholder-[#94A3B8]/70 focus:bg-[#101827]'
+        }`}
+      />
+      {value && (
+        <button
+          type="button"
+          onClick={() => { onChange(''); setOpen(false); }}
+          aria-label="Bersihkan pencarian"
+          className={`absolute inset-y-0 right-0 pr-3 flex items-center ${
+            isLight ? 'text-[#64748B] hover:text-[#0F172A]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
+          }`}
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
+      {showDropdown && (
+        <div
+          className={`absolute left-0 right-0 top-full mt-2 z-50 overflow-hidden rounded-xl border shadow-xl max-h-80 overflow-y-auto ${
+            isLight ? 'bg-white border-[#E2E8F0]' : 'bg-[#111A2B] border-[#26364D]'
+          }`}
+        >
+          {suggestions.map((p, i) => (
+            <button
+              key={p.id}
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); onSelectSuggestion(p); setOpen(false); }}
+              onMouseEnter={() => setHighlight(i)}
+              className={`w-full flex items-center gap-3 px-3 py-2 text-left transition-colors ${
+                i === highlight ? (isLight ? 'bg-[#F1F5F9]' : 'bg-[#1A263D]') : ''
+              }`}
+            >
+              <img
+                src={p.image}
+                alt=""
+                className="w-10 h-10 rounded-lg object-cover flex-shrink-0 bg-[#F1F5F9] dark:bg-[#0B1220]"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+              <span className="flex-1 min-w-0">
+                <span className={`block truncate text-xs font-bold ${isLight ? 'text-[#0F172A]' : 'text-[#F8FAFC]'}`}>
+                  {p.name}
+                </span>
+                <span className={`block text-[11px] ${isLight ? 'text-[#64748B]' : 'text-[#94A3B8]'}`}>
+                  {p.category}
+                </span>
+              </span>
+              <span className="text-xs font-black text-[#2583F7] flex-shrink-0">
+                Rp{p.price.toLocaleString('id-ID')}
+              </span>
+            </button>
+          ))}
+          <button
+            type="button"
+            onMouseDown={(e) => { e.preventDefault(); onViewAllResults(); setOpen(false); }}
+            className={`w-full px-3 py-2.5 text-center text-xs font-bold border-t ${
+              isLight
+                ? 'text-[#2583F7] border-[#E2E8F0] hover:bg-[#F1F5F9]'
+                : 'text-[#38BDF8] border-[#26364D] hover:bg-[#1A263D]'
+            }`}
+          >
+            Lihat semua hasil untuk &ldquo;{value.trim()}&rdquo;
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Header({
   cartCount,
   onCartClick,
   onMenuClick,
   searchValue,
   onSearchChange,
+  suggestions = [],
+  onSelectSuggestion,
+  onViewAllResults,
   onOpenCheckTransaction,
   onOpenTopSultan,
   onOpenAdminLogin,
@@ -31,6 +183,10 @@ export function Header({
   variant = 'light'
 }: HeaderProps) {
   const isLight = variant === 'light';
+
+  // Saran wajib ada callback-nya; kalau tidak dikirim, jadikan no-op agar aman.
+  const handleSelectSuggestion = onSelectSuggestion ?? (() => {});
+  const handleViewAllResults = onViewAllResults ?? (() => {});
 
   return (
     <header
@@ -100,38 +256,15 @@ export function Header({
 
           {/* Center: Search Bar on Desktop */}
           <div className="flex-1 hidden md:flex items-center justify-center max-w-md mx-2">
-            <div className="relative w-full">
-              <div
-                className={`absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none ${
-                  isLight ? 'text-[#64748B]' : 'text-[#94A3B8]'
-                }`}
-              >
-                <Search className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                value={searchValue}
-                onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Cari produk digital, akun premium, lisensi..."
-                className={`w-full pl-10 pr-9 py-2 rounded-xl text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#2583F7]/25 focus:border-[#2583F7] ${
-                  isLight
-                    ? 'bg-[#F1F5F9] border border-[#E2E8F0] text-[#0F172A] placeholder-[#94A3B8] focus:bg-white'
-                    : 'bg-[#111A2B] border border-[#26364D] text-[#F8FAFC] placeholder-[#94A3B8]/70 focus:bg-[#101827]'
-                }`}
-              />
-              {searchValue && (
-                <button
-                  type="button"
-                  onClick={() => onSearchChange('')}
-                  aria-label="Bersihkan pencarian"
-                  className={`absolute inset-y-0 right-0 pr-3 flex items-center ${
-                    isLight ? 'text-[#64748B] hover:text-[#0F172A]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
-                  }`}
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              )}
-            </div>
+            <SearchBox
+              value={searchValue}
+              onChange={onSearchChange}
+              suggestions={suggestions}
+              onSelectSuggestion={handleSelectSuggestion}
+              onViewAllResults={handleViewAllResults}
+              isLight={isLight}
+              placeholder="Cari produk digital, akun premium, lisensi..."
+            />
           </div>
 
           {/* Right: Menus & Action Items */}
@@ -257,38 +390,15 @@ export function Header({
             isLight ? 'border-[#E2E8F0]' : 'border-[#26364D]/50'
           }`}
         >
-          <div className="relative w-full">
-            <div
-              className={`absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none ${
-                isLight ? 'text-[#64748B]' : 'text-[#94A3B8]'
-              }`}
-            >
-              <Search className="w-4 h-4" />
-            </div>
-            <input
-              type="text"
-              value={searchValue}
-              onChange={(e) => onSearchChange(e.target.value)}
-              placeholder="Cari produk digital atau akun..."
-              className={`w-full pl-9 pr-8 py-2 rounded-xl text-xs placeholder-[#94A3B8] focus:outline-none focus:ring-2 focus:ring-[#2583F7]/25 focus:border-[#2583F7] transition-all ${
-                isLight
-                  ? 'bg-[#F1F5F9] border border-[#E2E8F0] text-[#0F172A] focus:bg-white'
-                  : 'bg-[#111A2B] border border-[#26364D] text-[#F8FAFC] placeholder-[#94A3B8]/70 focus:bg-[#101827]'
-              }`}
-            />
-            {searchValue && (
-              <button
-                type="button"
-                onClick={() => onSearchChange('')}
-                aria-label="Bersihkan pencarian"
-                className={`absolute inset-y-0 right-0 pr-2.5 flex items-center ${
-                  isLight ? 'text-[#64748B] hover:text-[#0F172A]' : 'text-[#94A3B8] hover:text-[#F8FAFC]'
-                }`}
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
+          <SearchBox
+            value={searchValue}
+            onChange={onSearchChange}
+            suggestions={suggestions}
+            onSelectSuggestion={handleSelectSuggestion}
+            onViewAllResults={handleViewAllResults}
+            isLight={isLight}
+            placeholder="Cari produk digital atau akun..."
+          />
         </div>
 
       </div>

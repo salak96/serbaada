@@ -160,6 +160,32 @@ function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Pencarian header: ketik saat halaman detail terbuka → kembali ke katalog
+  // agar hasil filter langsung terlihat (sebelumnya pencarian diam saja).
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    if (value.trim() !== '' && selectedDetailProduct) {
+      handleBackToCatalog();
+      setTimeout(() => {
+        document.getElementById('katalog')?.scrollIntoView({ behavior: 'smooth' });
+      }, 60);
+    }
+  };
+
+  // Klik saran pencarian → buka halaman detail produk itu.
+  const handleSelectSuggestion = (product: Product) => {
+    setSearch('');
+    handleOpenProductDetail(product);
+  };
+
+  // "Lihat semua hasil" di dropdown saran → tampilkan katalog terfilter.
+  const handleViewAllResults = () => {
+    if (selectedDetailProduct) handleBackToCatalog();
+    setTimeout(() => {
+      document.getElementById('katalog')?.scrollIntoView({ behavior: 'smooth' });
+    }, 60);
+  };
+
   // Sync with browser back/forward buttons
   useEffect(() => {
     const handlePopState = () => {
@@ -304,6 +330,15 @@ function App() {
     return result;
   }, [productsList, selectedProvider, selectedCategory, search, priceRange]);
 
+  // Saran pencarian live untuk dropdown di header (maks 8, muncul dari huruf pertama).
+  const searchSuggestions = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (q.length < 1) return [];
+    return productsList
+      .filter(product => product.name.toLowerCase().includes(q))
+      .slice(0, 8);
+  }, [search, productsList]);
+
   const categorizedProducts = useMemo(() => {
     const categories = new Map<string, Product[]>();
     filteredProducts.forEach(product => {
@@ -345,7 +380,10 @@ function App() {
         onCartClick={() => setIsCartOpen(true)}
         onMenuClick={() => setIsMenuOpen(true)}
         searchValue={search}
-        onSearchChange={setSearch}
+        onSearchChange={handleSearchChange}
+        suggestions={searchSuggestions}
+        onSelectSuggestion={handleSelectSuggestion}
+        onViewAllResults={handleViewAllResults}
         onOpenCheckTransaction={() => setIsCheckTransactionOpen(true)}
         onOpenTopSultan={() => setIsTopSultanOpen(true)}
         onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
@@ -400,7 +438,7 @@ function App() {
                     <input
                       type="text"
                       value={search}
-                      onChange={(e) => setSearch(e.target.value)}
+                      onChange={(e) => handleSearchChange(e.target.value)}
                       placeholder="Cari produk di katalog..."
                       className="w-full pl-9 pr-8 py-2.5 bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC] placeholder-[#94A3B8] dark:placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7] focus:ring-1 focus:ring-[#2583F7]"
                     />
