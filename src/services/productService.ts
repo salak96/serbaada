@@ -266,7 +266,12 @@ export async function fetchProductsFromApi(): Promise<Product[]> {
           return {
             ...p,
             name: cleanName,
-            description: cleanProductName(p.description),
+            // Deskripsi master JANGAN lewat cleanProductName: baris baru & emoji
+            // sengaja dipertahankan (diisi admin via PUT /content yang juga
+            // bypass cleanProductName). cleanProductName meratakan \n\n jadi
+            // spasi (\s{2,} -> ' ') dan menghapus emoji, sehingga deskripsi
+            // tampil sebagai satu blok panjang tanpa pemisah paragraf.
+            description: p.description || '',
             image: p.image && !isBlockedRemoteImage && (p.image.startsWith('/uploads') || p.image.startsWith('/api/storage') || p.image.startsWith('http'))
               ? p.image
               : getProductImage(cleanName)
