@@ -83,14 +83,14 @@ export function CartModal({
                     {totalItems} item
                   </span>
                 </h2>
-                <p className="text-xs text-[#64748B]">Androidstore.web.id Checkout</p>
+                <p className="text-xs text-[#475569]">Androidstore.web.id Checkout</p>
               </div>
             </div>
 
             <button
               onClick={onClose}
               aria-label="Tutup keranjang"
-              className="w-9 h-9 rounded-xl text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors focus:outline-none"
+              className="w-9 h-9 rounded-xl text-[#475569] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors focus:outline-none"
             >
               <X className="w-5 h-5" />
             </button>
@@ -106,7 +106,7 @@ export function CartModal({
                 <h3 className="text-base font-bold text-[#F8FAFC] mb-1">
                   Keranjang Anda Masih Kosong
                 </h3>
-                <p className="text-xs md:text-sm text-[#64748B] max-w-xs mb-6">
+                <p className="text-xs md:text-sm text-[#475569] max-w-xs mb-6">
                   Jelajahi berbagai paket langganan dan produk digital premium dengan harga hemat.
                 </p>
                 <button
@@ -147,17 +147,17 @@ export function CartModal({
                           <button
                             onClick={() => onRemove(item.id)}
                             aria-label={`Hapus ${item.name}`}
-                            className="text-[#64748B] hover:text-[#EF4444] hover:bg-red-950/40 p-1 rounded-lg transition-colors -mt-0.5 -mr-1"
+                            className="text-[#475569] hover:text-[#EF4444] hover:bg-red-950/40 p-1 rounded-lg transition-colors -mt-0.5 -mr-1"
                             title="Hapus produk"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[11px] font-medium text-[#64748B]">
+                          <span className="text-[11px] font-medium text-[#475569]">
                             {item.category}
                           </span>
-                          <span className="text-[#64748B]/40 text-[10px]">•</span>
+                          <span className="text-[#475569]/40 text-[10px]">•</span>
                           {item.provider === 'Abellab Reseller' ? (
                             <span className="text-[10px] font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-800/80">
                               Supplier Abellab Reseller
@@ -173,7 +173,7 @@ export function CartModal({
                       <div className="flex items-end justify-between gap-2 mt-2 pt-1 border-t border-[#26364D]/60">
                         <div>
                           {item.oldPrice > item.price && (
-                            <span className="block text-[11px] text-[#64748B] line-through leading-none">
+                            <span className="block text-[11px] text-[#475569] line-through leading-none">
                               {formatPrice(item.oldPrice)}
                             </span>
                           )}
@@ -218,7 +218,7 @@ export function CartModal({
           {cart.length > 0 && (
             <footer className="sticky bottom-0 z-10 bg-[#0B1220] border-t border-[#26364D] p-5 space-y-3.5 shadow-[0_-6px_25px_rgba(0,0,0,0.6)]">
               {/* Guarantee trust label */}
-              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#047857]/15 border border-[#10B981]/30 text-[#10B981] text-xs">
+              <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#047857]/15 border border-[#10B981]/30 text-[#047857] text-xs">
                 <ShieldCheck className="w-4 h-4 flex-shrink-0" />
                 <span className="font-medium">
                   Garansi akun aktif & panduan instalasi langsung via WhatsApp.
@@ -228,7 +228,7 @@ export function CartModal({
               {/* Total Row */}
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-[#64748B] block">Total Tagihan</span>
+                  <span className="text-xs text-[#475569] block">Total Tagihan</span>
                   <span className="text-xs font-semibold text-[#F8FAFC]">
                     {totalItems} item dipilih
                   </span>
@@ -253,7 +253,7 @@ export function CartModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full text-center text-xs text-[#64748B] hover:text-[#F8FAFC] font-medium py-1 transition-colors"
+                className="w-full text-center text-xs text-[#475569] hover:text-[#F8FAFC] font-medium py-1 transition-colors"
               >
                 ← Lanjut Pilih Produk Lain
               </button>

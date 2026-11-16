@@ -31,7 +31,7 @@ export function CategorySection({
             <h2 className="text-lg sm:text-xl md:text-2xl font-black text-[#0F172A] dark:text-[#F8FAFC] tracking-tight">
               {category}
             </h2>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-white dark:bg-[#111A2B] text-[#64748B] dark:text-[#94A3B8] border border-[#E2E8F0] dark:border-[#26364D]">
+            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-white dark:bg-[#111A2B] text-[#475569] dark:text-[#94A3B8] border border-[#E2E8F0] dark:border-[#26364D]">
               {products.length} produk
             </span>
           </div>

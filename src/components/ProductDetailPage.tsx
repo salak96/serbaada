@@ -203,7 +203,7 @@ export function ProductDetailPage({
       
       {/* Breadcrumb & Navigation Bar */}
       <nav aria-label="Breadcrumb" className="flex items-center justify-between gap-3 mb-6 flex-wrap">
-        <div className="flex items-center gap-2 text-xs sm:text-sm text-[#64748B] dark:text-[#94A3B8]">
+        <div className="flex items-center gap-2 text-xs sm:text-sm text-[#475569] dark:text-[#94A3B8]">
           <button
             type="button"
             onClick={onBack}
@@ -232,7 +232,7 @@ export function ProductDetailPage({
         <button
           type="button"
           onClick={handleShare}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] hover:text-[#1D4ED8] shadow-xs transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7] text-xs font-semibold text-[#475569] dark:text-[#94A3B8] hover:text-[#1D4ED8] shadow-xs transition-colors"
         >
           <Share2 className="w-3.5 h-3.5" />
           <span>{copiedLink ? 'Link Tersalin!' : 'Bagikan'}</span>
@@ -270,7 +270,7 @@ export function ProductDetailPage({
             </div>
 
             <div className="absolute top-4 right-4 z-10">
-              <span className="bg-[#F8FAFC] dark:bg-[#0B1220]/90 text-[#64748B] dark:text-[#38BDF8] border border-[#E2E8F0] dark:border-[#26364D] text-[11px] font-semibold px-2.5 py-0.5 rounded-full shadow-xs">
+              <span className="bg-[#F8FAFC] dark:bg-[#0B1220]/90 text-[#475569] dark:text-[#38BDF8] border border-[#E2E8F0] dark:border-[#26364D] text-[11px] font-semibold px-2.5 py-0.5 rounded-full shadow-xs">
                 {product.category}
               </span>
             </div>
@@ -286,9 +286,9 @@ export function ProductDetailPage({
             </div>
 
             {/* Provider and security note */}
-            <div className="mt-4 pt-3 border-t border-[#F1F5F9] dark:border-[#26364D] flex items-center justify-between text-xs text-[#64748B] dark:text-[#94A3B8]">
+            <div className="mt-4 pt-3 border-t border-[#F1F5F9] dark:border-[#26364D] flex items-center justify-between text-xs text-[#475569] dark:text-[#94A3B8]">
               <span className="flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+                <ShieldCheck className="w-4 h-4 text-[#047857]" />
                 <span>100% Produk Legal &amp; Bergaransi</span>
               </span>
               <span className="font-semibold text-[#1D4ED8] dark:text-[#38BDF8] bg-[#EFF6FF] dark:bg-[#2583F7]/15 px-2 py-0.5 rounded text-[11px]">
@@ -303,7 +303,7 @@ export function ProductDetailPage({
               <h2 className="text-lg sm:text-xl font-bold text-[#0F172A] dark:text-[#F8FAFC] tracking-tight">
                 Ulasan & Testimoni
               </h2>
-              <p className="text-xs sm:text-sm text-[#64748B] dark:text-[#94A3B8] mt-0.5">
+              <p className="text-xs sm:text-sm text-[#475569] dark:text-[#94A3B8] mt-0.5">
                 {productReviews.length > 0
                   ? `${avgRating.toFixed(1)} dari 5 · ${productReviews.length} ulasan`
                   : 'Belum ada ulasan untuk produk ini.'}
@@ -334,7 +334,7 @@ export function ProductDetailPage({
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-bold text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC] truncate">{rv.name}</span>
-                      {rv.date && <span className="text-[11px] text-[#64748B] shrink-0">{rv.date}</span>}
+                      {rv.date && <span className="text-[11px] text-[#475569] shrink-0">{rv.date}</span>}
                     </div>
                     <div className="flex items-center gap-0.5 my-0.5">
                       {[1, 2, 3, 4, 5].map(n => (
@@ -362,14 +362,14 @@ export function ProductDetailPage({
                 {displayName}
               </h1>
               {hasVariants && selectedVariant && (
-                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] mt-1">
+                <p className="text-xs text-[#475569] dark:text-[#94A3B8] mt-1">
                   Tipe akun {selectedVariant.account_type === 'private' ? 'Private' : 'Shared'} · Varian {selectedVariant.name} · {selectedVariant.duration}
                 </p>
               )}
 
               {/* 2 & 3. SKU & Badges */}
               <div className="flex items-center gap-3 mt-2 flex-wrap text-xs">
-                <span className="font-mono text-[#64748B] dark:text-[#94A3B8] bg-[#F1F5F9] dark:bg-[#080D18] px-2 py-0.5 rounded font-medium border border-[#E2E8F0] dark:border-[#26364D]">
+                <span className="font-mono text-[#475569] dark:text-[#94A3B8] bg-[#F1F5F9] dark:bg-[#080D18] px-2 py-0.5 rounded font-medium border border-[#E2E8F0] dark:border-[#26364D]">
                   SKU: {productSku}
                 </span>
 
@@ -404,7 +404,7 @@ export function ProductDetailPage({
 
                 {product.oldPrice > product.price && (
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-[#64748B] line-through tabular-nums">
+                    <span className="text-sm text-[#475569] line-through tabular-nums">
                       {formatPrice(product.oldPrice)}
                     </span>
                     <span className="text-xs font-bold bg-[#FEE2E2] dark:bg-red-950/60 text-[#DC2626] dark:text-red-400 px-1.5 py-0.5 rounded">
@@ -413,7 +413,7 @@ export function ProductDetailPage({
                   </div>
                 )}
               </div>
-              <span className="text-xs text-[#64748B] dark:text-[#94A3B8] block mt-0.5">
+              <span className="text-xs text-[#475569] dark:text-[#94A3B8] block mt-0.5">
                 Harga satuan resmi
               </span>
             </div>
@@ -421,11 +421,11 @@ export function ProductDetailPage({
             {/* 6. Statistik Penjualan dan Stok */}
             <div className="grid grid-cols-2 divide-x divide-[#E2E8F0] dark:divide-[#26364D] bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl p-3 text-center">
               <div className="px-2">
-                <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block uppercase tracking-wide">Terjual</span>
+                <span className="text-[11px] text-[#475569] dark:text-[#94A3B8] block uppercase tracking-wide">Terjual</span>
                 <span className="font-bold text-sm text-[#0F172A] dark:text-[#F8FAFC] mt-0.5 block">{dummySold(product)}</span>
               </div>
               <div className="px-2">
-                <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block uppercase tracking-wide">Stok</span>
+                <span className="text-[11px] text-[#475569] dark:text-[#94A3B8] block uppercase tracking-wide">Stok</span>
                 <span className={`font-bold text-sm mt-0.5 block ${isOutOfStock ? 'text-[#DC2626] dark:text-red-400' : 'text-[#059669] dark:text-emerald-400'}`}>
                   {isOutOfStock ? 'Kosong' : `${maxStock} unit`}
                 </span>
@@ -516,7 +516,7 @@ export function ProductDetailPage({
                 <span className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] uppercase tracking-wide">
                   PILIHAN VARIASI:
                 </span>
-                <span className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+                <span className="text-xs text-[#475569] dark:text-[#94A3B8]">
                   Pilih paket yang diinginkan
                 </span>
               </div>
@@ -551,7 +551,7 @@ export function ProductDetailPage({
                     <button
                       type="button"
                       onClick={() => alert('Varian ini sedang dalam persiapan server.')}
-                      className="px-3.5 py-2 rounded-xl text-xs font-medium bg-white dark:bg-[#080D18] text-[#64748B] dark:text-[#94A3B8] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#CBD5E1]"
+                      className="px-3.5 py-2 rounded-xl text-xs font-medium bg-white dark:bg-[#080D18] text-[#475569] dark:text-[#94A3B8] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#CBD5E1]"
                     >
                       Paket Pro (30 Hari)
                     </button>
@@ -570,11 +570,11 @@ export function ProductDetailPage({
                 </p>
                 <div className="grid grid-cols-2 gap-2 text-[#334155] dark:text-[#CBD5E1]">
                   <div>
-                    <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block">Min. Pembelian</span>
+                    <span className="text-[11px] text-[#475569] dark:text-[#94A3B8] block">Min. Pembelian</span>
                     <span className="font-bold">≥ {product.wholesaleMin || 5} unit</span>
                   </div>
                   <div>
-                    <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8] block">Harga Satuan</span>
+                    <span className="text-[11px] text-[#475569] dark:text-[#94A3B8] block">Harga Satuan</span>
                     <span className="font-bold">{formatPrice(product.wholesalePrice)}</span>
                   </div>
                 </div>
@@ -591,7 +591,7 @@ export function ProductDetailPage({
 
             {/* 9. Informasi Ketersediaan Stok */}
             <div className="flex items-center justify-between text-xs py-1">
-              <span className="text-[#64748B] dark:text-[#94A3B8]">Ketersediaan Stok:</span>
+              <span className="text-[#475569] dark:text-[#94A3B8]">Ketersediaan Stok:</span>
               {isOutOfStock ? (
                 <span className="font-bold text-[#DC2626] dark:text-red-400 bg-[#FEE2E2] dark:bg-red-950/60 px-2 py-0.5 rounded">
                   Habis (Restock Segera)
@@ -613,7 +613,7 @@ export function ProductDetailPage({
                   className={`pb-2.5 font-bold transition-all relative ${
                     activeTab === 'desc'
                       ? 'text-[#1D4ED8] dark:text-[#38BDF8]'
-                      : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
+                      : 'text-[#475569] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
                   <span>Deskripsi</span>
@@ -628,7 +628,7 @@ export function ProductDetailPage({
                   className={`pb-2.5 font-bold transition-all relative ${
                     activeTab === 'terms'
                       ? 'text-[#1D4ED8] dark:text-[#38BDF8]'
-                      : 'text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
+                      : 'text-[#475569] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]'
                   }`}
                 >
                   <span>Syarat &amp; Ketentuan</span>
@@ -649,14 +649,14 @@ export function ProductDetailPage({
                         {getProductType(product) === 'voucher' ? '🎁 Panduan Klaim & Penukaran Voucher / Redeem Code:' : '🔐 Panduan Penggunaan & Login Akun:'}
                       </p>
                       {getProductType(product) === 'voucher' ? (
-                        <ol className="list-decimal pl-4 space-y-1 text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                        <ol className="list-decimal pl-4 space-y-1 text-[11px] text-[#475569] dark:text-[#94A3B8]">
                           <li>Selesaikan pembayaran pesanan Anda di Androidstore.</li>
                           <li>Salin kode voucher atau tautan redeem dari menu <strong className="text-[#0F172A] dark:text-[#F8FAFC]">Pesanan Saya</strong> atau chat WhatsApp.</li>
                           <li>Kunjungi situs resmi/portal penukaran yang tertera pada rincian fitur di atas.</li>
                           <li>Masukkan kode/tautan untuk mengaktifkan layanan secara instan.</li>
                         </ol>
                       ) : (
-                        <ol className="list-decimal pl-4 space-y-1 text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                        <ol className="list-decimal pl-4 space-y-1 text-[11px] text-[#475569] dark:text-[#94A3B8]">
                           <li>Selesaikan pembayaran pesanan Anda.</li>
                           <li>Dapatkan detail login (email & kata sandi) dari menu <strong className="text-[#0F172A] dark:text-[#F8FAFC]">Pesanan Saya</strong> atau WhatsApp admin.</li>
                           <li>Login ke aplikasi/web resmi menggunakan kredensial yang diberikan.</li>
@@ -674,7 +674,7 @@ export function ProductDetailPage({
                         <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
                           Ketentuan Pembelian Androidstore.web.id:
                         </p>
-                        <ul className="list-disc pl-4 space-y-1 text-[#64748B] dark:text-[#94A3B8]">
+                        <ul className="list-disc pl-4 space-y-1 text-[#475569] dark:text-[#94A3B8]">
                           <li>Pastikan data akun / email yang diberikan sudah benar sebelum menyelesaikan pesanan.</li>
                           <li>Klaim garansi wajib menyertakan nomor invoice atau ID pesanan WhatsApp.</li>
                           <li>Dilarang mengubah data akun atau melanggar TOS layanan penyedia.</li>
@@ -701,7 +701,7 @@ export function ProductDetailPage({
                   className="w-full px-3.5 py-2 bg-white dark:bg-[#111A2B] border border-[#CBD5E1] dark:border-[#26364D] rounded-xl text-xs text-[#0F172A] dark:text-[#F8FAFC] placeholder-[#94A3B8] focus:outline-none focus:border-[#2583F7] focus:ring-2 focus:ring-[#2583F7]/20"
                   required
                 />
-                <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                <span className="text-[11px] text-[#475569] dark:text-[#94A3B8]">
                   Link aktivasi atau token pesanan akan diproses ke email ini.
                 </span>
               </div>
@@ -709,8 +709,8 @@ export function ProductDetailPage({
 
             {/* Optional Telegram ID */}
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-[#64748B] dark:text-[#94A3B8] block">
-                ID Telegram / Catatan <span className="text-[11px] font-normal text-[#64748B]">(Opsional)</span>
+              <label className="text-xs font-semibold text-[#475569] dark:text-[#94A3B8] block">
+                ID Telegram / Catatan <span className="text-[11px] font-normal text-[#475569]">(Opsional)</span>
               </label>
               <input
                 type="text"
@@ -727,7 +727,7 @@ export function ProductDetailPage({
                 <label className="text-xs font-bold text-[#0F172A] dark:text-[#F8FAFC] block">
                   Jumlah Pembelian
                 </label>
-                <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                <span className="text-[11px] text-[#475569] dark:text-[#94A3B8]">
                   Pilih kuantitas unit yang diinginkan
                 </span>
               </div>
@@ -737,7 +737,7 @@ export function ProductDetailPage({
                   type="button"
                   disabled={quantity <= 1 || isOutOfStock}
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="w-9 h-9 flex items-center justify-center text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F1F5F9] dark:hover:bg-[#111A2B] hover:text-[#0F172A] disabled:opacity-30 transition-colors"
+                  className="w-9 h-9 flex items-center justify-center text-[#475569] dark:text-[#94A3B8] hover:bg-[#F1F5F9] dark:hover:bg-[#111A2B] hover:text-[#0F172A] disabled:opacity-30 transition-colors"
                 >
                   <Minus className="w-4 h-4" />
                 </button>
@@ -759,7 +759,7 @@ export function ProductDetailPage({
                   type="button"
                   disabled={quantity >= maxStock || isOutOfStock}
                   onClick={() => setQuantity(q => Math.min(maxStock, q + 1))}
-                  className="w-9 h-9 flex items-center justify-center text-[#64748B] dark:text-[#94A3B8] hover:bg-[#F1F5F9] dark:hover:bg-[#111A2B] hover:text-[#0F172A] disabled:opacity-30 transition-colors"
+                  className="w-9 h-9 flex items-center justify-center text-[#475569] dark:text-[#94A3B8] hover:bg-[#F1F5F9] dark:hover:bg-[#111A2B] hover:text-[#0F172A] disabled:opacity-30 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -769,8 +769,8 @@ export function ProductDetailPage({
             {/* 13. Total Harga yang Diperbarui Otomatis */}
             <div className="p-3.5 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] flex items-center justify-between">
               <div>
-                <span className="text-xs text-[#64748B] dark:text-[#94A3B8] block">Total Pembayaran:</span>
-                <span className="text-[11px] text-[#64748B]">
+                <span className="text-xs text-[#475569] dark:text-[#94A3B8] block">Total Pembayaran:</span>
+                <span className="text-[11px] text-[#475569]">
                   {quantity} unit x {formatPrice(unitPrice)}
                 </span>
               </div>
@@ -788,7 +788,7 @@ export function ProductDetailPage({
                   onClick={handleAddToCartClick}
                   className={`py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
                     isOutOfStock
-                      ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#64748B] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
+                      ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#475569] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
                       : 'bg-white dark:bg-[#111A2B] border-2 border-[#2583F7] text-[#1D4ED8] hover:bg-[#EFF6FF] dark:hover:bg-[#1A263D] active:scale-[0.99] shadow-xs'
                   }`}
                 >
@@ -802,7 +802,7 @@ export function ProductDetailPage({
                   onClick={handleInstantBuyClick}
                   className={`py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 transition-all ${
                     isOutOfStock
-                      ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#64748B] cursor-not-allowed'
+                      ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#475569] cursor-not-allowed'
                       : 'bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-md shadow-[#2583F7]/25 active:scale-[0.99]'
                   }`}
                 >
@@ -813,7 +813,7 @@ export function ProductDetailPage({
 
               {/* Teks di bawah tombol */}
               <div className="pt-2 text-center space-y-1">
-                <p className="text-xs text-[#64748B] dark:text-[#94A3B8]">
+                <p className="text-xs text-[#475569] dark:text-[#94A3B8]">
                   Baca ketentuan paket sebelum membeli. Perlu memastikan sesuatu?{' '}
                   <a
                     href="https://wa.me/6285867336036"
@@ -825,7 +825,7 @@ export function ProductDetailPage({
                     <span>↗</span>
                   </a>
                 </p>
-                <p className="text-[11px] text-[#64748B]">
+                <p className="text-[11px] text-[#475569]">
                   Harga final dan instruksi pembayaran ditampilkan saat checkout.
                 </p>
               </div>
@@ -834,7 +834,7 @@ export function ProductDetailPage({
             {/* Notification Toast */}
             {showSuccessNotification && (
               <div className="p-3 rounded-xl bg-[#ECFDF5] dark:bg-emerald-950/40 border border-[#A7F3D0] dark:border-emerald-800/60 text-xs font-semibold text-[#065F46] dark:text-emerald-300 flex items-center gap-2 animate-fadeIn">
-                <Check className="w-4 h-4 text-[#10B981] flex-shrink-0" />
+                <Check className="w-4 h-4 text-[#047857] flex-shrink-0" />
                 <span>Berhasil menambahkan {quantity}x {product.name} ke keranjang belanja!</span>
               </div>
             )}
@@ -847,7 +847,7 @@ export function ProductDetailPage({
       {/* Mobile Sticky Bottom Bar (Dark mode: #0B1220, Light mode: white) */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-30 bg-white dark:bg-[#0B1220] border-t border-[#E2E8F0] dark:border-[#26364D] p-3 px-4 shadow-[0_-4px_25px_rgba(0,0,0,0.08)] dark:shadow-[0_-4px_25px_rgba(0,0,0,0.7)] flex items-center justify-between gap-3 transition-colors">
         <div className="min-w-0">
-          <span className="text-[10px] text-[#64748B] dark:text-[#94A3B8] block leading-none">
+          <span className="text-[10px] text-[#475569] dark:text-[#94A3B8] block leading-none">
             Total ({quantity} unit):
           </span>
           <span className="text-base font-extrabold text-[#1D4ED8] dark:text-[#38BDF8] tabular-nums">
@@ -862,7 +862,7 @@ export function ProductDetailPage({
             onClick={handleAddToCartClick}
             className={`p-2.5 rounded-xl border flex items-center justify-center transition-all ${
               isOutOfStock
-                ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#64748B] border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
+                ? 'bg-[#F1F5F9] dark:bg-[#080D18] text-[#475569] border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
                 : 'bg-white dark:bg-[#111A2B] border-2 border-[#2583F7] text-[#1D4ED8] active:scale-95'
             }`}
             title="Tambah ke Keranjang"
@@ -876,7 +876,7 @@ export function ProductDetailPage({
             onClick={handleInstantBuyClick}
             className={`py-2.5 px-4 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all ${
               isOutOfStock
-                ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#64748B] cursor-not-allowed'
+                ? 'bg-[#E2E8F0] dark:bg-[#26364D] text-[#475569] cursor-not-allowed'
                 : 'bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-sm shadow-[#2583F7]/30 active:scale-95'
             }`}
           >
@@ -920,7 +920,7 @@ export function ProductDetailPage({
                   type="button"
                   onClick={() => setIsOutOfStockModalOpen(false)}
                   aria-label="Tutup notifikasi"
-                  className="w-8 h-8 rounded-xl text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] hover:bg-[#E2E8F0] dark:hover:bg-[#111A2B] flex items-center justify-center transition-colors"
+                  className="w-8 h-8 rounded-xl text-[#475569] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] hover:bg-[#E2E8F0] dark:hover:bg-[#111A2B] flex items-center justify-center transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -940,13 +940,13 @@ export function ProductDetailPage({
                       <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
                       Stok Sedang Kosong (0 unit)
                     </span>
-                    <span className="text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                    <span className="text-[11px] text-[#475569] dark:text-[#94A3B8]">
                       {product.provider === 'Abellab Reseller' ? 'Supplier Abellab Reseller' : 'Supplier Prs Digital'}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-xs text-[#64748B] dark:text-[#94A3B8] leading-relaxed">
+                <p className="text-xs text-[#475569] dark:text-[#94A3B8] leading-relaxed">
                   Maaf, stok untuk paket produk ini sedang habis atau dalam proses pengisian ulang oleh penyedia server. Anda dapat meminta admin untuk memprioritaskan restock atau memilih alternatif paket lain di katalog.
                 </p>
 
@@ -976,7 +976,7 @@ export function ProductDetailPage({
               </div>
 
               {/* Footer */}
-              <div className="px-5 py-3 bg-[#F8FAFC] dark:bg-[#0B1220] border-t border-[#E2E8F0] dark:border-[#26364D] text-center text-[10px] text-[#64748B]">
+              <div className="px-5 py-3 bg-[#F8FAFC] dark:bg-[#0B1220] border-t border-[#E2E8F0] dark:border-[#26364D] text-center text-[10px] text-[#475569]">
                 Stok produk diperbarui secara otomatis setiap kali penyedia server mengisi kuota.
               </div>
             </div>
@@ -992,7 +992,7 @@ export function ProductDetailPage({
               <span className="w-2 h-5 rounded-full bg-[#1D4ED8]" />
               <span>Rekomendasi Produk Lainnya</span>
             </h3>
-            <span className="text-xs text-[#64748B] dark:text-[#94A3B8] font-semibold">Pilihan Serupa</span>
+            <span className="text-xs text-[#475569] dark:text-[#94A3B8] font-semibold">Pilihan Serupa</span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
@@ -1023,7 +1023,7 @@ export function ProductDetailPage({
                       <h4 className="font-bold text-xs text-[#0F172A] dark:text-[#F8FAFC] line-clamp-2 group-hover:text-[#1D4ED8] dark:group-hover:text-[#38BDF8] transition-colors leading-snug min-h-[32px]">
                         {p.name}
                       </h4>
-                      <div className="flex items-center gap-1 text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+                      <div className="flex items-center gap-1 text-[11px] text-[#475569] dark:text-[#94A3B8]">
                         <Star size={12} className="text-[#F59E0B] fill-[#F59E0B] shrink-0" />
                         <span className="font-bold text-[#0F172A] dark:text-[#F8FAFC]">{dummyRating(p)}</span>
                         <span className="text-[#CBD5E1] dark:text-[#334155]">|</span>
@@ -1036,7 +1036,7 @@ export function ProductDetailPage({
                     <span className="text-xs sm:text-sm font-black text-[#1D4ED8] dark:text-[#38BDF8] tabular-nums">
                       {formatPrice(p.price)}
                     </span>
-                    <span className="text-[10px] font-bold text-[#10B981] bg-[#047857]/15 px-1.5 py-0.5 rounded">
+                    <span className="text-[10px] font-bold text-[#047857] bg-[#047857]/15 px-1.5 py-0.5 rounded">
                       Instan
                     </span>
                   </div>

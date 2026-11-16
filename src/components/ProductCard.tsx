@@ -90,7 +90,7 @@ export function ProductCard({
         <div>
           {/* Metadata Row: Activation Type */}
           <div className="flex items-center justify-end gap-1 mb-2">
-            <span className="text-[10px] font-medium text-[#64748B] dark:text-[#94A3B8]">
+            <span className="text-[10px] font-medium text-[#475569] dark:text-[#94A3B8]">
               {product.requires_email ? 'Aktivasi Email' : 'Akun Instant'}
             </span>
           </div>
@@ -105,12 +105,12 @@ export function ProductCard({
           </h3>
 
           {/* Short Description */}
-          <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8] line-clamp-1 mt-1 leading-normal">
+          <p className="text-[11px] text-[#475569] dark:text-[#94A3B8] line-clamp-1 mt-1 leading-normal">
             {product.description ? product.description.replace(/[\r\n]+/g, ' ') : 'Garansi penuh & proses otomatis langsung aktif.'}
           </p>
 
           {/* Rating & Terjual dummy */}
-          <div className="flex items-center gap-1 text-[11px] text-[#64748B] dark:text-[#94A3B8] mt-1.5">
+          <div className="flex items-center gap-1 text-[11px] text-[#475569] dark:text-[#94A3B8] mt-1.5">
             <Star size={12} className="text-[#F59E0B] fill-[#F59E0B] shrink-0" />
             <span className="font-bold text-[#0F172A] dark:text-[#F8FAFC]">{dummyRating(product)}</span>
             <span className="text-[#CBD5E1] dark:text-[#334155]">|</span>
@@ -123,7 +123,7 @@ export function ProductCard({
           {/* Old Price Strikethrough if exists */}
           <div className="min-h-[16px]">
             {product.oldPrice > product.price ? (
-              <span className="text-[11px] text-[#64748B] line-through block tabular-nums">
+              <span className="text-[11px] text-[#475569] line-through block tabular-nums">
                 {formatPrice(product.oldPrice)}
               </span>
             ) : (
@@ -136,7 +136,7 @@ export function ProductCard({
             {isUnconfigured ? (
               <span className="text-xs text-amber-500 font-bold block truncate">Produk belum diatur</span>
             ) : hasVariants ? (
-              <span><span className="text-[11px] font-semibold text-[#64748B] dark:text-[#94A3B8]">Mulai </span>{formatPrice(minVariantPrice)}</span>
+              <span><span className="text-[11px] font-semibold text-[#475569] dark:text-[#94A3B8]">Mulai </span>{formatPrice(minVariantPrice)}</span>
             ) : (
               formatPrice(product.price)
             )}
@@ -151,7 +151,7 @@ export function ProductCard({
               disabled={isOutOfStock}
               className={`py-2 px-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition-all ${
                 isOutOfStock
-                  ? 'bg-[#F1F5F9] dark:bg-[#101827] text-[#64748B] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
+                  ? 'bg-[#F1F5F9] dark:bg-[#101827] text-[#475569] border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed'
                   : 'bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-sm shadow-[#2583F7]/30 dark:shadow-[0_0_12px_rgba(37,131,247,0.3)] active:scale-95'
               }`}
             >
@@ -164,7 +164,7 @@ export function ProductCard({
               <button
                 type="button"
                 disabled
-                className="py-2 px-2 rounded-xl font-semibold text-xs bg-[#F1F5F9] dark:bg-[#101827] text-[#64748B]/60 border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed flex items-center justify-center"
+                className="py-2 px-2 rounded-xl font-semibold text-xs bg-[#F1F5F9] dark:bg-[#101827] text-[#475569]/60 border border-[#E2E8F0] dark:border-[#26364D] cursor-not-allowed flex items-center justify-center"
               >
                 Kosong
               </button>

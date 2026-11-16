@@ -87,13 +87,13 @@ export function TopSultanModal({ isOpen, onClose }: TopSultanModalProps) {
                   Top Sultan Leaderboard
                   <Sparkles className="w-3.5 h-3.5 text-[#1D4ED8] dark:text-[#38BDF8]" />
                 </h2>
-                <p className="text-[11px] text-[#64748B] dark:text-[#94A3B8]">Pelanggan dengan transaksi tertinggi dari Pesanan Pelanggan</p>
+                <p className="text-[11px] text-[#475569] dark:text-[#94A3B8]">Pelanggan dengan transaksi tertinggi dari Pesanan Pelanggan</p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-xl text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] hover:bg-[#F1F5F9] dark:hover:bg-[#111A2B] border border-transparent hover:border-[#E2E8F0] dark:hover:border-[#26364D] flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-xl text-[#475569] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] hover:bg-[#F1F5F9] dark:hover:bg-[#111A2B] border border-transparent hover:border-[#E2E8F0] dark:hover:border-[#26364D] flex items-center justify-center transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -126,7 +126,7 @@ export function TopSultanModal({ isOpen, onClose }: TopSultanModalProps) {
                       ) : isTop3 ? (
                         <Medal className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       ) : (
-                        <span className="text-[#64748B] dark:text-[#94A3B8]">#{sultan.rank}</span>
+                        <span className="text-[#475569] dark:text-[#94A3B8]">#{sultan.rank}</span>
                       )}
                     </div>
 
@@ -139,7 +139,7 @@ export function TopSultanModal({ isOpen, onClose }: TopSultanModalProps) {
                           {sultan.tier}
                         </span>
                       </div>
-                      <span className="text-[10px] text-[#64748B] dark:text-[#94A3B8]">
+                      <span className="text-[10px] text-[#475569] dark:text-[#94A3B8]">
                         {sultan.totalOrders}x transaksi sukses
                       </span>
                     </div>
@@ -149,7 +149,7 @@ export function TopSultanModal({ isOpen, onClose }: TopSultanModalProps) {
                     <span className="text-xs font-black text-[#1D4ED8] dark:text-[#38BDF8] tabular-nums block">
                       {formatPrice(sultan.totalSpent)}
                     </span>
-                    <span className="text-[10px] text-[#64748B] dark:text-[#94A3B8]">Total Belanja</span>
+                    <span className="text-[10px] text-[#475569] dark:text-[#94A3B8]">Total Belanja</span>
                   </div>
                 </div>
               );
@@ -157,7 +157,7 @@ export function TopSultanModal({ isOpen, onClose }: TopSultanModalProps) {
           </div>
 
           {/* Footer note */}
-          <div className="px-5 py-3 bg-[#F8FAFC] dark:bg-[#0B1220] border-t border-[#E2E8F0] dark:border-[#26364D] text-center text-[11px] text-[#64748B] dark:text-[#94A3B8]">
+          <div className="px-5 py-3 bg-[#F8FAFC] dark:bg-[#0B1220] border-t border-[#E2E8F0] dark:border-[#26364D] text-center text-[11px] text-[#475569] dark:text-[#94A3B8]">
             Tingkatkan transaksi digital Anda dan dapatkan cashback serta promo khusus VIP Sultan!
           </div>
         </div>

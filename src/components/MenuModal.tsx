@@ -96,27 +96,27 @@ export function MenuModal({
     panel: isDarkMode ? 'bg-[#0B1220] border-[#26364D] text-[#F8FAFC]' : 'bg-white border-[#E2E8F0] text-[#0F172A]',
     header: isDarkMode ? 'bg-[#0B1220] border-[#26364D]' : 'bg-white border-[#E2E8F0]',
     closeBtn: isDarkMode
-      ? 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]'
-      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] hover:border-[#E2E8F0]',
+      ? 'text-[#475569] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]'
+      : 'text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9] hover:border-[#E2E8F0]',
     navPrimary: isDarkMode
       ? 'text-[#F8FAFC] hover:bg-[#111A2B]'
       : 'text-[#0F172A] hover:bg-[#F1F5F9]',
     navSecondary: isDarkMode
-      ? 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B]'
-      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]',
+      ? 'text-[#475569] hover:text-[#F8FAFC] hover:bg-[#111A2B]'
+      : 'text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9]',
     modePill: isDarkMode
       ? 'bg-[#080D18] text-[#38BDF8] border-[#26364D]'
       : 'bg-[#F0F7FF] text-[#1D4ED8] border-[#DCE8F5]',
     catItem: isDarkMode
-      ? 'text-[#64748B] hover:text-[#38BDF8] hover:bg-[#111A2B]'
-      : 'text-[#64748B] hover:text-[#1D4ED8] hover:bg-[#F1F5F9]',
+      ? 'text-[#475569] hover:text-[#38BDF8] hover:bg-[#111A2B]'
+      : 'text-[#475569] hover:text-[#1D4ED8] hover:bg-[#F1F5F9]',
     catBorder: isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]',
-    chevron: isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]',
+    chevron: isDarkMode ? 'text-[#475569]' : 'text-[#475569]',
     divider: isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]',
     csCard: isDarkMode ? 'bg-[#111A2B] border-[#26364D]' : 'bg-[#F0F7FF] border-[#DCE8F5]',
     csTitle: isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]',
-    csDesc: isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]',
-    footer: isDarkMode ? 'bg-[#080D18] border-[#26364D] text-[#64748B]' : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#64748B]',
+    csDesc: isDarkMode ? 'text-[#475569]' : 'text-[#475569]',
+    footer: isDarkMode ? 'bg-[#080D18] border-[#26364D] text-[#475569]' : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#475569]',
   };
 
   return (
@@ -275,7 +275,7 @@ export function MenuModal({
             <div className={`pt-6 mt-4 border-t ${c.divider}`}>
               <div className={`p-3.5 rounded-2xl ${c.csCard} border space-y-2`}>
                 <div className={`flex items-center gap-2 text-xs font-bold ${c.csTitle}`}>
-                  <ShieldCheck className="w-4 h-4 text-[#10B981]" />
+                  <ShieldCheck className="w-4 h-4 text-[#047857]" />
                   <span>Jaminan Transaksi</span>
                 </div>
                 <p className={`text-[11px] ${c.csDesc} leading-relaxed`}>

@@ -11,13 +11,14 @@ import {
 } from 'lucide-react';
 import { Header } from './components/Header';
 import { CategorySection } from './components/CategorySection';
-import { CartModal } from './components/CartModal';
-import { MenuModal } from './components/MenuModal';
-import { ProductDetailPage } from './components/ProductDetailPage';
-import { CheckoutModal } from './components/CheckoutModal';
-import { TransactionCheckerModal } from './components/TransactionCheckerModal';
-import { TopSultanModal } from './components/TopSultanModal';
 import { AndroidStoreHero } from './components/AndroidStoreHero';
+// Modal + halaman detail di-lazy-load: hanya diunduh saat dibuka, bukan di bundle awal.
+const CartModal = lazy(() => import('./components/CartModal').then(m => ({ default: m.CartModal })));
+const MenuModal = lazy(() => import('./components/MenuModal').then(m => ({ default: m.MenuModal })));
+const ProductDetailPage = lazy(() => import('./components/ProductDetailPage').then(m => ({ default: m.ProductDetailPage })));
+const CheckoutModal = lazy(() => import('./components/CheckoutModal').then(m => ({ default: m.CheckoutModal })));
+const TransactionCheckerModal = lazy(() => import('./components/TransactionCheckerModal').then(m => ({ default: m.TransactionCheckerModal })));
+const TopSultanModal = lazy(() => import('./components/TopSultanModal').then(m => ({ default: m.TopSultanModal })));
 // Admin console di-lazy-load: hanya diunduh saat admin login, bukan di bundle awal.
 const AdminDashboard = lazy(() => import('./components/admin/AdminDashboard').then(m => ({ default: m.AdminDashboard })));
 const AdminLoginModal = lazy(() => import('./components/admin/AdminLoginModal').then(m => ({ default: m.AdminLoginModal })));
@@ -396,19 +397,21 @@ function App() {
 
       <main className="flex-1 container mx-auto px-4 py-6 sm:py-8">
         {selectedDetailProduct ? (
-          <ProductDetailPage
-            product={selectedDetailProduct}
-            allProducts={productsList}
-            onBack={handleBackToCatalog}
-            onCategorySelect={(cat) => setSelectedCategory(cat)}
-            onAddToCart={handleAddWithDetails}
-            onInstantBuy={(prod, qty, email, id, variant) => {
-              handleAddWithDetails(prod, qty, email, id, variant);
-              setIsCartOpen(true);
-            }}
-            onSelectProduct={(p) => handleOpenProductDetail(p)}
-            isDarkMode={isDarkMode}
-          />
+          <Suspense fallback={null}>
+            <ProductDetailPage
+              product={selectedDetailProduct}
+              allProducts={productsList}
+              onBack={handleBackToCatalog}
+              onCategorySelect={(cat) => setSelectedCategory(cat)}
+              onAddToCart={handleAddWithDetails}
+              onInstantBuy={(prod, qty, email, id, variant) => {
+                handleAddWithDetails(prod, qty, email, id, variant);
+                setIsCartOpen(true);
+              }}
+              onSelectProduct={(p) => handleOpenProductDetail(p)}
+              isDarkMode={isDarkMode}
+            />
+          </Suspense>
         ) : (
           <>
             {/* New AndroidStore Hero Section */}
@@ -428,7 +431,7 @@ function App() {
                   <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-[#0F172A] dark:text-[#F8FAFC] tracking-tight">
                     Katalog Produk Digital
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#64748B] dark:text-[#94A3B8] mt-1">
+                  <p className="text-xs sm:text-sm text-[#475569] dark:text-[#94A3B8] mt-1">
                     Temukan produk digital premium dengan harga terbaik, proses mudah, dan layanan terpercaya.
                   </p>
                 </div>
@@ -443,12 +446,12 @@ function App() {
                       placeholder="Cari produk di katalog..."
                       className="w-full pl-9 pr-8 py-2.5 bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl text-xs sm:text-sm text-[#0F172A] dark:text-[#F8FAFC] placeholder-[#94A3B8] dark:placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#2583F7] focus:ring-1 focus:ring-[#2583F7]"
                     />
-                    <Search className="w-4 h-4 text-[#64748B] absolute left-3 top-3 pointer-events-none" />
+                    <Search className="w-4 h-4 text-[#475569] absolute left-3 top-3 pointer-events-none" />
                     {search && (
                       <button
                         type="button"
                         onClick={() => setSearch('')}
-                        className="absolute right-2.5 top-2.5 text-[#64748B] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]"
+                        className="absolute right-2.5 top-2.5 text-[#475569] hover:text-[#0F172A] dark:hover:text-[#F8FAFC]"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -457,7 +460,7 @@ function App() {
 
                   {/* Filter harga — tepat di bawah kolom pencarian */}
                   <div className="flex items-center gap-2">
-                    <label htmlFor="price-filter" className="text-xs font-bold text-[#64748B] dark:text-[#94A3B8] whitespace-nowrap">
+                    <label htmlFor="price-filter" className="text-xs font-bold text-[#475569] dark:text-[#94A3B8] whitespace-nowrap">
                       Harga:
                     </label>
                     <select
@@ -488,7 +491,7 @@ function App() {
                       className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
                         isActive
                           ? 'bg-[#1D4ED8] text-white border border-[#2583F7] shadow-sm'
-                          : 'bg-white dark:bg-[#111A2B] text-[#64748B] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7]/50'
+                          : 'bg-white dark:bg-[#111A2B] text-[#475569] dark:text-[#94A3B8] hover:text-[#0F172A] dark:hover:text-[#F8FAFC] border border-[#E2E8F0] dark:border-[#26364D] hover:border-[#2583F7]/50'
                       }`}
                     >
                       {categoryName}
@@ -502,7 +505,7 @@ function App() {
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2 pb-2">
                   {isAdmin && (
                   <div className="flex flex-wrap items-center gap-2 text-xs">
-                    <span className="text-[#64748B] dark:text-[#94A3B8] font-semibold text-[11px]">
+                    <span className="text-[#475569] dark:text-[#94A3B8] font-semibold text-[11px]">
                       Filter Server:
                     </span>
                     <button
@@ -597,13 +600,13 @@ function App() {
             {/* Empty State When No Products Match Filter / Search */}
             {!isLoading && !errorMessage && categorizedProducts.size === 0 && (
               <div className="bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-3xl p-10 sm:p-14 text-center max-w-lg mx-auto my-8 shadow-soft">
-                <div className="w-16 h-16 rounded-2xl bg-[#F8FAFC] dark:bg-[#080D18] text-[#64748B] flex items-center justify-center mx-auto mb-4 border border-[#E2E8F0] dark:border-[#26364D]">
+                <div className="w-16 h-16 rounded-2xl bg-[#F8FAFC] dark:bg-[#080D18] text-[#475569] flex items-center justify-center mx-auto mb-4 border border-[#E2E8F0] dark:border-[#26364D]">
                   <SearchX className="w-8 h-8 stroke-[1.5]" />
                 </div>
                 <h3 className="text-lg font-bold text-[#0F172A] dark:text-[#F8FAFC] mb-2">
                   Tidak Ada Produk yang Ditemukan
                 </h3>
-                <p className="text-sm text-[#64748B] dark:text-[#94A3B8] mb-6">
+                <p className="text-sm text-[#475569] dark:text-[#94A3B8] mb-6">
                   Maaf, tidak ada produk yang cocok dengan pencarian "{search || selectedCategory}"{priceRange !== 'Semua Harga' ? ` pada rentang harga ${priceRange}` : ''}.
                 </p>
                 <button
@@ -655,12 +658,12 @@ function App() {
               </span>
               <p
                 className={`text-sm max-w-md leading-relaxed ${
-                  isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]'
+                  isDarkMode ? 'text-[#94A3B8]' : 'text-[#475569]'
                 }`}
               >
                 Marketplace produk digital, akun premium, lisensi software, dan voucher game terpercaya di Indonesia. Transaksi otomatis dengan harga modal termurah dan garansi aktif.
               </p>
-              <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-[#10B981]">
+              <div className="pt-2 flex items-center gap-2 text-xs font-semibold text-[#047857]">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Transaksi Terenkripsi &amp; Layanan Resmi 24 Jam</span>
               </div>
@@ -677,7 +680,7 @@ function App() {
               </h4>
               <ul
                 className={`space-y-2 text-xs sm:text-sm ${
-                  isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]'
+                  isDarkMode ? 'text-[#475569]' : 'text-[#475569]'
                 }`}
               >
                 {CANONICAL_CATEGORIES.slice(1).map(cat => (
@@ -708,7 +711,7 @@ function App() {
               </h4>
               <p
                 className={`text-xs sm:text-sm mb-3 leading-relaxed ${
-                  isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]'
+                  isDarkMode ? 'text-[#475569]' : 'text-[#475569]'
                 }`}
               >
                 Butuh bantuan, kendala akun, atau pertanyaan produk?
@@ -728,7 +731,7 @@ function App() {
               </a>
               <span
                 className={`block text-[11px] mt-2 ${
-                  isDarkMode ? 'text-[#64748B]/70' : 'text-[#64748B]'
+                  isDarkMode ? 'text-[#475569]/70' : 'text-[#475569]'
                 }`}
               >
                 *Proses pesanan otomatis langsung aktif setelah verifikasi.
@@ -739,8 +742,8 @@ function App() {
           <div
             className={`pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-xs ${
               isDarkMode
-                ? 'border-[#26364D] text-[#64748B]'
-                : 'border-[#E2E8F0] text-[#64748B]'
+                ? 'border-[#26364D] text-[#475569]'
+                : 'border-[#E2E8F0] text-[#475569]'
             }`}
           >
             <p>© 2026 Androidstore.web.id. Seluruh hak cipta dilindungi.</p>
@@ -752,55 +755,75 @@ function App() {
       </footer>
 
       {/* Mobile Menu Modal */}
-      <MenuModal
-        isOpen={isMenuOpen}
-        onClose={() => setIsMenuOpen(false)}
-        onCategorySelect={(cat) => {
-          handleBackToCatalog();
-          handleCategorySelect(cat);
-        }}
-        onOpenCheckTransaction={() => setIsCheckTransactionOpen(true)}
-        onOpenTopSultan={() => setIsTopSultanOpen(true)}
-        onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
-        onLogoClick={handleGoHome}
-        isDarkMode={isDarkMode}
-        onToggleDarkMode={toggleDarkMode}
-        whatsappNumber={whatsappNumber}
-      />
+      {isMenuOpen && (
+        <Suspense fallback={null}>
+          <MenuModal
+            isOpen={isMenuOpen}
+            onClose={() => setIsMenuOpen(false)}
+            onCategorySelect={(cat) => {
+              handleBackToCatalog();
+              handleCategorySelect(cat);
+            }}
+            onOpenCheckTransaction={() => setIsCheckTransactionOpen(true)}
+            onOpenTopSultan={() => setIsTopSultanOpen(true)}
+            onOpenAdminLogin={() => setIsAdminLoginOpen(true)}
+            onLogoClick={handleGoHome}
+            isDarkMode={isDarkMode}
+            onToggleDarkMode={toggleDarkMode}
+            whatsappNumber={whatsappNumber}
+          />
+        </Suspense>
+      )}
 
       {/* Shopping Cart Drawer */}
-      <CartModal
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cart={cart}
-        onUpdateQuantity={updateQuantity}
-        onRemove={removeFromCart}
-        onOrderWhatsApp={handleOrderWhatsApp}
-        totalPrice={getTotalPrice()}
-      />
+      {isCartOpen && (
+        <Suspense fallback={null}>
+          <CartModal
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            cart={cart}
+            onUpdateQuantity={updateQuantity}
+            onRemove={removeFromCart}
+            onOrderWhatsApp={handleOrderWhatsApp}
+            totalPrice={getTotalPrice()}
+          />
+        </Suspense>
+      )}
 
       {/* Check Transaction Modal */}
-      <TransactionCheckerModal
-        isOpen={isCheckTransactionOpen}
-        onClose={() => setIsCheckTransactionOpen(false)}
-        isDarkMode={isDarkMode}
-        whatsappNumber={whatsappNumber}
-      />
+      {isCheckTransactionOpen && (
+        <Suspense fallback={null}>
+          <TransactionCheckerModal
+            isOpen={isCheckTransactionOpen}
+            onClose={() => setIsCheckTransactionOpen(false)}
+            isDarkMode={isDarkMode}
+            whatsappNumber={whatsappNumber}
+          />
+        </Suspense>
+      )}
 
       {/* Top Sultan Modal */}
-      <TopSultanModal
-        isOpen={isTopSultanOpen}
-        onClose={() => setIsTopSultanOpen(false)}
-      />
+      {isTopSultanOpen && (
+        <Suspense fallback={null}>
+          <TopSultanModal
+            isOpen={isTopSultanOpen}
+            onClose={() => setIsTopSultanOpen(false)}
+          />
+        </Suspense>
+      )}
 
       {/* 3-Stage Checkout & QRIS Modal */}
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        cart={cart}
-        totalPrice={getTotalPrice()}
-        onClearCart={clearCart}
-      />
+      {isCheckoutOpen && (
+        <Suspense fallback={null}>
+          <CheckoutModal
+            isOpen={isCheckoutOpen}
+            onClose={() => setIsCheckoutOpen(false)}
+            cart={cart}
+            totalPrice={getTotalPrice()}
+            onClearCart={clearCart}
+          />
+        </Suspense>
+      )}
 
       {/* Admin Login Modal */}
       <Suspense fallback={null}>

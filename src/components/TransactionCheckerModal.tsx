@@ -67,9 +67,9 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
     header: isDarkMode ? 'bg-[#0B1220] border-[#26364D]' : 'bg-white border-[#E2E8F0]',
     title: isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]',
     closeBtn: isDarkMode
-      ? 'text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]'
-      : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] hover:border-[#E2E8F0]',
-    muted: isDarkMode ? 'text-[#64748B]' : 'text-[#64748B]',
+      ? 'text-[#475569] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]'
+      : 'text-[#475569] hover:text-[#0F172A] hover:bg-[#F1F5F9] hover:border-[#E2E8F0]',
+    muted: isDarkMode ? 'text-[#475569]' : 'text-[#475569]',
     input: isDarkMode
       ? 'bg-[#080D18] border-[#26364D] text-[#F8FAFC] placeholder-[#94A3B8]/60'
       : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#0F172A] placeholder-[#94A3B8]/60',
@@ -80,7 +80,7 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
     resultBox: isDarkMode ? 'bg-[#111A2B] border-[#26364D]' : 'bg-[#F0F7FF] border-[#DCE8F5]',
     resultValue: isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]',
     accountBox: isDarkMode ? 'bg-[#080D18] border-[#26364D]' : 'bg-white border-[#E2E8F0]',
-    footer: isDarkMode ? 'bg-[#0B1220] border-[#26364D] text-[#64748B]' : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#64748B]',
+    footer: isDarkMode ? 'bg-[#0B1220] border-[#26364D] text-[#475569]' : 'bg-[#F8FAFC] border-[#E2E8F0] text-[#475569]',
   };
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -247,7 +247,7 @@ export function TransactionCheckerModal({ isOpen, onClose, isDarkMode = true, wh
                 <div className={`flex items-center justify-between border-b ${isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]'} pb-2`}>
                   <span className={`text-xs ${c.muted}`}>ID Pesanan: #{result.orderId}</span>
                   {result.status === 'delivered' ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#10B981] bg-[#047857]/15 px-2 py-0.5 rounded-full border border-[#10B981]/30">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#047857] bg-[#047857]/15 px-2 py-0.5 rounded-full border border-[#10B981]/30">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       Berhasil Terkirim
                     </span>

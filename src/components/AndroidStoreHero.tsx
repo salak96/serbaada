@@ -103,7 +103,7 @@ export function AndroidStoreHero({
             <div className={`p-3 rounded-xl border flex items-center gap-2.5 ${
               isDarkMode ? 'bg-[#101D33]/60 border-[#253752]' : 'bg-[#F0F7FF]/60 border-[#DCE8F5]'
             }`}>
-              <div className="w-8 h-8 rounded-lg bg-[#047857]/20 text-[#10B981] flex items-center justify-center flex-shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-[#047857]/20 text-[#047857] flex items-center justify-center flex-shrink-0">
                 <Zap className="w-4 h-4" />
               </div>
               <div>

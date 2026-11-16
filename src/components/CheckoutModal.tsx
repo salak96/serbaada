@@ -292,13 +292,13 @@ export function CheckoutModal({
                   {stage === 'qris' && 'Tahap 2 — Pembayaran QRIS'}
                   {stage === 'proof' && 'Tahap 3 — Konfirmasi & Bukti Transfer'}
                 </h2>
-                <p className="text-[10px] text-[#64748B]">Androidstore.web.id Secure Checkout</p>
+                <p className="text-[10px] text-[#475569]">Androidstore.web.id Secure Checkout</p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-xl text-[#64748B] hover:text-[#F8FAFC] hover:bg-[#111E32] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-xl text-[#475569] hover:text-[#F8FAFC] hover:bg-[#111E32] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -306,17 +306,17 @@ export function CheckoutModal({
 
           {/* Progress Indicator */}
           <div className="px-5 py-3 bg-[#080D18] border-b border-[#26364D] flex items-center justify-between text-[11px] font-bold flex-shrink-0">
-            <div className={`flex items-center gap-1.5 ${stage === 'identity' ? 'text-[#22C7FF]' : 'text-[#10B981]'}`}>
+            <div className={`flex items-center gap-1.5 ${stage === 'identity' ? 'text-[#22C7FF]' : 'text-[#047857]'}`}>
               <Check className="w-3.5 h-3.5" />
               <span>1. Identitas</span>
             </div>
             <span className="text-[#26364D]">────────</span>
-            <div className={`flex items-center gap-1.5 ${stage === 'qris' ? 'text-[#22C7FF]' : (stage === 'proof' ? 'text-[#10B981]' : 'text-[#64748B]')}`}>
+            <div className={`flex items-center gap-1.5 ${stage === 'qris' ? 'text-[#22C7FF]' : (stage === 'proof' ? 'text-[#047857]' : 'text-[#475569]')}`}>
               {stage === 'proof' ? <Check className="w-3.5 h-3.5" /> : null}
               <span>2. Bayar QRIS</span>
             </div>
             <span className="text-[#26364D]">────────</span>
-            <div className={`flex items-center gap-1.5 ${stage === 'proof' ? 'text-[#22C7FF]' : 'text-[#64748B]'}`}>
+            <div className={`flex items-center gap-1.5 ${stage === 'proof' ? 'text-[#22C7FF]' : 'text-[#475569]'}`}>
               <span>3. Bukti Transfer</span>
             </div>
           </div>
@@ -328,7 +328,7 @@ export function CheckoutModal({
             <div className="p-5 space-y-4">
               <div className="p-3.5 bg-[#111E32] border border-[#26364D] rounded-xl space-y-2">
                 <span className="text-xs font-bold text-[#22C7FF] block">Ringkasan Keranjang Anda</span>
-                <div className="space-y-1 text-xs text-[#64748B]">
+                <div className="space-y-1 text-xs text-[#475569]">
                   {cart.map(item => (
                     <div key={item.id} className="flex justify-between">
                       <span className="truncate max-w-[260px]">{item.name} x{item.quantity}</span>
@@ -344,7 +344,7 @@ export function CheckoutModal({
 
               <form onSubmit={handleIdentitySubmit} className="space-y-3 text-xs">
                 <div>
-                  <label className="block text-[#64748B] mb-1 font-semibold">
+                  <label className="block text-[#475569] mb-1 font-semibold">
                     Nama Lengkap <span className="text-red-400">*</span>
                   </label>
                   <div className="relative">
@@ -356,12 +356,12 @@ export function CheckoutModal({
                       placeholder="Contoh: Budi Santoso"
                       className="w-full pl-9 pr-3 py-2.5 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#1677FF]"
                     />
-                    <User className="w-4 h-4 text-[#64748B] absolute left-3 top-3" />
+                    <User className="w-4 h-4 text-[#475569] absolute left-3 top-3" />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[#64748B] mb-1 font-semibold">
+                  <label className="block text-[#475569] mb-1 font-semibold">
                     Nomor WhatsApp Aktif <span className="text-red-400">*</span>
                   </label>
                   <div className="relative">
@@ -373,9 +373,9 @@ export function CheckoutModal({
                       placeholder="Contoh: 081234567890"
                       className="w-full pl-9 pr-3 py-2.5 bg-[#080D18] border border-[#26364D] rounded-xl text-[#F8FAFC] placeholder-[#94A3B8]/60 focus:outline-none focus:border-[#1677FF]"
                     />
-                    <Phone className="w-4 h-4 text-[#64748B] absolute left-3 top-3" />
+                    <Phone className="w-4 h-4 text-[#475569] absolute left-3 top-3" />
                   </div>
-                  <span className="text-[10px] text-[#64748B] mt-1 block">
+                  <span className="text-[10px] text-[#475569] mt-1 block">
                     Nomor akan dinormalisasi otomatis ke format 628xx untuk pengiriman konfirmasi.
                   </span>
                 </div>
@@ -402,7 +402,7 @@ export function CheckoutModal({
               <div className="lg:col-span-6 bg-[#111E32] border border-[#26364D] rounded-2xl p-5 flex flex-col items-center justify-center space-y-4">
                 <div className="text-center">
                   <span className="text-xs font-bold text-[#22C7FF] block">QRIS Nasional (All Payment)</span>
-                  <span className="text-[11px] text-[#64748B]">Scan dengan BCA, Mandiri, BRI, Dana, OVO, GoPay, dll</span>
+                  <span className="text-[11px] text-[#475569]">Scan dengan BCA, Mandiri, BRI, Dana, OVO, GoPay, dll</span>
                 </div>
 
                 {/* Large QRIS image */}
@@ -450,7 +450,7 @@ export function CheckoutModal({
                 {/* Card 1 — Order ID */}
                 <div className="p-3.5 bg-[#111E32] border border-[#26364D] rounded-xl flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-[#64748B] block uppercase font-semibold">Order ID Pesanan</span>
+                    <span className="text-[10px] text-[#475569] block uppercase font-semibold">Order ID Pesanan</span>
                     <span className="font-mono font-bold text-sm text-[#22C7FF]">{orderId}</span>
                   </div>
                   <button
@@ -458,14 +458,14 @@ export function CheckoutModal({
                     onClick={handleCopyOrderId}
                     className="px-3 py-1.5 rounded-xl bg-[#080D18] border border-[#26364D] text-xs font-bold text-[#22C7FF] hover:bg-[#1677FF]/20 flex items-center gap-1.5 transition-all"
                   >
-                    {copiedOrderId ? <Check className="w-3.5 h-3.5 text-[#10B981]" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copiedOrderId ? <Check className="w-3.5 h-3.5 text-[#047857]" /> : <Copy className="w-3.5 h-3.5" />}
                     <span>{copiedOrderId ? 'Tersalin' : 'Salin ID'}</span>
                   </button>
                 </div>
 
                 {/* Card 2 — Total Tagihan (32-40px font) */}
                 <div className="p-4 bg-[#111E32] border border-[#26364D] rounded-xl space-y-2">
-                  <span className="text-[11px] text-[#64748B] block uppercase font-semibold">Total Pembayaran</span>
+                  <span className="text-[11px] text-[#475569] block uppercase font-semibold">Total Pembayaran</span>
                   <div className="flex items-center justify-between gap-3 flex-wrap">
                     <span className="text-3xl sm:text-4xl font-black text-[#22C7FF] tabular-nums tracking-tight">
                       {formatPrice(totalPrice)}
@@ -479,7 +479,7 @@ export function CheckoutModal({
                       <span>{copiedNominal ? 'Berhasil Disalin!' : 'Salin Nominal'}</span>
                     </button>
                   </div>
-                  <span className="text-[10px] text-[#64748B] block">
+                  <span className="text-[10px] text-[#475569] block">
                     *QRIS statis: Mohon pastikan nominal input sesuai total di atas.
                   </span>
                 </div>
@@ -490,7 +490,7 @@ export function CheckoutModal({
                     <Info className="w-3.5 h-3.5" />
                     <span>Informasi Pembayaran QRIS</span>
                   </div>
-                  <p className="text-[11px] text-[#64748B] leading-relaxed">
+                  <p className="text-[11px] text-[#475569] leading-relaxed">
                     Transaksi diproses aman dan otomatis. Selesaikan pembayaran sebelum batas waktu berakhir, lalu unggah bukti transfer pada tahap selanjutnya.
                   </p>
                 </div>
@@ -500,7 +500,7 @@ export function CheckoutModal({
                   <span className="font-bold text-xs uppercase tracking-wider text-[#22C7FF] block">
                     Cara Pembayaran QRIS:
                   </span>
-                  <ol className="space-y-1.5 text-[11px] text-[#64748B] pl-1">
+                  <ol className="space-y-1.5 text-[11px] text-[#475569] pl-1">
                     <li className="flex items-start gap-2">
                       <span className="font-bold text-[#22C7FF]">1.</span>
                       <span>Buka aplikasi mobile banking atau e-wallet (BCA, Dana, OVO, GoPay, dll).</span>
@@ -548,23 +548,23 @@ export function CheckoutModal({
           {stage === 'proof' && (
             <div className="p-5 space-y-4 text-xs">
               <div className="p-3.5 bg-[#111E32] border border-[#26364D] rounded-xl space-y-1.5 font-mono">
-                <div className="flex justify-between text-[#64748B]">
+                <div className="flex justify-between text-[#475569]">
                   <span>Order ID:</span>
                   <span className="text-[#22C7FF] font-bold">{orderId}</span>
                 </div>
-                <div className="flex justify-between text-[#64748B]">
+                <div className="flex justify-between text-[#475569]">
                   <span>Nama:</span>
                   <span className="text-[#F8FAFC]">{customerName}</span>
                 </div>
-                <div className="flex justify-between text-[#64748B]">
+                <div className="flex justify-between text-[#475569]">
                   <span>Total:</span>
-                  <span className="text-[#10B981] font-bold">{formatPrice(totalPrice)}</span>
+                  <span className="text-[#047857] font-bold">{formatPrice(totalPrice)}</span>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[#64748B] mb-1 font-semibold">
+                  <label className="block text-[#475569] mb-1 font-semibold">
                     Upload Bukti Transfer (Screenshot Struk) <span className="text-red-400">*</span>
                   </label>
                   <input
@@ -577,7 +577,7 @@ export function CheckoutModal({
                         setProofPreview(URL.createObjectURL(file));
                       }
                     }}
-                    className="w-full text-xs text-[#64748B] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1677FF] file:text-white hover:file:bg-[#1D4ED8]"
+                    className="w-full text-xs text-[#475569] file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1677FF] file:text-white hover:file:bg-[#1D4ED8]"
                   />
                 </div>
 
@@ -588,8 +588,8 @@ export function CheckoutModal({
                 )}
 
                 <div>
-                  <label className="block text-[#64748B] mb-1 font-semibold">
-                    Catatan Tambahan <span className="text-[10px] text-[#64748B] font-normal">(Opsional)</span>
+                  <label className="block text-[#475569] mb-1 font-semibold">
+                    Catatan Tambahan <span className="text-[10px] text-[#475569] font-normal">(Opsional)</span>
                   </label>
                   <textarea
                     rows={2}
