@@ -168,6 +168,15 @@ function timeAgo(iso: string | null | undefined): string {
   return new Date(iso).toLocaleDateString('id-ID');
 }
 
+// Sensor nama seller di dashboard: tampilkan 5 karakter pertama, sisanya ***.
+// Mis. "@CrewStore_OfficialBot" -> "@Crew***", "Prs Digital" -> "Prs D***".
+function maskSellerName(name: string | null | undefined): string {
+  const s = String(name || '').trim();
+  if (!s) return '—';
+  if (s.length <= 5) return s;
+  return s.slice(0, 5).trimEnd() + '***';
+}
+
 
 // Uraikan item produk dari satu order (untuk Produk Terlaris).
 // Utamakan array `products` (punya nama, qty, subtotal per item).
@@ -2302,7 +2311,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                               <span className="font-bold text-[var(--text)] block truncate max-w-[280px]">{p.name}</span>
                               <span className="text-[10px] text-[var(--text-muted)]">{p.orders} order</span>
                             </td>
-                            <td className="py-3 pr-3 text-[var(--text-muted)] whitespace-nowrap">{p.provider}</td>
+                            <td className="py-3 pr-3 text-[var(--text-muted)] whitespace-nowrap">{maskSellerName(p.provider)}</td>
                             <td className="py-3 pr-3 font-bold text-[var(--text)] tabular-nums text-right whitespace-nowrap">{p.qty} unit</td>
                             <td className="py-3 font-bold text-[var(--success)] tabular-nums text-right whitespace-nowrap">{formatPrice(p.revenue)}</td>
                           </tr>
