@@ -641,9 +641,14 @@ export function ProductDetailPage({
               <div className="text-xs sm:text-sm text-[#475569] dark:text-[#CBD5E1] leading-relaxed min-h-[90px] break-words overflow-hidden max-w-full">
                 {activeTab === 'desc' ? (
                   <div className="space-y-3">
-                    <p className="whitespace-pre-line">
-                      {product.description || `Layanan ${product.name} bergaransi resmi dengan proses aktivasi instan & aman.`}
-                    </p>
+                    {(product.description || `Layanan ${product.name} bergaransi resmi dengan proses aktivasi instan & aman.`)
+                      .split(/\n\s*\n/)
+                      .filter((para: string) => para.trim().length > 0)
+                      .map((para: string, i: number) => (
+                        <p key={i} className="whitespace-pre-line">
+                          {para.trim()}
+                        </p>
+                      ))}
                     <div className="p-3 rounded-xl bg-[#F8FAFC] dark:bg-[#080D18] border border-[#E2E8F0] dark:border-[#26364D] space-y-2 mt-2">
                       <p className="font-bold text-xs text-[#1D4ED8] dark:text-[#38BDF8]">
                         {getProductType(product) === 'voucher' ? '🎁 Panduan Klaim & Penukaran Voucher / Redeem Code:' : '🔐 Panduan Penggunaan & Login Akun:'}
