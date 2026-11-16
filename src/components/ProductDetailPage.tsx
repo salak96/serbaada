@@ -96,7 +96,7 @@ export function ProductDetailPage({
     ? `${product.name} ${selectedVariant.name} ${selectedVariant.account_type === 'private' ? 'Private' : 'Shared'}`
     : product.name;
   const [recipientEmail, setRecipientEmail] = useState('');
-  const [recipientId, setRecipientId] = useState('');
+  const [recipientId] = useState('');
   const [activeTab, setActiveTab] = useState<'desc' | 'terms'>('desc');
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [isOutOfStockModalOpen, setIsOutOfStockModalOpen] = useState(false);
