@@ -177,6 +177,17 @@ function maskSellerName(name: string | null | undefined): string {
   return s.slice(0, 5).trimEnd() + '***';
 }
 
+// Sensor nama seller jadi 2 inisial + *** (untuk Aktivitas Sinkronisasi).
+// Mis. "Prs Digital" -> "PD***", "Abellab Reseller" -> "AR***".
+function maskSellerInitials(name: string | null | undefined): string {
+  const s = String(name || '').trim();
+  if (!s) return '—';
+  const words = s.split(/[\s_]+/).map(w => w.replace(/^[^A-Za-z]+/, '')).filter(Boolean);
+  const initials = words.slice(0, 2).map(w => w[0].toUpperCase()).join('');
+  if (!initials) return '***';
+  return initials + '***';
+}
+
 
 // Uraikan item produk dari satu order (untuk Produk Terlaris).
 // Utamakan array `products` (punya nama, qty, subtotal per item).
@@ -2235,7 +2246,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         className="w-full text-left p-3 rounded-xl bg-[var(--bg-nested)] border border-[var(--border)] hover:border-[var(--accent)] transition-colors"
                       >
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-bold text-xs text-[var(--accent-soft)] truncate">{log.seller_name}</span>
+                          <span className="font-bold text-xs text-[var(--accent-soft)] truncate">{maskSellerInitials(log.seller_name)}</span>
                           <span className="text-[10px] text-[var(--text-muted)] flex-shrink-0">{timeAgo(log.created_at)}</span>
                         </div>
                         <p className="text-[11px] text-[var(--text-muted)] line-clamp-1 mt-1">{log.response_summary || log.error_message || '—'}</p>
