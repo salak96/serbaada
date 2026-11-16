@@ -994,30 +994,28 @@ export function ProductDetailPage({
             <span className="text-xs text-[#64748B] dark:text-[#94A3B8] font-semibold">Pilihan Serupa</span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
             {(() => {
               const sameCategory = allProducts.filter(p => p.id !== product.id && p.category === product.category);
               const fallback = allProducts.filter(p => p.id !== product.id);
               const list = sameCategory.length > 0 ? sameCategory : fallback;
-              return list.slice(0, 6).map(p => (
+              return list.slice(0, 5).map(p => (
                 <div
                   key={p.id}
                   onClick={() => {
                     if (onSelectProduct) onSelectProduct(p);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
-                  className="bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl overflow-hidden shadow-xs hover:shadow-md hover:border-[#2583F7] dark:hover:border-[#38BDF8] transition-all cursor-pointer flex flex-col justify-between group"
+                  className="bg-white dark:bg-[#111A2B] border border-[#E2E8F0] dark:border-[#26364D] rounded-xl overflow-hidden shadow-xs hover:shadow-lg hover:border-[#2583F7] dark:hover:border-[#38BDF8] hover:-translate-y-0.5 transition-all cursor-pointer flex flex-col justify-between group"
                 >
                   <div>
-                    <div className="w-full h-28 sm:h-32 bg-[#F8FAFC] dark:bg-[#080D18] relative overflow-hidden flex items-center justify-center">
+                    <div className="w-full aspect-square bg-[#F8FAFC] dark:bg-[#080D18] relative overflow-hidden flex items-center justify-center p-4">
                       <img
                         src={p.image || '/assets/default_produk.png'}
                         alt={p.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        loading="lazy"
+                        className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300"
                       />
-                      <span className="absolute top-2 left-2 px-2 py-0.5 rounded bg-[#2583F7] text-white text-[9px] font-black uppercase shadow-xs">
-                        {p.category.split('&')[0].trim()}
-                      </span>
                     </div>
 
                     <div className="p-3 space-y-1.5">
