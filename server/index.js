@@ -676,11 +676,15 @@ app.get('/api/leaderboard/top-sultan', async (_req, res) => {
         const current = customerMap.get(customerKey) || { 
           name: customerName, 
           totalSpent: 0, 
-          totalOrders: 0 
+          totalOrders: 0,
+          products: []
         };
         
         current.totalSpent += Number(o.total_amount || 0);
         current.totalOrders += 1;
+        // Kumpulkan nama produk unik yang dibeli (tampil di leaderboard)
+        const prodName = (o.product_name || '').trim() || (Array.isArray(o.products) && o.products[0] && o.products[0].name) || '';
+        if (prodName && !current.products.includes(prodName)) current.products.push(prodName);
         customerMap.set(customerKey, current);
       }
     });
@@ -694,6 +698,7 @@ app.get('/api/leaderboard/top-sultan', async (_req, res) => {
       name: s.name,
       totalSpent: s.totalSpent,
       totalOrders: s.totalOrders,
+      products: s.products || [],
       tier: idx === 0 ? 'Sultan Mythic' : idx < 3 ? 'Sultan Diamond' : 'Sultan Platinum'
     }));
 

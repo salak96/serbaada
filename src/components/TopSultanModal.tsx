@@ -12,6 +12,7 @@ interface SultanUser {
   totalSpent: number;
   totalOrders: number;
   tier: string;
+  products?: string[];
 }
 
 const DEFAULT_REAL_SULTANS: SultanUser[] = [
@@ -58,6 +59,13 @@ export function TopSultanModal({ isOpen, onClose }: TopSultanModalProps) {
       currency: 'IDR',
       minimumFractionDigits: 0
     }).format(price);
+  };
+
+  // Tampilkan maks 2 nama produk, sisanya "+N lainnya"
+  const formatProducts = (products?: string[]) => {
+    if (!products || products.length === 0) return '';
+    if (products.length <= 2) return products.join(', ');
+    return `${products.slice(0, 2).join(', ')} +${products.length - 2} lainnya`;
   };
 
   return (
@@ -140,6 +148,12 @@ export function TopSultanModal({ isOpen, onClose }: TopSultanModalProps) {
                         </span>
                       </div>
                       <span className="text-[10px] text-[#475569] dark:text-[#94A3B8]">
+                        {sultan.products && sultan.products.length > 0 && (
+                          <span className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
+                            {formatProducts(sultan.products)}
+                          </span>
+                        )}
+                        {sultan.products && sultan.products.length > 0 ? ' • ' : ''}
                         {sultan.totalOrders}x transaksi sukses
                       </span>
                     </div>
