@@ -98,6 +98,10 @@ export function ProductDetailPage({
   const [recipientEmail, setRecipientEmail] = useState('');
   const [recipientId] = useState('');
   const [activeTab, setActiveTab] = useState<'desc' | 'terms'>('desc');
+  const [termsPage, setTermsPage] = useState(0);
+  // Syarat & Ketentuan bisa dibagi jadi beberapa halaman: pemisah satu baris "---HALAMAN---"
+  const termsPages = (product.terms || '').split('\n---HALAMAN---\n').map((s: string) => s.trim()).filter(Boolean);
+  const termsPageClamped = Math.min(termsPage, Math.max(termsPages.length - 1, 0));
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [isOutOfStockModalOpen, setIsOutOfStockModalOpen] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
@@ -106,6 +110,7 @@ export function ProductDetailPage({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     setQuantity(1);
+    setTermsPage(0);
     const first = (product.variants || []).find(v => v.is_active !== 0);
     if (first) {
       setSelAccountType(first.account_type);
@@ -624,7 +629,7 @@ export function ProductDetailPage({
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab('terms')}
+                  onClick={() => { setActiveTab('terms'); setTermsPage(0); }}
                   className={`pb-2.5 font-bold transition-all relative ${
                     activeTab === 'terms'
                       ? 'text-[#1D4ED8] dark:text-[#38BDF8]'
@@ -666,7 +671,32 @@ export function ProductDetailPage({
                 ) : (
                   <div className="space-y-2 text-xs">
                     {product.terms ? (
-                      <p className="whitespace-pre-line text-[#475569] dark:text-[#CBD5E1] leading-relaxed text-xs sm:text-sm">{product.terms}</p>
+                      <>
+                        <p className="whitespace-pre-line text-[#475569] dark:text-[#CBD5E1] leading-relaxed text-xs sm:text-sm">{termsPages[termsPageClamped] || product.terms}</p>
+                        {termsPages.length > 1 && (
+                          <div className="flex items-center justify-between pt-3 mt-1 border-t border-[#F1F5F9] dark:border-[#26364D]">
+                            <button
+                              type="button"
+                              disabled={termsPageClamped === 0}
+                              onClick={() => setTermsPage(termsPageClamped - 1)}
+                              className="px-3 py-1.5 rounded-lg text-[11px] font-bold bg-[#F1F5F9] dark:bg-[#111A2B] text-[#0F172A] dark:text-[#F8FAFC] disabled:opacity-40"
+                            >
+                              ← Sebelumnya
+                            </button>
+                            <span className="text-[11px] font-bold text-[#475569] dark:text-[#94A3B8]">
+                              Halaman {termsPageClamped + 1} dari {termsPages.length}
+                            </span>
+                            <button
+                              type="button"
+                              disabled={termsPageClamped === termsPages.length - 1}
+                              onClick={() => setTermsPage(termsPageClamped + 1)}
+                              className="px-3 py-1.5 rounded-lg text-[11px] font-bold bg-[#2583F7] text-white disabled:opacity-40"
+                            >
+                              Selanjutnya →
+                            </button>
+                          </div>
+                        )}
+                      </>
                     ) : (
                       <>
                         <p className="font-semibold text-[#0F172A] dark:text-[#F8FAFC]">
