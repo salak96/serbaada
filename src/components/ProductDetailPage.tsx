@@ -961,7 +961,7 @@ export function ProductDetailPage({
                 {/* Actions */}
                 <div className="space-y-2 pt-2">
                   <a
-                    href={`https://wa.me/6285867336036?text=${encodeURIComponent(`Halo Admin Androidstore.web.id! Saya ingin menanyakan ketersediaan / restock untuk produk: ${product.name} (Server: ${product.provider || 'Prs Digital'}). Kapan stok ready kembali?`)}`}
+                    href={`https://wa.me/6285867336036?text=${encodeURIComponent(`Halo Admin Androidstore.web.id! Saya ingin menanyakan ketersediaan / restock untuk produk: ${product.name}. Kapan stok ready kembali?`)}`}
                     target="_blank"
                     rel="noreferrer"
                     className="w-full py-3 px-4 rounded-xl font-bold text-xs bg-[#1D4ED8] hover:bg-[#1D4ED8] text-white shadow-md shadow-[#2583F7]/25 flex items-center justify-center gap-2 transition-all active:scale-95"
