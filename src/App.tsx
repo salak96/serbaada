@@ -786,6 +786,7 @@ function App() {
             onRemove={removeFromCart}
             onOrderWhatsApp={handleOrderWhatsApp}
             totalPrice={getTotalPrice()}
+            isDarkMode={isDarkMode}
           />
         </Suspense>
       )}

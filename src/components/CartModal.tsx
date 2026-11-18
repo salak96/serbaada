@@ -10,6 +10,7 @@ interface CartModalProps {
   onRemove: (id: string | number) => void;
   onOrderWhatsApp: () => void;
   totalPrice: number;
+  isDarkMode?: boolean;
 }
 
 export function CartModal({
@@ -19,7 +20,8 @@ export function CartModal({
   onUpdateQuantity,
   onRemove,
   onOrderWhatsApp,
-  totalPrice
+  totalPrice,
+  isDarkMode
 }: CartModalProps) {
   // Lock body scroll and handle Escape key when drawer is open
   useEffect(() => {
@@ -69,44 +71,44 @@ export function CartModal({
 
       {/* Slide-in Drawer Container */}
       <div className="fixed inset-y-0 right-0 flex max-w-full pl-10 pointer-events-none">
-        <aside className="w-screen max-w-[440px] bg-[#101827] shadow-drawer flex flex-col pointer-events-auto border-l border-[#26364D] transition-all duration-300 ease-out transform animate-slideIn text-[#F8FAFC]">
+        <aside className={`w-screen max-w-[440px] ${isDarkMode ? 'bg-[#101827]' : 'bg-white'} shadow-drawer flex flex-col pointer-events-auto border-l ${isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]'} transition-all duration-300 ease-out transform animate-slideIn ${isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>
           {/* Sticky Header */}
-          <header className="sticky top-0 z-10 bg-[#0B1220] px-5 py-4 border-b border-[#26364D] flex items-center justify-between">
+          <header className={`sticky top-0 z-10 ${isDarkMode ? 'bg-[#0B1220]' : 'bg-white'} px-5 py-4 border-b ${isDarkMode ? 'border-[#26364D]' : 'border-[#E2E8F0]'} flex items-center justify-between`}>
             <div className="flex items-center gap-2.5">
               <div className="w-9 h-9 rounded-xl bg-[#1D4ED8]/15 flex items-center justify-center text-[#38BDF8] border border-[#2583F7]/30 shadow-[0_0_10px_rgba(37,131,247,0.3)]">
                 <ShoppingBag className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-base font-bold text-[#F8FAFC] flex items-center gap-2">
+                <h2 className={`text-base font-bold ${isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'} flex items-center gap-2`}>
                   Keranjang Belanja
                   <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#1D4ED8]/20 text-[#38BDF8] border border-[#2583F7]/30">
                     {totalItems} item
                   </span>
                 </h2>
-                <p className="text-xs text-[#475569]">Androidstore.web.id Checkout</p>
+                <p className={`text-xs ${isDarkMode ? 'text-[#475569]' : 'text-[#64748B]'}`}>Androidstore.web.id Checkout</p>
               </div>
             </div>
 
             <button
               onClick={onClose}
               aria-label="Tutup keranjang"
-              className="w-9 h-9 rounded-xl text-[#475569] hover:text-[#F8FAFC] hover:bg-[#111A2B] border border-transparent hover:border-[#26364D] flex items-center justify-center transition-colors focus:outline-none"
+              className={`w-9 h-9 rounded-xl ${isDarkMode ? 'text-[#475569] hover:text-[#F8FAFC] hover:bg-[#111A2B] hover:border-[#26364D]' : 'text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9] hover:border-[#E2E8F0]'} border border-transparent flex items-center justify-center transition-colors focus:outline-none`}
             >
               <X className="w-5 h-5" />
             </button>
           </header>
 
           {/* Scrollable Cart Item List */}
-          <div className="flex-1 overflow-y-auto px-5 py-4 divide-y divide-[#26364D]/60">
+          <div className={`flex-1 overflow-y-auto px-5 py-4 divide-y ${isDarkMode ? 'divide-[#26364D]/60' : 'divide-[#E2E8F0]'}`}>
             {cart.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-12 px-4">
-                <div className="w-20 h-20 rounded-2xl bg-[#111A2B] border border-[#26364D] text-[#38BDF8] flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+                <div className={`w-20 h-20 rounded-2xl ${isDarkMode ? 'bg-[#111A2B] border-[#26364D] text-[#38BDF8]' : 'bg-[#F0F7FF] border-[#DCE8F5] text-[#1D4ED8]'} border flex items-center justify-center mb-4 shadow-[0_0_15px_rgba(56,189,248,0.2)]`}>
                   <ShoppingBag className="w-10 h-10 stroke-[1.5]" />
                 </div>
-                <h3 className="text-base font-bold text-[#F8FAFC] mb-1">
+                <h3 className={`text-base font-bold ${isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'} mb-1`}>
                   Keranjang Anda Masih Kosong
                 </h3>
-                <p className="text-xs md:text-sm text-[#475569] max-w-xs mb-6">
+                <p className={`text-xs md:text-sm ${isDarkMode ? 'text-[#475569]' : 'text-[#64748B]'} max-w-xs mb-6`}>
                   Jelajahi berbagai paket langganan dan produk digital premium dengan harga hemat.
                 </p>
                 <button
@@ -122,9 +124,9 @@ export function CartModal({
                 {cart.map(item => (
                   <article
                     key={item.id}
-                    className="p-3.5 bg-[#111A2B] rounded-2xl border border-[#26364D] hover:border-[#2583F7]/60 shadow-card transition-all flex gap-3.5 group"
+                    className={`p-3.5 ${isDarkMode ? 'bg-[#111A2B] border-[#26364D]' : 'bg-[#F0F7FF] border-[#E2E8F0]'} rounded-2xl border hover:border-[#2583F7]/60 shadow-card transition-all flex gap-3.5 group`}
                   >
-                    <div className="relative w-20 h-20 rounded-xl overflow-hidden bg-[#080D18] flex-shrink-0 border border-[#26364D]">
+                    <div className={`relative w-20 h-20 rounded-xl overflow-hidden ${isDarkMode ? 'bg-[#080D18] border-[#26364D]' : 'bg-white border-[#E2E8F0]'} flex-shrink-0 border`}>
                       <img
                         src={item.image}
                         alt={item.name}
@@ -141,59 +143,49 @@ export function CartModal({
                     <div className="flex-1 min-w-0 flex flex-col justify-between">
                       <div>
                         <div className="flex items-start justify-between gap-1">
-                          <h3 className="font-semibold text-sm text-[#F8FAFC] line-clamp-2 leading-tight">
+                          <h3 className={`font-semibold text-sm ${isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'} line-clamp-2 leading-tight`}>
                             {item.name}
                           </h3>
                           <button
                             onClick={() => onRemove(item.id)}
                             aria-label={`Hapus ${item.name}`}
-                            className="text-[#475569] hover:text-[#EF4444] hover:bg-red-950/40 p-1 rounded-lg transition-colors -mt-0.5 -mr-1"
+                            className={`${isDarkMode ? 'text-[#475569] hover:bg-red-950/40' : 'text-[#64748B] hover:bg-red-50'} hover:text-[#EF4444] p-1 rounded-lg transition-colors -mt-0.5 -mr-1`}
                             title="Hapus produk"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[11px] font-medium text-[#475569]">
+                          <span className={`text-[11px] font-medium ${isDarkMode ? 'text-[#475569]' : 'text-[#64748B]'}`}>
                             {item.category}
                           </span>
-                          <span className="text-[#475569]/40 text-[10px]">•</span>
-                          {item.provider === 'Abellab Reseller' ? (
-                            <span className="text-[10px] font-bold text-amber-400 bg-amber-950/60 px-1.5 py-0.5 rounded border border-amber-800/80">
-                              Supplier Abellab Reseller
-                            </span>
-                          ) : (
-                            <span className="text-[10px] font-bold text-[#38BDF8] bg-[#1D4ED8]/15 px-1.5 py-0.5 rounded border border-[#2583F7]/30">
-                              Supplier Prs Digital
-                            </span>
-                          )}
                         </div>
                       </div>
 
-                      <div className="flex items-end justify-between gap-2 mt-2 pt-1 border-t border-[#26364D]/60">
+                      <div className={`flex items-end justify-between gap-2 mt-2 pt-1 border-t ${isDarkMode ? 'border-[#26364D]/60' : 'border-[#E2E8F0]'}`}>
                         <div>
                           {item.oldPrice > item.price && (
-                            <span className="block text-[11px] text-[#475569] line-through leading-none">
+                            <span className={`block text-[11px] ${isDarkMode ? 'text-[#475569]' : 'text-[#94A3B8]'} line-through leading-none`}>
                               {formatPrice(item.oldPrice)}
                             </span>
                           )}
-                          <span className="font-bold text-sm md:text-base text-[#38BDF8]">
+                          <span className={`font-bold text-sm md:text-base ${isDarkMode ? 'text-[#38BDF8]' : 'text-[#1D4ED8]'}`}>
                             {formatPrice(item.price)}
                           </span>
                         </div>
 
                         {/* Quantity Stepper */}
-                        <div className="flex items-center bg-[#080D18] rounded-xl p-0.5 border border-[#26364D]">
+                        <div className={`flex items-center ${isDarkMode ? 'bg-[#080D18] border-[#26364D]' : 'bg-[#F1F5F9] border-[#E2E8F0]'} rounded-xl p-0.5 border`}>
                           <button
                             type="button"
                             onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
                             aria-label="Kurangi jumlah"
-                            className="w-7 h-7 rounded-lg bg-[#111A2B] text-[#F8FAFC] hover:bg-[#1A263D] flex items-center justify-center transition-colors shadow-xs active:scale-95"
+                            className={`w-7 h-7 rounded-lg ${isDarkMode ? 'bg-[#111A2B] text-[#F8FAFC] hover:bg-[#1A263D]' : 'bg-white text-[#0F172A] hover:bg-[#E2E8F0]'} flex items-center justify-center transition-colors shadow-xs active:scale-95`}
                           >
                             <Minus className="w-3.5 h-3.5" />
                           </button>
 
-                          <span className="w-8 text-center font-bold text-xs text-[#F8FAFC] tabular-nums">
+                          <span className={`w-8 text-center font-bold text-xs ${isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'} tabular-nums`}>
                             {item.quantity}
                           </span>
 
@@ -201,7 +193,7 @@ export function CartModal({
                             type="button"
                             onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
                             aria-label="Tambah jumlah"
-                            className="w-7 h-7 rounded-lg bg-[#111A2B] text-[#F8FAFC] hover:bg-[#1A263D] flex items-center justify-center transition-colors shadow-xs active:scale-95"
+                            className={`w-7 h-7 rounded-lg ${isDarkMode ? 'bg-[#111A2B] text-[#F8FAFC] hover:bg-[#1A263D]' : 'bg-white text-[#0F172A] hover:bg-[#E2E8F0]'} flex items-center justify-center transition-colors shadow-xs active:scale-95`}
                           >
                             <Plus className="w-3.5 h-3.5" />
                           </button>
@@ -216,7 +208,7 @@ export function CartModal({
 
           {/* Sticky Checkout Footer */}
           {cart.length > 0 && (
-            <footer className="sticky bottom-0 z-10 bg-[#0B1220] border-t border-[#26364D] p-5 space-y-3.5 shadow-[0_-6px_25px_rgba(0,0,0,0.6)]">
+            <footer className={`sticky bottom-0 z-10 ${isDarkMode ? 'bg-[#0B1220] border-[#26364D] shadow-[0_-6px_25px_rgba(0,0,0,0.6)]' : 'bg-white border-[#E2E8F0] shadow-[0_-6px_25px_rgba(15,23,42,0.08)]'} border-t p-5 space-y-3.5`}>
               {/* Guarantee trust label */}
               <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#047857]/15 border border-[#10B981]/30 text-[#047857] text-xs">
                 <ShieldCheck className="w-4 h-4 flex-shrink-0" />
@@ -228,13 +220,13 @@ export function CartModal({
               {/* Total Row */}
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="text-xs text-[#475569] block">Total Tagihan</span>
-                  <span className="text-xs font-semibold text-[#F8FAFC]">
+                  <span className={`text-xs ${isDarkMode ? 'text-[#475569]' : 'text-[#64748B]'} block`}>Total Tagihan</span>
+                  <span className={`text-xs font-semibold ${isDarkMode ? 'text-[#F8FAFC]' : 'text-[#0F172A]'}`}>
                     {totalItems} item dipilih
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-xl md:text-2xl font-black text-[#38BDF8] tabular-nums">
+                  <span className={`text-xl md:text-2xl font-black ${isDarkMode ? 'text-[#38BDF8]' : 'text-[#1D4ED8]'} tabular-nums`}>
                     {formatPrice(totalPrice)}
                   </span>
                 </div>
@@ -253,7 +245,7 @@ export function CartModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full text-center text-xs text-[#475569] hover:text-[#F8FAFC] font-medium py-1 transition-colors"
+                className={`w-full text-center text-xs ${isDarkMode ? 'text-[#475569] hover:text-[#F8FAFC]' : 'text-[#64748B] hover:text-[#0F172A]'} font-medium py-1 transition-colors`}
               >
                 ← Lanjut Pilih Produk Lain
               </button>
