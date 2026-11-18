@@ -296,9 +296,6 @@ export function ProductDetailPage({
                 <ShieldCheck className="w-4 h-4 text-[#047857]" />
                 <span>100% Produk Legal &amp; Bergaransi</span>
               </span>
-              <span className="font-semibold text-[#1D4ED8] dark:text-[#38BDF8] bg-[#EFF6FF] dark:bg-[#2583F7]/15 px-2 py-0.5 rounded text-[11px]">
-                {product.provider === 'Abellab Reseller' ? 'Supplier Abellab Reseller' : 'Supplier Prs Digital'}
-              </span>
             </div>
           </div>
 
@@ -953,9 +950,6 @@ export function ProductDetailPage({
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#DC2626] dark:text-red-400 bg-[#FEE2E2] dark:bg-red-950/60 px-2 py-0.5 rounded-md border border-[#FECACA] dark:border-red-900/60">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />
                       Stok Sedang Kosong (0 unit)
-                    </span>
-                    <span className="text-[11px] text-[#475569] dark:text-[#94A3B8]">
-                      {product.provider === 'Abellab Reseller' ? 'Supplier Abellab Reseller' : 'Supplier Prs Digital'}
                     </span>
                   </div>
                 </div>
