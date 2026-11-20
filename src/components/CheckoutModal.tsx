@@ -15,6 +15,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { CartItem } from '../types/product';
+import { dynamicQrisDataUrl } from '../lib/qris';
 import qrisImg from '../assets/qris.jpeg';
 
 interface CheckoutModalProps {
@@ -45,6 +46,7 @@ export function CheckoutModal({
   const [customerNotes, setCustomerNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [dynamicQrisUrl, setDynamicQrisUrl] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Reset state when opened
@@ -61,6 +63,7 @@ export function CheckoutModal({
       setCustomerNotes('');
       setIsSubmitting(false);
       setIsLightboxOpen(false);
+      setDynamicQrisUrl(null);
       setToastMessage(null);
     }
   }, [isOpen]);
@@ -89,7 +92,24 @@ export function CheckoutModal({
     };
   }, [isOpen, isLightboxOpen, onClose]);
 
+  // QRIS dinamis: begitu masuk tahap pembayaran, buat QR dari total tagihan
+  // (nominal tertanam di QR). Gagal -> null, tampilan memakai gambar statis.
+  useEffect(() => {
+    if (stage !== 'qris') return;
+    let cancelled = false;
+    setDynamicQrisUrl(null);
+    dynamicQrisDataUrl(totalPrice).then((url) => {
+      if (!cancelled) setDynamicQrisUrl(url);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [stage, totalPrice]);
+
   if (!isOpen) return null;
+
+  // QRIS dinamis (nominal terisi otomatis); fallback ke gambar statis bila gagal.
+  const qrisSrc = dynamicQrisUrl ?? qrisImg;
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -157,8 +177,13 @@ export function CheckoutModal({
 
   const handleDownloadQris = () => {
     const link = document.createElement('a');
-    link.href = qrisImg;
-    link.download = 'QRIS-Androidstore.jpeg';
+    if (dynamicQrisUrl) {
+      link.href = dynamicQrisUrl;
+      link.download = `QRIS-Androidstore-${orderId || 'order'}.png`;
+    } else {
+      link.href = qrisImg;
+      link.download = 'QRIS-Androidstore.jpeg';
+    }
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -408,7 +433,7 @@ export function CheckoutModal({
                 {/* Large QRIS image */}
                 <div className="w-full max-w-[420px] aspect-square bg-white rounded-xl p-3 border-2 border-[#26364D] shadow-lg flex items-center justify-center relative group">
                   <img
-                    src={qrisImg}
+                    src={qrisSrc}
                     alt="QRIS Androidstore"
                     className="w-full h-full object-contain rounded-lg"
                   />
@@ -480,7 +505,9 @@ export function CheckoutModal({
                     </button>
                   </div>
                   <span className="text-[10px] text-[#475569] block">
-                    *QRIS statis: Mohon pastikan nominal input sesuai total di atas.
+                    {dynamicQrisUrl
+                      ? '*QRIS dinamis: nominal sudah terisi otomatis sesuai total di atas — tinggal scan dan konfirmasi.'
+                      : '*QRIS statis: Mohon pastikan nominal input sesuai total di atas.'}
                   </span>
                 </div>
 
@@ -515,7 +542,7 @@ export function CheckoutModal({
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="font-bold text-[#22C7FF]">4.</span>
-                      <span>Masukkan dan pastikan nominal pembayaran sesuai total tagihan.</span>
+                      <span>{dynamicQrisUrl ? 'Nominal sudah terisi otomatis — periksa dan konfirmasi pembayaran.' : 'Masukkan dan pastikan nominal pembayaran sesuai total tagihan.'}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="font-bold text-[#22C7FF]">5.</span>
@@ -641,7 +668,7 @@ export function CheckoutModal({
             </span>
 
             <div className="w-full max-w-[500px] aspect-square bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-center">
-              <img src={qrisImg} alt="QRIS Perbesar" className="w-full h-full object-contain rounded-lg" />
+              <img src={qrisSrc} alt="QRIS Perbesar" className="w-full h-full object-contain rounded-lg" />
             </div>
 
             <div className="flex items-center gap-3 w-full max-w-[320px]">
