@@ -139,6 +139,18 @@ export function ProductDetailPage({
     : (isWholesaleApplied ? (product.wholesalePrice || product.price) : product.price);
   const subtotal = unitPrice * quantity;
 
+  // Harga coret mengikuti varian yang dipilih (bukan harga coret produk).
+  // Varian tanpa old_price tidak menampilkan coretan — jangan pakai
+  // oldPrice produk untuk varian lain (nilainya bisa lebih kecil dari
+  // harga varian sehingga diskon tampil negatif).
+  const effectiveOldPrice = hasVariants && selectedVariant
+    ? Number(selectedVariant.old_price || 0)
+    : product.oldPrice;
+  const showOldPrice = effectiveOldPrice > 0 && effectiveOldPrice > unitPrice;
+  const effectiveDiscount = showOldPrice
+    ? Math.round(((effectiveOldPrice - unitPrice) / effectiveOldPrice) * 100)
+    : 0;
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -404,13 +416,13 @@ export function ProductDetailPage({
                   </span>
                 )}
 
-                {product.oldPrice > product.price && (
+                {showOldPrice && (
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-[#475569] line-through tabular-nums">
-                      {formatPrice(product.oldPrice)}
+                      {formatPrice(effectiveOldPrice)}
                     </span>
                     <span className="text-xs font-bold bg-[#FEE2E2] dark:bg-red-950/60 text-[#DC2626] dark:text-red-400 px-1.5 py-0.5 rounded">
-                      -{product.discount || 25}%
+                      -{effectiveDiscount}%
                     </span>
                   </div>
                 )}

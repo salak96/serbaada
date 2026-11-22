@@ -286,6 +286,7 @@ interface ProductVariant {
   duration: string;
   selling_price: number;
   cost_price: number;
+  old_price: number;
   stock: number;
   is_active: number;
   image?: string;
@@ -1534,6 +1535,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       duration: 'Semua',
       selling_price: editingProductPrice.selling_price || 0,
       cost_price: editingProductPrice.cost_price || 0,
+      old_price: Math.round(((editingProductPrice.selling_price || 0) * 1.35) / 1000) * 1000,
       stock: 25,
       is_active: 1
     };
@@ -1566,6 +1568,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       duration,
       selling_price: selling,
       cost_price: cost,
+      old_price: Math.round((selling * 1.35) / 1000) * 1000,
       stock: Number(sp.stock || 25),
       is_active: 1,
       image: String(sp.image_url || '').trim()
@@ -4554,7 +4557,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                         />
                       </div>
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-4 gap-2">
                       <div>
                         <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Harga Jual (Rp)</label>
                         <input
@@ -4572,6 +4575,16 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                           inputMode="numeric"
                           value={formatRupiahInput(v.cost_price)}
                           onChange={(e) => updateVariantField(idx, { cost_price: parseRupiahInput(e.target.value) })}
+                          className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Harga Coret (Rp)</label>
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={formatRupiahInput(v.old_price)}
+                          onChange={(e) => updateVariantField(idx, { old_price: parseRupiahInput(e.target.value) })}
                           className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
                         />
                       </div>

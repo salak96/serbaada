@@ -647,7 +647,7 @@ app.get('/api/public/products', async (req, res) => {
         description: p.description,
         terms: p.terms || '',
         reviews: p.reviews || [],
-        variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, stock: v.stock, image: v.image || '' }))
+        variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, old_price: v.old_price || 0, stock: v.stock, image: v.image || '' }))
       };
     });
 
@@ -801,7 +801,7 @@ app.get('/api/public/products/:slug', async (req, res) => {
         description: p.description,
         terms: p.terms || '',
         reviews: p.reviews || [],
-        variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, stock: v.stock, image: v.image || '' }))
+        variants: (p.variants || []).filter(v => v.is_active).map(v => ({ id: v.id, name: v.name, account_type: v.account_type, duration: v.duration, selling_price: v.selling_price, old_price: v.old_price || 0, stock: v.stock, image: v.image || '' }))
       }
     });
   } catch (err) {

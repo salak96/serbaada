@@ -5,6 +5,7 @@ export interface ProductVariant {
   duration: string;
   selling_price: number;
   cost_price?: number;
+  old_price?: number;
   stock: number;
   is_active?: number;
   image?: string;

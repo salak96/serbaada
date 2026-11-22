@@ -20,6 +20,17 @@ export function ProductCard({
   const activeVariants = (product.variants || []).filter(v => v.is_active !== 0);
   const hasVariants = activeVariants.length > 0;
   const minVariantPrice = hasVariants ? Math.min(...activeVariants.map(v => Number(v.selling_price || 0))) : 0;
+  // Harga coret kartu mengikuti varian termurah (yang harganya ditampilkan
+  // sebagai "Mulai ..."). Varian tanpa old_price -> pakai oldPrice produk
+  // hanya bila nilainya masih di atas harga varian termurah.
+  const cheapestVariant = hasVariants
+    ? activeVariants.reduce((a, b) => Number(a.selling_price || 0) <= Number(b.selling_price || 0) ? a : b)
+    : null;
+  const cardOldPrice = cheapestVariant && Number(cheapestVariant.old_price || 0) > 0
+    ? Number(cheapestVariant.old_price)
+    : product.oldPrice;
+  const cardPrice = hasVariants ? minVariantPrice : product.price;
+  const showCardOldPrice = cardOldPrice > 0 && cardOldPrice > cardPrice;
   const variantStockTotal = hasVariants ? activeVariants.reduce((s, v) => s + Number(v.stock || 0), 0) : 0;
   const isUnconfigured = hasVariants ? minVariantPrice <= 0 : (!product.price || product.price <= 0);
   const isOutOfStock = hasVariants
@@ -122,9 +133,9 @@ export function ProductCard({
         <div className="mt-3 pt-3 border-t border-[#E2E8F0] dark:border-[#26364D]">
           {/* Old Price Strikethrough if exists */}
           <div className="min-h-[16px]">
-            {product.oldPrice > product.price ? (
+            {showCardOldPrice ? (
               <span className="text-[11px] text-[#475569] line-through block tabular-nums">
-                {formatPrice(product.oldPrice)}
+                {formatPrice(cardOldPrice)}
               </span>
             ) : (
               <span className="text-[11px] text-transparent select-none block">-</span>

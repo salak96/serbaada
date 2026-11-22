@@ -146,6 +146,7 @@ function normalizeVariants(input) {
       duration: String(v.duration || 'Semua').trim(),
       selling_price: Number(v.selling_price || 0),
       cost_price: Number(v.cost_price || 0),
+      old_price: Number(v.old_price || 0),
       stock: Number(v.stock ?? 25),
       is_active: v.is_active === undefined ? 1 : (v.is_active ? 1 : 0),
       image: String(v.image || '').trim()
