@@ -1274,6 +1274,13 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
     return 'Rp ' + Number(p || 0).toLocaleString('id-ID');
   };
 
+  // Input harga: tampil "1.000" saat mengetik, nilai yang disimpan tetap number.
+  const formatRupiahInput = (n: number | null | undefined) => Number(n || 0).toLocaleString('id-ID');
+  const parseRupiahInput = (s: string) => {
+    const digits = s.replace(/[^0-9]/g, '');
+    return digits === '' ? 0 : Number(digits);
+  };
+
   const [supplierCurrencyMode, setSupplierCurrencyMode] = useState<'AUTO' | 'IDR' | 'USD'>('AUTO');
 
   const formatSupplierPrice = (p: number) => {
@@ -4458,15 +4465,16 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
               <div>
                 <label className="block text-[var(--text-muted)] mb-1 font-semibold">Harga Jual Akhir Androidstore</label>
                 <input
-                  type="number"
-                  value={
+                  type="text"
+                  inputMode="numeric"
+                  value={formatRupiahInput(
                     markupType === 'percent'
                       ? Math.round((editingProductPrice.cost_price * (1 + markupVal / 100)) / 500) * 500
                       : markupType === 'nominal'
                       ? editingProductPrice.cost_price + markupVal
                       : editingProductPrice.selling_price
-                  }
-                  onChange={(e) => setEditingProductPrice({ ...editingProductPrice, selling_price: Number(e.target.value) })}
+                  )}
+                  onChange={(e) => setEditingProductPrice({ ...editingProductPrice, selling_price: parseRupiahInput(e.target.value) })}
                   disabled={markupType !== 'manual'}
                   className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--success)] font-bold font-mono text-sm"
                 />
@@ -4539,18 +4547,20 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <div>
                         <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Harga Jual (Rp)</label>
                         <input
-                          type="number"
-                          value={v.selling_price}
-                          onChange={(e) => updateVariantField(idx, { selling_price: Number(e.target.value) })}
+                          type="text"
+                          inputMode="numeric"
+                          value={formatRupiahInput(v.selling_price)}
+                          onChange={(e) => updateVariantField(idx, { selling_price: parseRupiahInput(e.target.value) })}
                           className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
                         />
                       </div>
                       <div>
                         <label className="block text-[10px] text-[var(--text-muted)] mb-0.5 font-semibold">Harga Modal (Rp)</label>
                         <input
-                          type="number"
-                          value={v.cost_price}
-                          onChange={(e) => updateVariantField(idx, { cost_price: Number(e.target.value) })}
+                          type="text"
+                          inputMode="numeric"
+                          value={formatRupiahInput(v.cost_price)}
+                          onChange={(e) => updateVariantField(idx, { cost_price: parseRupiahInput(e.target.value) })}
                           className="w-full px-2.5 py-1.5 bg-[var(--bg-card)] border border-[var(--border)] rounded-lg text-[var(--text)] font-mono"
                         />
                       </div>
@@ -5379,10 +5389,11 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <div>
                   <label className="block text-[var(--text-muted)] mb-1 font-semibold">Harga Modal (Rp)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     required
-                    value={editingSupplierProduct.cost_price || 15000}
-                    onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, cost_price: Number(e.target.value) })}
+                    value={formatRupiahInput(editingSupplierProduct.cost_price || 15000)}
+                    onChange={(e) => setEditingSupplierProduct({ ...editingSupplierProduct, cost_price: parseRupiahInput(e.target.value) })}
                     className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
@@ -5553,10 +5564,11 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 <div>
                   <label className="block text-[var(--text-muted)] mb-1 font-semibold">Total Tagihan (Rp)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
                     required
-                    value={newOrderForm.total_amount}
-                    onChange={(e) => setNewOrderForm({ ...newOrderForm, total_amount: Number(e.target.value) })}
+                    value={formatRupiahInput(newOrderForm.total_amount)}
+                    onChange={(e) => setNewOrderForm({ ...newOrderForm, total_amount: parseRupiahInput(e.target.value) })}
                     className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)]"
                   />
                 </div>
