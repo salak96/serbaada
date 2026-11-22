@@ -4480,6 +4480,17 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                 />
               </div>
 
+              <div>
+                <label className="block text-[var(--text-muted)] mb-1 font-semibold">Harga Coret (Rp) — isi 0 untuk menghilangkan coretan</label>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={formatRupiahInput(editingProductPrice.old_price)}
+                  onChange={(e) => setEditingProductPrice({ ...editingProductPrice, old_price: parseRupiahInput(e.target.value) })}
+                  className="w-full px-3 py-2 bg-[var(--bg-nested)] border border-[var(--border)] rounded-xl text-[var(--text)] font-mono text-sm"
+                />
+              </div>
+
               {/* Varian Produk: Tipe Akun · Varian · Durasi */}
               <div className="pt-3 border-t border-[var(--border)]">
                 <div className="flex items-center justify-between mb-1">
