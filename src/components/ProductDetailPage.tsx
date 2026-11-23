@@ -659,7 +659,7 @@ export function ProductDetailPage({
                       .split(/\n\s*\n/)
                       .filter((para: string) => para.trim().length > 0)
                       .map((para: string, i: number) => (
-                        <p key={i} className="whitespace-pre-line">
+                        <p key={i} className="whitespace-pre-line text-justify">
                           {para.trim()}
                         </p>
                       ))}
