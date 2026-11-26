@@ -34,6 +34,17 @@ function getProductType(product: Product): 'voucher' | 'account' {
   return 'account';
 }
 
+// Ubah URL mentah (https?://...) dalam teks menjadi link yang bisa dipencet.
+function linkifyText(text: string) {
+  return text.split(/(https?:\/\/[^\s]+)/g).map((part, i) =>
+    /^https?:\/\//.test(part) ? (
+      <a key={i} href={part} target="_blank" rel="noopener noreferrer" className="text-[#1D4ED8] dark:text-[#38BDF8] underline break-all">{part}</a>
+    ) : (
+      part
+    )
+  );
+}
+
 export function ProductDetailPage({
   product,
   allProducts = [],
@@ -660,7 +671,7 @@ export function ProductDetailPage({
                       .filter((para: string) => para.trim().length > 0)
                       .map((para: string, i: number) => (
                         <p key={i} className="whitespace-pre-line text-justify">
-                          {para.trim()}
+                          {linkifyText(para.trim())}
                         </p>
                       ))}
                     {getProductType(product) === 'voucher' && (
@@ -681,7 +692,7 @@ export function ProductDetailPage({
                   <div className="space-y-2 text-xs">
                     {product.terms ? (
                       <>
-                        <p className="whitespace-pre-line text-[#475569] dark:text-[#CBD5E1] leading-relaxed text-xs sm:text-sm">{termsPages[termsPageClamped] || product.terms}</p>
+                        <p className="whitespace-pre-line text-[#475569] dark:text-[#CBD5E1] leading-relaxed text-xs sm:text-sm">{linkifyText(termsPages[termsPageClamped] || product.terms)}</p>
                         {termsPages.length > 1 && (
                           <div className="flex items-center justify-between pt-3 mt-1 border-t border-[#F1F5F9] dark:border-[#26364D]">
                             <button
