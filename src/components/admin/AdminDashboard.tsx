@@ -227,6 +227,25 @@ function shortDayLabel(d: Date): string {
   return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 }
 
+// Tanggal transaksi untuk kolom TANGGAL di tabel Pesanan Pelanggan.
+// Sumber utama: created_at (ISO, ada jamnya). Fallback: tanggal dari nomor
+// invoice INV-YYYYMMDD-NNN (tanpa jam). Bila keduanya tidak ada: '-'.
+function formatOrderDate(o: { created_at?: string; invoice_number?: string }): { date: string; time: string | null } {
+  const d = o.created_at ? new Date(o.created_at) : null;
+  if (d && !Number.isNaN(d.getTime())) {
+    return {
+      date: d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+      time: d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
+    };
+  }
+  const m = String(o.invoice_number || '').match(/^INV-(\d{4})(\d{2})(\d{2})-/);
+  if (m) {
+    const dd = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    return { date: dd.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }), time: null };
+  }
+  return { date: '—', time: null };
+}
+
 // Sparkline SVG mungil (tanpa library) untuk kartu KPI.
 // data = angka per hari (7 hari). Bila semua nol, garis datar.
 function Sparkline({ data, color = '#38BDF8', height = 32, width = 120 }: { data: number[]; color?: string; height?: number; width?: number }) {
@@ -3431,6 +3450,7 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                       <tr>
                         <th className="p-3.5 w-12">No</th>
                         <th className="p-3.5">Invoice</th>
+                        <th className="p-3.5">Tanggal</th>
                         <th className="p-3.5">Pelanggan</th>
                         <th className="p-3.5">Kontak</th>
                         <th className="p-3.5">Total Bayar</th>
@@ -3443,13 +3463,17 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
                     <tbody className="divide-y divide-[var(--border)]">
                       {orders.length === 0 ? (
                         <tr>
-                          <td colSpan={9} className="p-8 text-center text-[var(--text-muted)]">Belum ada transaksi pesanan yang masuk.</td>
+                          <td colSpan={10} className="p-8 text-center text-[var(--text-muted)]">Belum ada transaksi pesanan yang masuk.</td>
                         </tr>
                       ) : (
                         paginatedOrders.map((o, index) => (
                           <tr key={o.id} className="hover:bg-[var(--bg-hover)]">
                             <td className="p-3.5 font-mono text-[var(--text-muted)]">{(ordersCurrentPage - 1) * ordersPageSize + index + 1}</td>
                            <td className="p-3.5 font-mono font-bold text-[var(--accent-soft)]">{o.invoice_number}</td>
+                            <td className="p-3.5 whitespace-nowrap">
+                              <span className="font-medium text-[var(--text)] block">{formatOrderDate(o).date}</span>
+                              {formatOrderDate(o).time ? <span className="text-[10px] text-[var(--text-muted)] block">{formatOrderDate(o).time}</span> : null}
+                            </td>
                             <td className="p-3.5 font-bold text-[var(--text)]">{o.customer_name}</td>
                             <td className="p-3.5 text-[var(--text-muted)]">{o.customer_phone}</td>
                             <td className="p-3.5 font-mono font-bold text-[var(--success)]">{formatPrice(o.total_amount)}</td>
