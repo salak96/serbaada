@@ -889,6 +889,14 @@ export function AdminDashboard({ onClose, onRefreshPublicProducts }: AdminDashbo
       }
 
       return matchSearch && matchPayment && matchStatus && matchSupplier && matchDate;
+    }).sort((a, b) => {
+      // Urutkan berdasarkan tanggal transaksi, terbaru dulu.
+      // Tanggal kosong/tidak valid dianggap paling lama.
+      const ta = new Date(a.created_at).getTime();
+      const tb = new Date(b.created_at).getTime();
+      const va = Number.isNaN(ta) ? -Infinity : ta;
+      const vb = Number.isNaN(tb) ? -Infinity : tb;
+      return vb - va;
     });
   }, [orders, orderSearchQuery, orderDateRange, orderPaymentFilter, orderStatusFilter, orderSupplierFilter]);
 
